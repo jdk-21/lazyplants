@@ -21,7 +21,7 @@ n/a
 
 ### .feature File
 
-[.feature file](/test_driver/water_plants.feature)  
+[.feature file](/test_driver/features/water_plants.feature)  
 
 ## 2.2 Alternative Flows
 n/a
