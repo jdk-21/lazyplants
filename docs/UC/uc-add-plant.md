@@ -23,7 +23,7 @@ n/a
 
 ### .feature File
 
-[.feature file](/test_driver/feature/add_plants.feature)  
+[.feature file](/test_driver/features/add_plants.feature)  
 
 ## 2.2 Alternative Flows
 n/a
