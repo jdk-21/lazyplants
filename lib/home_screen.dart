@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'navigation_drawer.dart';
 import 'sliver_appbar.dart';
 import 'main.dart';
 import 'dart:ui' as ui;
@@ -12,6 +13,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavigationDrawer(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add,),
+        backgroundColor: kPrimaryColor,
+        onPressed: (){
+          print("add pressed");
+        },
+      ),
         body: Material(
       child: CustomScrollView(
         slivers: [

@@ -32,7 +32,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
     final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255)
         .clamp(0, 255)
         .toInt();
-    return kPrimaryColor.withAlpha(alpha); 
+    return kPrimaryColor.withAlpha(alpha);
     //return Color.fromARGB(alpha, 255, 255, 255);
   }
 
@@ -84,7 +84,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             child: Row(
               children: [
                 Text(
-                  'Hi, Jonathan!',
+                  'Hi, John!',
                   style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -158,11 +158,10 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: Colors.white
-                        ),
-                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.menu, color: Colors.white),
+                        onPressed: () {
+                          Scaffold.of(context).openDrawer();
+                        },
                       ),
                       Text(
                         this.title,
@@ -176,8 +175,8 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       IconButton(
                         icon: Icon(
                           Icons.search_outlined,
-                          color: this.makeStickyHeaderTextColor(
-                              shrinkOffset, false), // will disappear when expanded
+                          color: this.makeStickyHeaderTextColor(shrinkOffset,
+                              false), // will disappear when expanded
                         ),
                         onPressed: () {},
                       ),
