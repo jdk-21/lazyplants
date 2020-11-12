@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'package:lazyplants/main.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double collapsedHeight;

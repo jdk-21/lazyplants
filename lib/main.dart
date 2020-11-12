@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lazyplants/home_screen.dart';
-import 'home_screen.dart';
+import 'package:lazyplants/screens/home_screen.dart';
 
 const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;
