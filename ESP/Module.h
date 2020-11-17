@@ -8,7 +8,7 @@
 
 bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
-    delay(300);
+    delay(500);
     Serial.println();
     Serial.print("Connecting to WiFi..");
     bool Stop = false;
@@ -20,6 +20,8 @@ bool connect(const char* ssid,const char* password){
       Serial.print(".");
       if (counter == 8){
         Serial.println();
+        WiFi.begin(ssid, password);
+        delay(500);
       }
       if (counter >= 20){
         Stop = true;
@@ -60,17 +62,6 @@ bool connect(const char* ssid,const char* password){
 
 }
 
-String converte_AtoJ(String Message[][2], int length_Message){
-  //msg zusammenbauen im JSON Format ("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\"\"}")
-  String msg = "{";
-  for (int i=0;i < length_Message; i++){
-    msg = msg + "\"" + Message[i][0] + "\":\"" + Message[i][1] +"\",";
-  }
-  msg.remove(msg.length()-1); //löschen des letzten ',' da kein weiterer Parameter kommt
-  msg = msg + "}";
-  return msg;
-}
-
 int patch(String ServerPath, String Message){
     // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
     // HTTP header
@@ -100,9 +91,49 @@ int post(String ServerPath, String Message){
     
     http.end();
     return httpResponseCode;
+}
+
+JSONVar get_json(String ServerPath){
+  //HTTP GET
+  HTTPClient http;
+  http.begin(ServerPath); //Startet Verbindung zu Server
+  int httpResponseCode = http.GET();
+  
+  String payload = "{empty}"; 
+  
+  if (httpResponseCode>0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    payload = http.getString();
   }
+  else {
+    Serial.print("Error code: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end(); // Free resources
+  
+  //Konvertieren in JSON Objekt
+   Serial.println(payload);
+   JSONVar myObject = JSON.parse(payload);
+  
+  // JSON.typeof(jsonVar) can be used to get the type of the var
+  if (JSON.typeof(myObject) == "undefined") {
+    Serial.println("Parsing input failed! Retry..");
+    JSONVar myObject = JSON.parse(payload);
+  }
+    
+  //Serial.print("JSON object = ");
+  //Serial.println(myObject);
+    
+  // myObject.keys() can be used to get an array of all the keys in the object
+  JSONVar keys = myObject.keys();
 
-
-
-
-
+  //Ausgabe
+  for (int i = 0; i < keys.length(); i++) {
+    JSONVar value = myObject[keys[i]];
+    Serial.print(keys[i]);
+    Serial.print(" = ");
+    Serial.println(value);
+  }
+  return myObject;
+}
