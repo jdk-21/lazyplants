@@ -62,7 +62,7 @@ bool connect(const char* ssid,const char* password){
 
 }
 
-int patch(String ServerPath, String Message){
+int patch_json(String ServerPath, JSONVar Message){
     // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
     // HTTP header
     // TEST
@@ -71,7 +71,8 @@ int patch(String ServerPath, String Message){
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
     //int httpResponseCode = http.PATCH("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\"}");
-    int httpResponseCode = http.PATCH(Message);
+    String msg = JSON.stringify(Message);
+    int httpResponseCode = http.PATCH(msg);
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
     
@@ -79,12 +80,13 @@ int patch(String ServerPath, String Message){
     return httpResponseCode;
   }
 
-int post(String ServerPath, String Message){
+int post_json(String ServerPath, JSONVar Message){
     HTTPClient http;
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
 
-    int httpResponseCode = http.POST(Message);
+    String msg = JSON.stringify(Message);
+    int httpResponseCode = http.POST(msg);
 
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
@@ -113,7 +115,6 @@ JSONVar get_json(String ServerPath){
   http.end(); // Free resources
   
   //Konvertieren in JSON Objekt
-   Serial.println(payload);
    JSONVar myObject = JSON.parse(payload);
   
   // JSON.typeof(jsonVar) can be used to get the type of the var
@@ -122,8 +123,8 @@ JSONVar get_json(String ServerPath){
     JSONVar myObject = JSON.parse(payload);
   }
     
-  //Serial.print("JSON object = ");
-  //Serial.println(myObject);
+  Serial.print("JSON object = ");
+  Serial.println(myObject);
     
   // myObject.keys() can be used to get an array of all the keys in the object
   JSONVar keys = myObject.keys();

@@ -32,5 +32,11 @@ void setup() {
 
 void loop() {
   JSONVar J = get_json(ServerPath);
+  delay(1000);
+  Serial.println("---------------------");
+  J["water"] = !(J["water"]);
+  patch_json(ServerPath, J);
   delay(10000);
+  Serial.println();
+  Serial.println();
 }
