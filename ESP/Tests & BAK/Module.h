@@ -7,6 +7,9 @@
 
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
+#define BodenfeuchtigkeitPIN 12 
+#define feuchtemin 0
+#define feuchtemax 3571 // Erfahrungswer. Arduino Reference sagt max. 4095  //TODO: kallibrieren
 
 //weitere Parameter
 #define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
@@ -166,10 +169,20 @@ int entfernung(){
     return(entfernung);
   }
   
-  int fuellsstand(int Tankhoehe){
-    int Value = entfernung();
-    return (Value/Tankhoehe *100);
-  }
+int fuellsstand(int Tankhoehe){
+  int Value = entfernung();
+  return (Value/Tankhoehe *100);
+}
+
+int bodenfeuchte(int PIN){
+    int value = analogRead(PIN);
+    Serial.print("Messwert: ");
+    Serial.println(value);
+    value = (((value - feuchtemin) *100) /feuchtemax);
+    Serial.print("Normwert: ");
+    Serial.println(value);
+    return value;
+}
 
 
 
