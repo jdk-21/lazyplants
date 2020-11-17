@@ -9,11 +9,13 @@
 //Declarationen
 
   //Sensoren 
-  #define ultraschalltrigger 7 // Arduino Pin an HC-SR04 Trig
-  #define ultraschallecho 6    // Arduino Pin an HC-SR04 Echo
+  #define ultraschalltrigger 34 // Arduino Pin an HC-SR04 Trig
+  #define ultraschallecho 35    // Arduino Pin an HC-SR04 Echo
 
   //weitere Parameter
   #define Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
+
+  #include <Esp.h>
 
 void setup() {
   pinMode(ultraschalltrigger, OUTPUT);

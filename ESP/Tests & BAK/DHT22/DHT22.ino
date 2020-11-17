@@ -7,36 +7,34 @@
  */
 
 
-//Include
-#include "DHT.h"
+#include "DHT.h" //DHT Bibliothek laden
 
-  //Sensoren
-  #define DHTPIN 4 // Datapin für den DHT22
-  #define DHT_TYPTE DHT22 //Typ von DHT
-  DHT dht(DHTPIN, DHT_TYPTE);
+#define DHTPIN 2 //Der Sensor wird an PIN 2 angeschlossen    
 
-//SETUP 
+#define DHTTYPE DHT22    // Es handelt sich um den DHT22 Sensor
+
+DHT dht(DHTPIN, DHTTYPE); //Der Sensor wird ab jetzt mit „dht“ angesprochen
+
 void setup() {
-  dht.begin();
-  Serial.begin(9600);//Test
+  Serial.begin(115200); //Serielle Verbindung starten
+
+  dht.begin(); //DHT11 Sensor starten
 }
 
-// Funktionen
- 
-  float Luftfeuchtigkeit(){
-    return dht.readHumidity();
-  }
-  
-  float Temperatur(){
-    return dht.readTemperature();
-  }
-  
-//Main
 void loop() {
-  Serial.print("Luftfeuchte: ");
-  Serial.println(Luftfeuchtigkeit());
+  
+  delay(2000); //Zwei Sekunden Vorlaufzeit bis zur Messung (der Sensor ist etwas träge)
+
+  
+  float Luftfeuchtigkeit = dht.readHumidity(); //die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+  
+  float Temperatur = dht.readTemperature();//die Temperatur auslesen und unter „Temperatur“ speichern
+  
+  Serial.print("Luftfeuchtigkeit: "); //Im seriellen Monitor den Text und 
+  Serial.print(Luftfeuchtigkeit); //die Dazugehörigen Werte anzeigen
+  Serial.println(" %");
   Serial.print("Temperatur: ");
-  Serial.println(Temperatur());
-  delay(5000);
-  Serial.println(" ");
+  Serial.print(Temperatur);
+  Serial.println(" Grad Celsius");
+
 }
