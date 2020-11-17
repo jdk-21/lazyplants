@@ -12,6 +12,7 @@ String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" 
 const char* ssid = "TrojaNet";
 const char* password = "50023282650157230429";
 
+/*
 int patch(){
     // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
     // HTTP header
@@ -28,6 +29,7 @@ int patch(){
     http.end();
     return httpResponseCode;
   }
+*/
 
 void setup() {
   
@@ -45,7 +47,7 @@ void setup() {
   }
   counter = 0;
   Stop = false;
-  int ResponseCode = patch();
+  int ResponseCode = patch(ServerPath);
   while ((ResponseCode != 200) && !(Stop)){
     counter ++;
     ResponseCode = patch();

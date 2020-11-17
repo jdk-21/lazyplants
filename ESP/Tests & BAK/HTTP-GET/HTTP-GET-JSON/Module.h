@@ -8,7 +8,7 @@
 
 bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
-    delay(300);
+    delay(500);
     Serial.println();
     Serial.print("Connecting to WiFi..");
     bool Stop = false;
@@ -20,6 +20,8 @@ bool connect(const char* ssid,const char* password){
       Serial.print(".");
       if (counter == 8){
         Serial.println();
+        WiFi.begin(ssid, password);
+        delay(500);
       }
       if (counter >= 20){
         Stop = true;
@@ -101,8 +103,3 @@ int post(String ServerPath, String Message){
     http.end();
     return httpResponseCode;
   }
-
-
-
-
-
