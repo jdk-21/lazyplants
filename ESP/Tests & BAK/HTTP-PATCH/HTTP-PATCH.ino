@@ -7,8 +7,8 @@ String token = "cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
 String table = "waterplants";
 String id = "/5fb3804d76949e054eeae501";
 String filter = ""; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
-String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter + " Htttp/1.1");
-//http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ Htttp/1.1
+String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter);
+//http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
 const char* ssid = "TrojaNet";
 const char* password = "50023282650157230429";
 
@@ -21,7 +21,7 @@ int patch(){
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
     //int httpResponseCode = http.POST("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\",\"date\":\"2020-11-16T10:54:25.035Z\"}");
-    int httpResponseCode = http.PATCH("{\"water\":\"false\"\"}");
+    int httpResponseCode = http.PATCH("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\"}");
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
     

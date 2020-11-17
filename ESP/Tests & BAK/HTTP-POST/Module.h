@@ -56,7 +56,7 @@ bool connect(const char* ssid,const char* password){
     
 
 }
-
+/*
 int senden(){
     // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
     // HTTP header
@@ -71,6 +71,7 @@ int senden(){
       "watertank": 0,
       "id": "string"
     }*/
+    /*
     HTTPClient http;
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
@@ -82,3 +83,4 @@ int senden(){
     http.end();
     return httpResponseCode;
   }
+  */

@@ -17,10 +17,10 @@ bool connect(const char* ssid,const char* password){
       counter ++;
       delay(1000);
       Serial.print(".");
-      if (counter == 15){
+      if (counter == 8){
         Serial.println();
       }
-      if (counter >= 40){
+      if (counter >= 20){
         Stop = true;
         Serial.println();
         Serial.println("No Connection!!!");
