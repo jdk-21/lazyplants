@@ -5,6 +5,16 @@
 #include <Arduino_JSON.h>
 #include <HTTPClient.h>
 
+#define ultraschalltrigger 34 // Pin an HC-SR04 Trig
+#define ultraschallecho 35    // Pin an HC-SR04 Echo
+
+//weitere Parameter
+#define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
+void setup() {
+  pinMode(ultraschalltrigger, OUTPUT);
+  pinMode(ultraschallecho, INPUT);
+  Serial.begin(115200);//Test
+}
 
 bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
@@ -138,3 +148,29 @@ JSONVar get_json(String ServerPath){
   }
   return myObject;
 }
+
+int entfernung(){
+    long entfernung=0;
+    long zeit=0;
+  
+    digitalWrite(ultraschalltrigger, LOW);
+    delayMicroseconds(3);
+    noInterrupts();
+    digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
+    delayMicroseconds(10);
+    digitalWrite(ultraschalltrigger, LOW);
+    zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
+    interrupts();
+    zeit = (zeit/2); // Zeit halbieren
+    entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+    return(entfernung);
+  }
+  
+  int fuellsstand(int Tankhoehe){
+    int Value = entfernung();
+    return (Value/Tankhoehe *100);
+  }
+
+
+
+
