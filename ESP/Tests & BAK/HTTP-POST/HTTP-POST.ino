@@ -1,29 +1,20 @@
 #include "WiFi.h"
 #include <HTTPClient.h>
+//#include "Module.h"
 
+String ipadresse = "178.238.227.46:3000";
 String token = "cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ";
-String ServerPath = ("http://178.238.227.46:3000/api/Plant_Data?access_token="+token);
+String table = "waterplants";
+String ServerPath = ("http://"+ipadresse+"/api/"+ table + "?access_token=" + token);
 const char* ssid = "TrojaNet";
 const char* password = "50023282650157230429";
  
 int senden(){
-    // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
-    // HTTP header
-    // TEST
-    /*Dominik Klein, [01.11.20 17:25]
-    {
-      "name": "string",
-      "date": "2020-11-01T16:20:25.756Z",
-      "soil_moisture": 0,
-      "humidity": 0,
-      "temperature": 0,
-      "watertank": 0,
-      "id": "string"
-    }*/
     HTTPClient http;
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
-    int httpResponseCode = http.POST("{\"UserID\":\"2\",\"PlantID\":\"2\",\"Plantname\":\"ESP-Post-2\",\"date\":\"2020-11-11T10:54:25.035Z\"}");
+    //int httpResponseCode = http.POST("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\",\"date\":\"2020-11-16T10:54:25.035Z\"}");
+    int httpResponseCode = http.POST("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\"\"}");
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
     

@@ -73,6 +73,7 @@ void setup() {
   if (counter >= 31){
     Serial.println("");
     Serial.println("WiFi Connection faild!");
+    ESP.restart();
   } else {
     Serial.println("");
     Serial.println("WiFi Connected!");
