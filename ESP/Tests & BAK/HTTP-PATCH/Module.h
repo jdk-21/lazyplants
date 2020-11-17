@@ -45,6 +45,7 @@ bool connect(const char* ssid,const char* password){
                 delay(10);
             }
         }
+        //ESP.restart();
         return false;
       }
     }
@@ -75,7 +76,7 @@ int senden(String ServerPath, String Message[][2],int length_Message){
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
 
-    int httpResponseCode = http.POST(converte_AtoJ(Message[][2], length_Message));
+    int httpResponseCode = http.POST(converte_AtoJ(Message[length_Message-1][2], length_Message));
 
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
