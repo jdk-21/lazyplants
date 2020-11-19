@@ -1,23 +1,34 @@
 #include <arduino>
+#include <Time>
 #include <vector>
 #include <WiFi.h>
 #include <Arduino_JSON.h>
 #include <HTTPClient.h>
 
+// PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 12 
-#define feuchtemin 0
-#define feuchtemax 3571 // Erfahrungswer. Arduino Reference sagt max. 4095  //TODO: kallibrieren
+#define BodenfeuchtigkeitPIN 12
+#define PumpePIN 17
+
+// Umfeld
+#define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
+// Constanten
+const int feuchtemin = 0;
+const int feuchtemax = 3571; // Erfahrungswert, Arduino Reference sagt max. Wert bei 4095  //TODO: kallibrieren
 
 //weitere Parameter
 #define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
+
+
 void setup() {
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
-  Serial.begin(115200);//Test
+  pinMode(PumpePIN, OUTPUT);
+  Serial.begin(115200);
 }
 
+//Connections
 bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
     delay(500);
@@ -75,16 +86,33 @@ bool connect(const char* ssid,const char* password){
 }
 
 int patch_json(String ServerPath, JSONVar Message){
-    // http://178.238.227.46:3000/api/plants_data?access_token=Fm8ctl15LypUYt6ICN6kA3M2BlVrwF9KCMijBPSfqAGtHMv220PAZSHvisDZxBq6 //POST
-    // HTTP header
-    // TEST
+    // HTTP-PATCH
+    // Überschreibt den Inhalt eines Datensatzes. 
+    // Wichtig! Der Datensatz muss komplett im JSON Objekt hinterlegt sein nicht nur der zu ändernde Teil und es dürfen keine Undefinierten Inhalte enthalten sein (Errorcode: 402).
+    
     HTTPClient http;
-    //http.begin(ServerPath + "&filter[where][UserID]=1&filter[where][PlantID]=1");
     http.begin(ServerPath);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
-    //int httpResponseCode = http.PATCH("{\"UserID\":\"1\",\"PlantID\":\"1\",\"water\":\"false\"}");
-    String msg = JSON.stringify(Message);
-    int httpResponseCode = http.PATCH(msg);
+    String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
+    int httpResponseCode = http.PATCH(msg); // Übertragung
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);    
+    
+    http.end();
+    return httpResponseCode;
+  }
+
+int put_json(String ServerPath, JSONVar Message){
+    // HTTP-PUT
+    // Ändern eines Datensatzes (Server Path). Der Inhalt ist im JSON Objekt enthalten.
+    // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
+    // Nicht Definierte Inhalte des DAtensatzes werden neu angelegt. Sollte kein Datensatz vorhanden sein der zum ServerPAth passt wird dieser neue angelegt.
+
+    HTTPClient http;
+    http.begin(ServerPath);
+    http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
+    String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
+    int httpResponseCode = http.PUT(msg); // Übertragung
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
     
@@ -93,12 +121,16 @@ int patch_json(String ServerPath, JSONVar Message){
   }
 
 int post_json(String ServerPath, JSONVar Message){
+    // HTTP-POST
+    // Anlegen eines neuen Datensatzes in der Datenbank (ServerPath). Der Inhalt ist im JSON Objekt enthalten.
+    // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
+
     HTTPClient http;
     http.begin(ServerPath);
-    http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
+    http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
-    String msg = JSON.stringify(Message);
-    int httpResponseCode = http.POST(msg);
+    String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
+    int httpResponseCode = http.POST(msg); // Übertragung
 
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);    
@@ -108,7 +140,11 @@ int post_json(String ServerPath, JSONVar Message){
 }
 
 JSONVar get_json(String ServerPath){
-  //HTTP GET
+  // HTTP GET
+  // Abrufen eines Datensatzes (id muss in URL hinterlegt sein) im JSON Format
+  // zum Debugging wird der Datensatz und das JSON objekt auf dne Seriellen Monitor übertragen
+  // Return das den Datensatz als JSON Objekt
+
   HTTPClient http;
   http.begin(ServerPath); //Startet Verbindung zu Server
   int httpResponseCode = http.GET();
@@ -151,7 +187,11 @@ JSONVar get_json(String ServerPath){
   return myObject;
 }
 
+
+//Sensoren
 int entfernung(){
+    // Ermittlung der Entfernung zwischen Ultraschallsensor und Objekt.
+    // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
     long entfernung=0;
     long zeit=0;
   
@@ -163,26 +203,73 @@ int entfernung(){
     digitalWrite(ultraschalltrigger, LOW);
     zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
     interrupts();
-    zeit = (zeit/2); // Zeit halbieren
+    zeit = (zeit/2); // Zeit halbieren, da der SChall den Weg hin und zurück überwindet
     entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
     return(entfernung);
   }
   
-int fuellsstand(int Tankhoehe){
+int fuellsstand(int Tankhoehe = max_Tankhoehe){
+  // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
   int Value = entfernung();
   return (Value/Tankhoehe *100);
 }
 
-int bodenfeuchte(int PIN){
-    int value = analogRead(PIN);
-    Serial.print("Messwert: ");
-    Serial.println(value);
-    value = (((value - feuchtemin) *100) /feuchtemax);
-    Serial.print("Normwert: ");
-    Serial.println(value);
-    return value;
+int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
+  // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
+  // Der Normierte Wert wird in % angegeben.
+  int value = analogRead(PIN);
+  Serial.print("Messwert: ");
+  Serial.println(value);
+  value = (((value - feuchtemin) *100) /feuchtemax);
+  Serial.print("Normwert: ");
+  Serial.println(value);
+  return value;
 }
 
 
+//Aktoren
+void pumpen(bool pumpe, int PIN = PumpePIN){
+  // je nach bool pumpe wird die Pumpe an (true) oder aus (false) geschaltet, die Logik ist "negiert" da das Relai bei einem Low schaltet
+  // Dynamische Bestimmung der Schaltzustände anhand des Relais_Schaltpunkts
+  if (pumpe){
+    digitalWrite(PIN, Relai_Schaltpunkt);
+    Serial.println("ON");
+  } else {
+    if (Reali_Schaltpunkt == LOW){
+        digitalWrite(PIN, HIGH);
+    } else {
+      digitalWrite(PIN, LOW);
+    }
+    
+    Serial.println("OFF");
+  }
+}
+
+void giesen(int Feuchtigkeitswert){
+  // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
+  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN)
+  const int lange_giesen = 5000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
+  const int kurz_giesen = 3000; //Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
+
+  if (feuchte_aktuell >= Feuchtigkeitswert){
+    Serial.println("Boden feucht genug.");
+    return;
+  } else if (feuchte_aktuell <= (Feuchtigkeitswert / 2)) { // Hoher Wasserbedarf
+    Serial.println("Lange gießen.");
+    pumpen(true);
+    delay(lange_giesen);
+    pumpen(false);
+    delay(wartezeit);
+    giesen(Feuchtigkeitswert);
+  } else if (feuchte_aktuell < Feuchtigkeitswert){
+    Serial.println("Kurz gießen.");
+    pumpen(true);
+    delay(kurz_giesen);
+    pumpen(false);
+    delay(wartezeit);
+    giesen(Feuchtigkeitswert);
+  }
+}
 
 
