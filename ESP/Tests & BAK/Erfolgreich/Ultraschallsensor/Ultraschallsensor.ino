@@ -16,6 +16,8 @@
   #define Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
 
   #include <Esp.h>
+  #include <arduino>
+
 
 void setup() {
   pinMode(ultraschalltrigger, OUTPUT);
