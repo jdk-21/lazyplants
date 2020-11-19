@@ -247,9 +247,11 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
 
 void giesen(int Feuchtigkeitswert){
   // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
+  // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
+
   int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN)
   const int lange_giesen = 5000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
-  const int kurz_giesen = 3000; //Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
 
   if (feuchte_aktuell >= Feuchtigkeitswert){
@@ -271,5 +273,34 @@ void giesen(int Feuchtigkeitswert){
     giesen(Feuchtigkeitswert);
   }
 }
+
+void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
+
+  //Konstanten
+  const int spruezeit = 2000; // Sprühzeit in ms (Wert sollte recht klein sein)
+  const int wartezeit = 10000; // Wartezeit in ms (Wert sollte recht hoch sein)
+  const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
+  int counter = 0;
+
+  int feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+
+  // Optimierung: evtl. Test ob Deckel zu ist
+  while ((feuchte_aktuell < Feuchtigkeitswert) && (counter < 10))
+  {
+    counter++;
+    Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
+    Serial.println(counter);
+    pumpen(true);
+    delay(spruezeit);
+    pumpen(false)
+    delay(wartezeit);
+    feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+  }
+  Serial.println("Luftfeuchtigkeit erreicht.")
+  return;
+}
+
+
+
 
 
