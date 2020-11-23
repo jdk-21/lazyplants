@@ -11,6 +11,7 @@
 #include "Module.h"
 
 #include <Preferences.h>
+#include "DHT.h" //DHT Bibliothek laden
 #include <WiFi.h>
 #include <Arduino_JSON.h>
 #include <HTTPClient.h>
@@ -32,6 +33,7 @@ const char* pw = "50023282650157230429";
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
 #define BodenfeuchtigkeitPIN 12
 #define PumpePIN 17
+#define dhtPIN 23
 
 // Umgebungs variablen
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet

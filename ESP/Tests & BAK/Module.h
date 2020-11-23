@@ -2,6 +2,7 @@
 #include <Time>
 #include <vector>
 #include <WiFi.h>
+#include "DHT.h" //DHT Bibliothek laden
 #include <Arduino_JSON.h>
 #include <HTTPClient.h>
 
@@ -224,6 +225,22 @@ int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
   Serial.print("Normwert: ");
   Serial.println(value);
   return value;
+}
+
+float luftfeuchtigkeit(int PIN, String dht_type){
+  DHT dht(PIN, dht_type); //Der Sensor wird ab jetzt mit „dht“ angesprochen
+  dht.begin();
+  float Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+  dht.end();
+  return Luftfeuchtigkeit;  
+}
+
+float temperatur(int PIN, String dht_type){
+  DHT dht(PIN, dht_type); //Der Sensor wird ab jetzt mit „dht“ angesprochen
+  dht.begin();
+  float Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
+  dht.end();
+  return Temperatur;  
 }
 
 
