@@ -1,5 +1,5 @@
-#include <arduino>
-#include <Time>
+// #include <arduino>
+// #include <Time>
 #include <vector>
 #include <WiFi.h>
 #include "DHT.h" //DHT Bibliothek laden
@@ -12,7 +12,8 @@
 #define BodenfeuchtigkeitPIN 12
 #define PumpePIN 17
 #define dhtPIN 23
-#define dhtType "DHT22"
+#define dhtType DHT22
+DHT dht(dhtPIN, dhtType);
 
 // Umfeld
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
@@ -23,13 +24,14 @@ const int feuchtemax = 3571; // Erfahrungswert, Arduino Reference sagt max. Wert
 //weitere Parameter
 #define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
 
-
+/*
 void setup() {
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
   Serial.begin(115200);
 }
+*/
 
 //Connections
 bool connect(const char* ssid,const char* password){
@@ -74,7 +76,7 @@ bool connect(const char* ssid,const char* password){
                 delay(10);
             }
         }
-        //ESP.restart();
+        ESP.restart();
         return false;
       }
     }
@@ -150,7 +152,7 @@ int patch_json(String ServerPath, JSONVar Message){
     String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PATCH(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);    
+    Serial.println(httpResponseCode);    
     
     http.end();
     return httpResponseCode;
@@ -168,7 +170,7 @@ int put_json(String ServerPath, JSONVar Message){
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PUT(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);    
+    Serial.println(httpResponseCode);    
     
     http.end();
     return httpResponseCode;
@@ -187,7 +189,7 @@ int post_json(String ServerPath, JSONVar Message){
     int httpResponseCode = http.POST(msg); // Übertragung
 
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);    
+    Serial.println(httpResponseCode);    
     
     http.end();
     return httpResponseCode;
@@ -207,7 +209,7 @@ JSONVar get_json(String ServerPath){
   
   if (httpResponseCode>0) {
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);
+    Serial.println(httpResponseCode);
     payload = http.getString();
   }
   else {
@@ -280,19 +282,15 @@ int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
   return value;
 }
 
-float luftfeuchtigkeit(int PIN, String dht_type){
-  DHT dht(PIN, dht_type); //Der Sensor wird ab jetzt mit „dht“ angesprochen
+float luftfeuchtigkeit(){
   dht.begin();
   float Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
-  dht.end();
   return Luftfeuchtigkeit;  
 }
 
-float temperatur(int PIN, String dht_type){
-  DHT dht(PIN, dht_type); //Der Sensor wird ab jetzt mit „dht“ angesprochen
+float temperatur(){
   dht.begin();
   float Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
-  dht.end();
   return Temperatur;  
 }
 
@@ -305,7 +303,7 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
     digitalWrite(PIN, Relai_Schaltpunkt);
     Serial.println("ON");
   } else {
-    if (Reali_Schaltpunkt == LOW){
+    if (Relai_Schaltpunkt == LOW){
         digitalWrite(PIN, HIGH);
     } else {
       digitalWrite(PIN, LOW);
@@ -319,7 +317,7 @@ void giesen(int Feuchtigkeitswert){
   // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
   // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
 
-  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN)
+  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN);
   const int lange_giesen = 5000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
@@ -352,7 +350,7 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
   const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
   int counter = 0;
 
-  int feuchte_aktuell = luftfeuchtigkeit(dhtPIN, dhtType); // TODO: Luftfeuchtigkeits mess Funktion einbinden
+  int feuchte_aktuell = luftfeuchtigkeit();
 
   // Optimierung: evtl. Test ob Deckel zu ist
   while ((feuchte_aktuell < Feuchtigkeitswert) && (counter < 10))
@@ -362,15 +360,10 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
     Serial.println(counter);
     pumpen(true);
     delay(spruezeit);
-    pumpen(false)
+    pumpen(false);
     delay(wartezeit);
-    feuchte_aktuell = luftfeuchtigkeit(dhtPIN, dhtType); // TODO: Luftfeuchtigkeits mess Funktion einbinden
+    feuchte_aktuell = luftfeuchtigkeit();
   }
-  Serial.println("Luftfeuchtigkeit erreicht.")
+  Serial.println("Luftfeuchtigkeit erreicht.");
   return;
 }
-
-
-
-
-
