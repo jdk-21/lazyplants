@@ -26,71 +26,42 @@ String ServerPath = ("http://"+ipadresse+"/api/"+ table+"/login?");
 const char* ssid = "TrojaNet";
 const char* password = "50023282650157230429";
 
-JSONVar login(){
-  HTTPClient http;
-  http.begin(ServerPath);
-  //http.addHeader("Content-Type", "application/json "); // Typ des Body auf json Format festlegen
-
+/*{
+"email":"test@gmail.com",
+"password":"test"
+}*/
+JSONVar login(String email, String pw){
+  table = "Members";
   JSONVar answer;
   String msg;
-  String A;
-  for(int i=1;i<=4;i++){
-    Serial.print(i);
-    Serial.print(": ");
-    if ((i%2) == 0){
-      Serial.print("H2 ");
-      http.addHeader("Content-Type", "application/json","charset=utf-8","Content-Length=160"); // Typ des Body auf json Format festlegen
-    } else{
-      Serial.print("H1 ");
-      http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-    }
-    table = "Members";
-    ServerPath = ("http://"+ipadresse+"/api/"+ table+"/login?");
-    if(i>(i/2)){
-      ServerPath.remove(ServerPath.length()-1);
-    }
-    Serial.println(ServerPath);
-    JSONVar body = JSON.parse("{\"email\":\"test@gmail.com\",\"password\":\"test\"}");
-    msg = JSON.stringify(body);
-    A = http.POST(msg);
-    Serial.print(A);
-    A = http.getString();
-    Serial.print(A);
-    answer = JSON.parse(A);
-    Serial.print("\t \t");
-    translate(answer);
-    if(answer["id"] != null && answer["userId"] != null){
-      break;
-    }
-  }
-  Serial.println();
-  Serial.println(msg);
-  if (answer["id"] != null || answer["userId"] != null){
-    Serial.print("token: ");
-    Serial.println(answer["id"]);
-    Serial.print("UserID: ");
-    Serial.println(answer["userId"]);
-  }
+  String Ans;
+  int ResponseCode;
+
+  HTTPClient http;
+  http.begin(ServerPath);
+  
+  http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
+  ServerPath = ("http://"+ ipadresse +"/api/"+ table +"/login?");
+  msg = "{\"email\":\""+ email +"\",\"password\":\""+ pw +"\"}";
+
+  ResponseCode = http.POST(msg);
+  Ans = http.getString();
+  answer = JSON.parse(Ans);
+  translate(ResponseCode);
+  http.end();
   return answer;
 }
 
 void setup() {
+  JSONVar test;
   Serial.begin(115200);
   connect(ssid, password);
-  login();
+  test = login("test@gmail.com","test");
+  Serial.print("Token: ");
+  Serial.println(test["id"]);
 }
 
 
 
 void loop() {
-  /*
-  JSONVar J = get_json(ServerPath);
-  delay(1000);
-  Serial.println("---------------------");
-  J["water"] = !(J["water"]);
-  patch_json(ServerPath, J);
-  delay(10000);
-  Serial.println();
-  Serial.println();
-  */
 }
