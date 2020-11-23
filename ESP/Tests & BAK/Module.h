@@ -11,6 +11,8 @@
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
 #define BodenfeuchtigkeitPIN 12
 #define PumpePIN 17
+#define dhtPIN 23
+#define dhtType "DHT22"
 
 // Umfeld
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
@@ -299,7 +301,7 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
   const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
   int counter = 0;
 
-  int feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+  int feuchte_aktuell = luftfeuchtigkeit(dhtPIN, dhtType); // TODO: Luftfeuchtigkeits mess Funktion einbinden
 
   // Optimierung: evtl. Test ob Deckel zu ist
   while ((feuchte_aktuell < Feuchtigkeitswert) && (counter < 10))
@@ -311,7 +313,7 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
     delay(spruezeit);
     pumpen(false)
     delay(wartezeit);
-    feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+    feuchte_aktuell = luftfeuchtigkeit(dhtPIN, dhtType); // TODO: Luftfeuchtigkeits mess Funktion einbinden
   }
   Serial.println("Luftfeuchtigkeit erreicht.")
   return;
