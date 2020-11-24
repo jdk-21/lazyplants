@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'package:lazyplants/main.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double collapsedHeight;
@@ -158,7 +157,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(Icons.menu, color: Colors.white),
+                        icon: Icon(Icons.menu_rounded, color: Colors.white),
                         onPressed: () {
                           Scaffold.of(context).openDrawer();
                         },

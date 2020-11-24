@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.lazyplants">
    <application
+        android:requestLegacyExternalStorage="true"
         android:label="lazyplants"
         android:icon="@mipmap/ic_launcher">
         <activity
