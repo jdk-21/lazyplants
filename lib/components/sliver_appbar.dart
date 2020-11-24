@@ -158,7 +158,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(Icons.menu, color: Colors.white),
+                        icon: Icon(Icons.menu_rounded, color: Colors.white),
                         onPressed: () {
                           Scaffold.of(context).openDrawer();
                         },

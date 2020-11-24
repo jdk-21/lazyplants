@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lazyplants/screens/home_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:lazyplants/screens/add_plant_screen3.dart';
 import 'package:lazyplants/main.dart';
-
 class AddPlantScreen2 extends StatefulWidget {
   const AddPlantScreen2({
     Key key,
@@ -13,7 +11,6 @@ class AddPlantScreen2 extends StatefulWidget {
 }
 
 class _AddPlantScreen2State extends State<AddPlantScreen2> {
-
   String dropdownValue = 'ESP 32 Living Room';
 
   @override
@@ -46,7 +43,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
               ),
               Text("Name of your plant"),
               Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 15, bottom: 15),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 15, bottom: 15),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -82,18 +80,18 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                 elevation: 16,
                 style: TextStyle(color: Colors.white),
                 dropdownColor: kPrimaryColor,
-                
-                underline: Container(
-                  height: 0,
-                  color: Colors.grey
-                ),
+                underline: Container(height: 0, color: Colors.grey),
                 onChanged: (String newValue) {
                   setState(() {
                     dropdownValue = newValue;
                   });
                 },
-                items: <String>['ESP 32 Living Room', 'ESP Bonsai Tree', 'Arduino Garden', 'Raspberry Bedroom']
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: <String>[
+                  'ESP 32 Living Room',
+                  'ESP Bonsai Tree',
+                  'Arduino Garden',
+                  'Raspberry Bedroom'
+                ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -107,8 +105,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => AddPlantScreen3()),
                     );
                   },
                   highlightColor: Colors.transparent,
@@ -130,7 +127,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                     padding: const EdgeInsets.only(
                         left: 45.0, right: 45.0, top: 12, bottom: 12),
                     child: const Text(
-                      'Finished',
+                      'Next',
                       style: TextStyle(fontSize: 14),
                     ),
                   ),

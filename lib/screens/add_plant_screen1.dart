@@ -47,10 +47,12 @@ class AddPlantScreen1 extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   top: 8.0,
                   bottom: 20.0,
+                  left: 40.0,
+                  right: 40.0
                 ),
-                child: Text("Your API-Key:"),
+                child: Text("Please ensure your microcontroller is already up and running before you continue!", textAlign: TextAlign.center , style: TextStyle(fontSize: 20, ),),
               ),
-              Container(
+              /*Container(
                 margin: EdgeInsets.only(left: 40, right: 40),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
@@ -74,11 +76,11 @@ class AddPlantScreen1 extends StatelessWidget {
                         onPressed: () {}),
                   ],
                 ),
-              ),
+              ),*/
               FlatButton(
-                child: Text("How do I add my sensors?",
+                child: Text("How do I add my microcontroller?",
                     style: TextStyle(
-                        color: Colors.white.withAlpha(200), fontSize: 13)),
+                        color: Colors.white.withAlpha(200), fontSize: 15)),
                 onPressed: () async {
                   const helpUrl =
                       "https://github.com/jdk-21/lazyplants/tree/esp";

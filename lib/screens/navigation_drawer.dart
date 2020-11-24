@@ -100,7 +100,7 @@ class NavigationDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.help_outlined),
+                leading: Icon(Icons.wifi_tethering_outlined),
                 title: Text(
                   "How to connect?",
                   style: TextStyle(
@@ -127,7 +127,7 @@ class NavigationDrawer extends StatelessWidget {
               ),
               Expanded(
                 child: ListTile(
-                  leading: Icon(Icons.adb_outlined),
+                  leading: Icon(Icons.account_circle_outlined),
                   title: Text(
                     "About",
                     style: TextStyle(

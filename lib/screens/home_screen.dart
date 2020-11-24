@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
         drawer: NavigationDrawer(),
         floatingActionButton: FloatingActionButton(
           child: Icon(
-            Icons.add,
+            Icons.add_rounded,
           ),
           backgroundColor: kPrimaryColor,
           onPressed: () {
