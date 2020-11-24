@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-
-import 'navigation_drawer.dart';
+import 'package:lazyplants/components/navigation_drawer.dart';
 import 'package:lazyplants/components/sliver_appbar.dart';
 import 'package:lazyplants/main.dart';
-import 'add_plant_screen1.dart';
+import 'add_plant/add_plant_screen1.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

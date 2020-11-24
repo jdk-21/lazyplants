@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lazyplants/screens/add_plant_screen3.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:lazyplants/main.dart';
-class AddPlantScreen2 extends StatefulWidget {
-  const AddPlantScreen2({
+import 'add_plant_screen2.dart';
+
+class AddPlantScreen1 extends StatelessWidget {
+  const AddPlantScreen1({
     Key key,
   }) : super(key: key);
-
-  @override
-  _AddPlantScreen2State createState() => _AddPlantScreen2State();
-}
-
-class _AddPlantScreen2State extends State<AddPlantScreen2> {
-  String dropdownValue = 'ESP 32 Living Room';
 
   @override
   Widget build(BuildContext context) {
@@ -34,78 +29,70 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: Text(
-                  "What's your name?",
+                  "Add a plant",
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Text("Name of your plant"),
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 25, right: 25, top: 15, bottom: 15),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  height: 46,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                    child: TextField(
-                      autocorrect: false,
-                      enabled: true,
-                      onSubmitted: (value) {
-                        print(value);
-                      },
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                      decoration: InputDecoration(
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        hintText: "Totally creative name",
-                        hintStyle: TextStyle(
-                          color: kPrimaryColor.withOpacity(0.5),
-                        ),
+                  top: 8.0,
+                  bottom: 20.0,
+                  left: 40.0,
+                  right: 40.0
+                ),
+                child: Text("Please ensure your microcontroller is already up and running before you continue!", textAlign: TextAlign.center , style: TextStyle(fontSize: 20, ),),
+              ),
+              /*Container(
+                margin: EdgeInsets.only(left: 40, right: 40),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.black38.withOpacity(0.4),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: Text("blub"),
                       ),
                     ),
-                  ),
+                    IconButton(
+                        icon: Icon(
+                          Icons.copy,
+                          color: Colors.white,
+                        ),
+                        tooltip: "Copy to clipboard",
+                        onPressed: () {}),
+                  ],
                 ),
-              ),
-              DropdownButton<String>(
-                value: dropdownValue,
-                iconEnabledColor: Colors.white,
-                elevation: 16,
-                style: TextStyle(color: Colors.white),
-                dropdownColor: kPrimaryColor,
-                underline: Container(height: 0, color: Colors.grey),
-                onChanged: (String newValue) {
-                  setState(() {
-                    dropdownValue = newValue;
-                  });
+              ),*/
+              FlatButton(
+                child: Text("How do I add my microcontroller?",
+                    style: TextStyle(
+                        color: Colors.white.withAlpha(200), fontSize: 15)),
+                onPressed: () async {
+                  const helpUrl =
+                      "https://github.com/jdk-21/lazyplants/tree/esp";
+                  if (await canLaunch(helpUrl)) {
+                    await launch(helpUrl);
+                  } else {
+                    throw "Could not launch $helpUrl";
+                  }
                 },
-                items: <String>[
-                  'ESP 32 Living Room',
-                  'ESP Bonsai Tree',
-                  'Arduino Garden',
-                  'Raspberry Bedroom'
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
                 child: FlatButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AddPlantScreen3()),
+                      MaterialPageRoute(
+                          builder: (context) => AddPlantScreen2()),
                     );
                   },
                   highlightColor: Colors.transparent,
@@ -145,7 +132,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),
                   child: const Text(
-                    'Back',
+                    'Cancel',
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

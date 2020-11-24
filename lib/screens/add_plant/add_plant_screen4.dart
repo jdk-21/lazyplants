@@ -30,6 +30,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
 
     setState(() {
       if (pickedFile != null) {
+        // dart:io -> File isn't available in Flutter Web
         if(kIsWeb)
         {
           _image = Image.network(pickedFile.path);

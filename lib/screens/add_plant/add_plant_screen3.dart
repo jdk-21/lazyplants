@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lazyplants/screens/add_plant_screen4.dart';
-import 'package:lazyplants/screens/home_screen.dart';
+import 'package:lazyplants/screens/add_plant/add_plant_screen4.dart';
 import 'package:lazyplants/main.dart';
 
 class AddPlantScreen3 extends StatefulWidget {
