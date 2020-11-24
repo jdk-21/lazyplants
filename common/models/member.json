@@ -1,0 +1,41 @@
+{
+  "name": "Member",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "firstname": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "memberpic": {
+      "type": "any"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "plants": {
+      "type": "hasMany",
+      "model": "Plants",
+      "foreignKey": ""
+    },
+    "plantData": {
+      "type": "hasMany",
+      "model": "PlantData",
+      "foreignKey": ""
+    }
+  },
+  "acls" : [
+    {
+     "accessType": "READ",
+     "principalType": "ROLE",
+     "principalId": "$everyone",
+     "permission": "ALLOW"
+    }
+   ],
+  "methods": {}
+}

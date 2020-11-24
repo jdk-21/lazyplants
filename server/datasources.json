@@ -1,0 +1,13 @@
+{
+  "db": {
+    "host": "localhost",
+    "port": 27017,
+    "url": "",
+    "database": "lazyplants",
+    "password": "",
+    "name": "db",
+    "user": "",
+    "useNewUrlParser": true,
+    "connector": "mongodb"
+  }
+}
