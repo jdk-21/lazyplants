@@ -40,7 +40,7 @@ int counter;
 String  Time;
 char buffer [80];
 time_t rawtime;
-#define IntervallTime 30000 // Mikrosekunden hier 30s
+#define IntervallTime 3E7 // Mikrosekunden hier 30s
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
 
 String filter; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1

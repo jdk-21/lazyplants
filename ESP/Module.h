@@ -266,6 +266,14 @@ JSONVar get_json(String ServerPath){
     payload = http.getString();
     Serial.print("payload: ");
     Serial.println(payload);
+    if (payload[0] == '[') {
+      payload.remove(0,1);
+    }
+    if (payload[(payload.length()-1)] == ']'){
+      payload.remove((payload.length()-1),1);
+    }
+    Serial.print("payload: ");
+    Serial.println(payload);
   }
   else {
     Serial.print("Error code: ");
