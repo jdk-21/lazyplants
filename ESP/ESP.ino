@@ -1,8 +1,8 @@
 /* Name: Steuerung ESP
  * Projekt: LazyPlants
  * Erstelldatum:  01.11.2020 18:00
- * Änderungsdatum: 25.11.2020 16:00
- * Version: 0.1.1
+ * Änderungsdatum: 25.11.2020 22:00
+ * Version: 0.1.2
  * History:
  */
 
@@ -20,8 +20,8 @@ String table_get = "Plants"; // Pflanze
 String table_DB = "PlantData"; // Pflanzen Datensätze
 String email = "patrick@gmail.com";
 String pw_API = "test";
-//String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
 String ServerPath = ("http://"+ ipadresse + "/api/" + table_login+ "?");
+//String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
 //String filter = "&filter[where][UserID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
 
 // WLAN
@@ -30,23 +30,27 @@ String ServerPath = ("http://"+ ipadresse + "/api/" + table_login+ "?");
 const char* ssid = "flottes_WLAN";
 const char* pw = "70175666528540340315";
 
+// Variablen
 JSONVar Data;
 String id;
 String token;
 String UserID;
+String filter; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
 String msg;
 int ResponseCode;
 int counter;
 String  Time;
 char buffer [80];
-time_t rawtime;
-#define IntervallTime 3E7 // Mikrosekunden hier 30s
+#define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
 
-String filter; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
+//Zeit
+#define NTP_SERVER "de.pool.ntp.org"
+#define TZ_INFO "WEST-1DWEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00" // Western European Time
+struct tm local;
 
 //Preferences preferences; // Permanentes Speichern von Variablen
-//RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
+
 void firstStart(){
   Serial.begin(115200);
   delay(500); // Warten bis Serial gestartet ist
@@ -76,7 +80,7 @@ void setup() {
     Serial.println("Start Nr.: " + String(bootZaeler));
   }
 
-  setenv("TZ", TZ_INFO, 1);             // Zeitzone  muss nach dem reset neu eingestellt werden
+  setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
 
   Data = login(email, pw_API); // Login bei API und Token erhalten
@@ -91,33 +95,25 @@ void setup() {
   if (token == "null"){
     Serial.println("Login nicht möglich!");
     ESP.restart();
-  }
-  //timeClient.begin(); // Verindung zum "Zeitserver"
-  //Time = timeClient.getFormattedTime();
-  //Serial.print("Zeitserver verbunden: "); Serial.println(Time);
-  
+  }  
 }
 
 void loop() {
-  //timeClient.update();// Zeit aktualisieren
-  //Time = timeClient.getEpochTime();
-
+  //Zeit
   tm local;
-  getLocalTime(&local);
-  //Time = (&local, "%y-%m-%dT%H:%M:%SZ");
-  //rawtime = mktime(&local); //Falsches Format
-  //Serial.println(rawtime);
-  //Time = rawtime_year+"-"+rawtime_mon+"-"+rawtime_mday;
-  strftime (buffer,80,"20%y-%m-%dT%H:%M:%S.000Z",&local);
-  //Time = asctime(&local);
+  getLocalTime(&local); //Abrufen der Zeit
+  strftime (buffer,80,"20%y-%m-%dT%H:%M:%S.000Z",&local); //Formatieren der Zeit
   Time = buffer;
-  Serial.println("Time: "+ String(Time));
+  Serial.println("Time: "+ String(Time)); 
 
   // prüfen ob Plant existiert
   filter = "&filter[where][memberId]="+ UserID +"&filter[where][espId]=" + espID ;
   ServerPath = ("http://"+ipadresse+"/api/"+ table_get + "?access_token=" + token + filter);
   Data = get_json(ServerPath);
+  Serial.print("Data: ");
   Serial.println(Data);
+
+  // Plant existiert nicht
   if (JSON.stringify(Data) == "[]"){
     Serial.println("GET Plant failed");
     ServerPath = ("http://"+ipadresse+"/api/"+ table_get + "?access_token=" + token);
@@ -127,18 +123,19 @@ void loop() {
     Data = JSON.parse(msg);
     counter = 0;
     do{
-      ResponseCode = post_json(ServerPath, Data);
+      ResponseCode = post_json(ServerPath, Data); // POST der default Werte
       counter++;
       delay(1000);
       if (counter == max_Retry){
         Serial.println("POST new Plant failed");
       }
     }while(ResponseCode != 200 && counter <= max_Retry);
+
   } else{
     Serial.print("GET Plant with Name: ");
     Serial.println(Data["plantname"]);
   }
-  //delay(60000);
+
   Serial.println("Deep Sleep");
   esp_sleep_enable_timer_wakeup(IntervallTime);    // Deep Sleep Zeit einstellen
   esp_deep_sleep_start();

@@ -29,11 +29,6 @@ DHT dht(dhtPIN, dhtType);
 // Connection
 const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
 const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zeit
-#define NTP_SERVER "de.pool.ntp.org"
-#define TZ_INFO "WEST-1DWEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00" // Western European Time
-struct tm local;
-//WiFiUDP ntpUDP;
-//NTPClient timeClient(ntpUDP, NTP_SERVER, utcOffsetInSeconds_winter); // Anlegen des Zeitservers mit Offset da UTC Zeit nicht MEZ ist
 String login_table = "Members"; // zum Anmelden an der API
 const String ipadresse = "178.238.227.46:3000"; // IP ADresse des Servers
 #define max_Retry 5
@@ -262,18 +257,14 @@ JSONVar get_json(String ServerPath){
   
   if (httpResponseCode>0) {
     Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
+    translate(httpResponseCode);
     payload = http.getString();
-    Serial.print("payload: ");
-    Serial.println(payload);
     if (payload[0] == '[') {
       payload.remove(0,1);
     }
     if (payload[(payload.length()-1)] == ']'){
       payload.remove((payload.length()-1),1);
     }
-    Serial.print("payload: ");
-    Serial.println(payload);
   }
   else {
     Serial.print("Error code: ");
