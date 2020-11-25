@@ -2,9 +2,9 @@
 
 module.exports = function(Plants) {
 
-    Plants.allMyPlants = function async (req, callback) {
+    Plants.allMyPlants = function (req, callback) {
         var userId = req.accessToken.userId;
-        var filter = {"where": {"memberId": userId}};
+        var filter = {"where":{"memberId": userId}};
         Plants.find(filter, function (err, Plants) {
           if (err !== null) {
             callback(err);
@@ -19,23 +19,34 @@ module.exports = function(Plants) {
         "http": {"verb": "get", "path": "/allMyPlants"},
     });
 
+    Plants.doublefilter = function (req, callback, room) {
+      var userId = req.accessToken.userId;
+      var filter = {"where":{"and":[{"memberId": userId}, {"room": room}]}};
+      Plants.find(filter, function (err, Plants) {
+        if (err !== null) {
+          callback(err);
+        }
+        callback(null, Plants);
+      });
+      };
 
-    Plants.MyPlants = function async (id, callback) {
-        
-        //var userId = req.accessToken.userId;
-        var filter = {"where": {"id": id}};
-        Plants.find(Plants.allMyPlants() & filter, function (err, Plants) {
-          if (err !== null) {
-            callback(err);
-          }
-          callback(null, Plants);
-        });
-    }
+  Plants.remoteMethod('doublefilter', {
+      "accepts": { arg: 'req', type: 'object', http: {source: 'req'}},
+      "returns": { arg: 'result', type: 'string' },
+      "http": {"verb": "get", "path": "/doublefilter"},
+  });
 
-    Plants.remoteMethod('MyPlants', {
-        "accepts": { arg: 'id',arg: 'req', type: 'string', arg: 'req', type: 'object', http: {source: 'req'}},
-        "returns": { arg: 'MyPlants', type: 'Plants' },
-        "http": {"verb": "get", "path": "/MyPlants"},
-    });
-    //Dies ist eine Änderung
+  Plants.test = function (req) {
+    var test = req;
+    retrun (test);
+    };
+
+Plants.remoteMethod('test', {
+    "accepts": { arg: 'req', type: 'object', http: {source: 'req'}},
+    "returns": { arg: 'rest', type: 'string' },
+    "http": {"verb": "get", "path": "/test"},
+});
+
+
+
 };
