@@ -14,7 +14,7 @@ class Translation extends Translations {
           'urlLaunchError': 'Could not launch URL:',
           'useCamera': 'Use Camera',
           'pickGallery': 'Pick from gallery',
-          
+
           // homescreen
           'hi': 'Hi',
           'hello': 'Hello',
@@ -34,18 +34,20 @@ class Translation extends Translations {
 
           // add plant screens
           'addPlant1_title': 'Add a plant',
-          'addPlant1_body': 'Please ensure your microcontroller is already up and running before you continue!',
+          'addPlant1_body':
+              'Please ensure your microcontroller is already up and running before you continue!',
           'addPlant1_helpText': 'How do I add my microcontroller?',
           'addPlant1_helpUrl': 'https://github.com/jdk-21/lazyplants/tree/esp',
           'addPlant2_title': 'What\'s your name?',
           'addPlant2_helpText': 'Name, please',
           'addPlant2_hintName': 'Totally creative name',
           'addPlant3_title': 'Set your defaults',
-          'addPlant3_humidityText': 'At what percentage should LazyPlants water your plants?',
+          'addPlant3_humidityText':
+              'At what percentage should LazyPlants water your plants?',
           'addPlant3_helpHumidityTitle': 'The Humidity Slider:',
-          'addPlant3_helpHumidityText': '0 represents 0% humidity and 100 represents 100%. If you set the slider to 75%, LazyPlants will water your plant if the humidity is below 75%.',
+          'addPlant3_helpHumidityText':
+              '0 represents 0% humidity and 100 represents 100%. If you set the slider to 75%, LazyPlants will water your plant if the humidity is below 75%.',
           'addPlant4_title': 'Take a picture',
-          
         },
         'de_DE': {
           'next': 'Weiter',
@@ -57,7 +59,7 @@ class Translation extends Translations {
           'urlLaunchError': 'URL lässt sich nicht öffnen:',
           'useCamera': 'Benutze Kamera',
           'pickGallery': 'Von Galerie auswählen',
-          
+
           // homescreen
           'hi': 'Hi',
           'hello': 'Hallo',
@@ -77,18 +79,20 @@ class Translation extends Translations {
 
           // add plant screens
           'addPlant1_title': 'Füge eine Pflanze hinzu',
-          'addPlant1_body': 'Versichere dich, dass dein Mikrocontroller an ist und funktioniert.',
+          'addPlant1_body':
+              'Versichere dich, dass dein Mikrocontroller an ist und funktioniert.',
           'addPlant1_helpText': 'Wie füge ich meinen Mikrocontroller hinzu?',
           'addPlant1_helpUrl': 'https://github.com/jdk-21/lazyplants/tree/esp',
           'addPlant2_title': 'Name, bitte',
           'addPlant2_helpText': 'Name der Pflanze',
           'addPlant2_hintName': 'Total kreativer Name',
           'addPlant3_title': 'Setze Standards',
-          'addPlant3_humidityText': 'Ab welcher Bodenfeuchtigkeit soll LazyPlants gießen?',
+          'addPlant3_humidityText':
+              'Ab welcher Bodenfeuchtigkeit soll LazyPlants gießen?',
           'addPlant3_helpHumidityTitle': 'Der Feuchtigkeitsregler:',
-          'addPlant3_helpHumidityText': '0 repräsentiert 0% und 100 repräsentiert 100%. Wenn der Regler bei 75% steht, gießt LazyPlants bei einer Bodenfeuchtigkeit von unter 75%.',
+          'addPlant3_helpHumidityText':
+              '0 repräsentiert 0% und 100 repräsentiert 100%. Wenn der Regler bei 75% steht, gießt LazyPlants bei einer Bodenfeuchtigkeit von unter 75%.',
           'addPlant4_title': 'Mache ein Foto',
-
         }
       };
 }
