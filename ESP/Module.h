@@ -1,18 +1,44 @@
-#include <arduino>
-#include <Time>
-#include <vector>
-#include <WiFi.h>
-#include <Arduino_JSON.h>
-#include <HTTPClient.h>
+/* Name: Module ESP
+ * Projekt: LazyPlants
+ * Erstelldatum:  15.11.2020 18:00
+ * Änderungsdatum: 25.11.2020 16:00
+ * Version: 0.0.5
+ * History:
+ */
+
+#include <WiFi.h> // Verbinden mit dem WLAN (Bibliothek: Arduino Uno WiFi Dev Ed Library)
+#include "DHT.h" //DHT Bibliothek laden
+#include <Arduino_JSON.h> // Erstellen von JSON Objekten (Bibliothek: Arduino_JSON )
+#include <HTTPClient.h> // HTTP Requests (Bibliothek: ArduinoHttpClient )
+#include <NTPClient.h> // Zeit abfrage (Bibliothek: NTPClient)
+#include <WiFiUdp.h> // gehötz zur Zeitabfrage
+#include <time.h> 
 
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
 #define BodenfeuchtigkeitPIN 12
 #define PumpePIN 17
+#define dhtPIN 23
+#define dhtType DHT22
+DHT dht(dhtPIN, dhtType);
 
 // Umfeld
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
+
+// Connection
+const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
+const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zeit
+#define NTP_SERVER "de.pool.ntp.org"
+#define TZ_INFO "WEST-1DWEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00" // Western European Time
+struct tm local;
+//WiFiUDP ntpUDP;
+//NTPClient timeClient(ntpUDP, NTP_SERVER, utcOffsetInSeconds_winter); // Anlegen des Zeitservers mit Offset da UTC Zeit nicht MEZ ist
+String login_table = "Members"; // zum Anmelden an der API
+const String ipadresse = "178.238.227.46:3000"; // IP ADresse des Servers
+#define max_Retry 5
+
+
 // Constanten
 const int feuchtemin = 0;
 const int feuchtemax = 3571; // Erfahrungswert, Arduino Reference sagt max. Wert bei 4095  //TODO: kallibrieren
@@ -29,7 +55,7 @@ void setup() {
 }
 */
 
-// Connections
+//Connections
 bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
     delay(500);
@@ -42,12 +68,12 @@ bool connect(const char* ssid,const char* password){
       counter ++;
       delay(1000);
       Serial.print(".");
-      if (counter == 8){
+      if (counter == (max_Retry*2)){
         Serial.println();
         WiFi.begin(ssid, password);
         delay(500);
       }
-      if (counter >= 20){
+      if (counter >= (max_Retry*4)){
         Stop = true;
         Serial.println();
         Serial.println("No Connection!!!");
@@ -69,10 +95,10 @@ bool connect(const char* ssid,const char* password){
                 Serial.print(WiFi.RSSI(i));
                 Serial.print(")");
                 Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
-                delay(10);
+                delay(1000);
             }
         }
-        //ESP.restart();
+        ESP.restart();
         return false;
       }
     }
@@ -84,6 +110,88 @@ bool connect(const char* ssid,const char* password){
     }
     
 
+}
+
+String translate(int ResponseCode){
+  String msg ;
+  switch (ResponseCode)
+  {
+  case 100:
+    msg = "100: Continue";
+    break;
+  case 101:
+    msg = "101: Switching Protocols";
+    break;
+  case 102:
+    msg = "102: Processing ";
+    break;
+  case 103:
+    msg = "103: Early Hints ";
+    break;
+  case 200:
+    msg = "200: OK ";
+    break;
+  case 201:
+    msg = "201: Created";
+    break;
+  case 202:
+    msg = "202: Accepted";
+    break;
+  // Fehlend 203 bis 226 
+  case 300:
+    msg = "300: Multiple Choices";
+    break;
+  // Fehlend 301 bis 308
+  case 400:
+    msg = "400: Bad Request";
+    break;
+  case 401:
+    msg = "401: Unauthorized";
+    break;
+  case 403:
+    msg = "403: Forbidden";
+    break;
+  case 404:
+    msg = "404: Not Found";
+    break;
+  // Fehlend ab 405
+  default:
+    msg = ResponseCode +": unknown"; 
+    break;
+  }
+  Serial.println(msg);
+  return msg;
+}
+
+JSONVar login(String email, String pw){
+  JSONVar answer;
+  String msg;
+  String Ans;
+  int ResponseCode;
+  int counter = 0;
+
+  String ServerPath_login = ("http://"+ ipadresse +"/api/"+ login_table +"/login?");
+  msg = "{\"email\":\""+ email +"\",\"password\":\""+ pw +"\"}";
+
+  HTTPClient http;
+  http.begin(ServerPath_login);
+  http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
+
+  do{
+    ResponseCode = http.POST(msg);
+    counter++;
+    translate(ResponseCode);
+    if (ResponseCode != 200){ // Auswertung ob Verbindung ustande kam
+    Serial.print("Login failed! ");
+    Serial.println(counter);
+    delay(1000);
+    }
+  }while (ResponseCode != 200 && counter <= max_Retry); // retry bis Verbndung Zustande kommt oder 5 Versucher erreicht sind
+  
+  Ans = http.getString();
+  answer = JSON.parse(Ans);
+  http.end();
+  return answer;
 }
 
 int patch_json(String ServerPath, JSONVar Message){
@@ -156,6 +264,8 @@ JSONVar get_json(String ServerPath){
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
     payload = http.getString();
+    Serial.print("payload: ");
+    Serial.println(payload);
   }
   else {
     Serial.print("Error code: ");
@@ -189,7 +299,7 @@ JSONVar get_json(String ServerPath){
 }
 
 
-// Sensoren
+//Sensoren
 int entfernung(){
     // Ermittlung der Entfernung zwischen Ultraschallsensor und Objekt.
     // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
@@ -227,8 +337,20 @@ int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
   return value;
 }
 
+float luftfeuchtigkeit(){
+  dht.begin();
+  float Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+  return Luftfeuchtigkeit;  
+}
 
-// Aktoren
+float temperatur(){
+  dht.begin();
+  float Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
+  return Temperatur;  
+}
+
+
+//Aktoren
 void pumpen(bool pumpe, int PIN = PumpePIN){
   // je nach bool pumpe wird die Pumpe an (true) oder aus (false) geschaltet, die Logik ist "negiert" da das Relai bei einem Low schaltet
   // Dynamische Bestimmung der Schaltzustände anhand des Relais_Schaltpunkts
@@ -236,7 +358,7 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
     digitalWrite(PIN, Relai_Schaltpunkt);
     Serial.println("ON");
   } else {
-    if (Reali_Schaltpunkt == LOW){
+    if (Relai_Schaltpunkt == LOW){
         digitalWrite(PIN, HIGH);
     } else {
       digitalWrite(PIN, LOW);
@@ -250,7 +372,7 @@ void giesen(int Feuchtigkeitswert){
   // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
   // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
 
-  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN)
+  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN);
   const int lange_giesen = 5000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
@@ -283,7 +405,7 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
   const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
   int counter = 0;
 
-  int feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+  int feuchte_aktuell = luftfeuchtigkeit();
 
   // Optimierung: evtl. Test ob Deckel zu ist
   while ((feuchte_aktuell < Feuchtigkeitswert) && (counter < 10))
@@ -293,15 +415,10 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
     Serial.println(counter);
     pumpen(true);
     delay(spruezeit);
-    pumpen(false)
+    pumpen(false);
     delay(wartezeit);
-    feuchte_aktuell = Feuchtigkeitswert; // TODO: Luftfeuchtigkeits mess Funktion einbinden
+    feuchte_aktuell = luftfeuchtigkeit();
   }
-  Serial.println("Luftfeuchtigkeit erreicht.")
+  Serial.println("Luftfeuchtigkeit erreicht.");
   return;
 }
-
-
-
-
-

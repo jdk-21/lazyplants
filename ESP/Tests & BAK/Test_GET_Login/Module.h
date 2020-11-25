@@ -17,7 +17,10 @@ DHT dht(dhtPIN, dhtType);
 
 // Umfeld
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
-login_table = "Members"; // zum Anmelden an der API
+String login_table = "Members"; // zum Anmelden an der API
+String ipadresse = "178.238.227.46:3000"; // Server IP
+String ServerPath_login = ("http://" + ipadresse + "/api/"+ login_table + "/login?");
+
 // Constanten
 const int feuchtemin = 0;
 const int feuchtemax = 3571; // Erfahrungswert, Arduino Reference sagt max. Wert bei 4095  //TODO: kallibrieren
@@ -149,10 +152,10 @@ JSONVar login(String email, String pw){
   int ResponseCode;
 
   HTTPClient http;
-  http.begin(ServerPath);
+  http.begin(ServerPath_login);
   
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-  ServerPath = ("http://"+ ipadresse +"/api/"+ login_table +"/login?");
+  ServerPath_login = ("http://"+ ipadresse +"/api/"+ login_table +"/login?");
   msg = "{\"email\":\""+ email +"\",\"password\":\""+ pw +"\"}";
 
   ResponseCode = http.POST(msg);
