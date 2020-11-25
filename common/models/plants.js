@@ -37,5 +37,5 @@ module.exports = function(Plants) {
         "returns": { arg: 'MyPlants', type: 'Plants' },
         "http": {"verb": "get", "path": "/MyPlants"},
     });
-
+    //Dies ist eine Änderung
 };
