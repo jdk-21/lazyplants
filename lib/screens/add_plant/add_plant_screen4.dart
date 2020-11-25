@@ -4,6 +4,7 @@ import 'package:lazyplants/screens/home_screen.dart';
 import 'dart:io';
 import 'package:lazyplants/main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 
 class AddPlantScreen4 extends StatefulWidget {
   const AddPlantScreen4({
@@ -65,7 +66,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 80),
                 child: Text(
-                  "Set your defaults",
+                  'addPlant4_title' .tr,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -99,8 +100,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   ),
                   padding: const EdgeInsets.only(
                       left: 30.0, right: 30.0, top: 12, bottom: 12),
-                  child: const Text(
-                    'Use Camera',
+                  child: Text(
+                    'useCamera' .tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -134,8 +135,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   ),
                   padding: const EdgeInsets.only(
                       left: 35.0, right: 35.0, top: 12, bottom: 12),
-                  child: const Text(
-                    'Pick from gallery',
+                  child: Text(
+                    'pickGallery' .tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -156,8 +157,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                       child: Container(
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10, bottom: 10),
-                        child: const Text(
-                          'Back',
+                        child: Text(
+                          'back' .tr,
                           style: TextStyle(fontSize: 14),
                         ),
                       ),
@@ -177,8 +178,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                       child: Container(
                         padding: const EdgeInsets.only(
                             right: 15.0, top: 10, bottom: 10),
-                        child: const Text(
-                          'Finish',
+                        child: Text(
+                          'finish' .tr,
                           style: TextStyle(fontSize: 14),
                         ),
                       ),

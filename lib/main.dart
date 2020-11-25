@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lazyplants/screens/home_screen.dart';
+import 'package:get/get.dart';
+import 'package:lazyplants/translation.dart';
+import 'dart:io';
 
 const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;
@@ -27,7 +30,14 @@ class MyApp extends StatelessWidget {
   // constant colors
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // gets the system locale, doesn't work with web
+    final String defaultLocale = Platform.localeName;
+    return GetMaterialApp(
+      // set translation
+      translations: Translation(),
+      
+      locale: Locale(defaultLocale), // translations will be displayed in that locale
+      fallbackLocale: Locale('de', 'DE'), // specify the fallback locale in case an invalid locale is selected.
       debugShowCheckedModeBanner: false,
       title: 'LazyPlants',
       theme: ThemeData(

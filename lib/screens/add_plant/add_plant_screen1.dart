@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lazyplants/main.dart';
 import 'add_plant_screen2.dart';
+import 'package:get/get.dart';
 
 class AddPlantScreen1 extends StatelessWidget {
   const AddPlantScreen1({
@@ -29,7 +30,7 @@ class AddPlantScreen1 extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: Text(
-                  "Add a plant",
+                  "addPlant1_title" .tr,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -38,12 +39,14 @@ class AddPlantScreen1 extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  top: 8.0,
-                  bottom: 20.0,
-                  left: 40.0,
-                  right: 40.0
+                    top: 8.0, bottom: 20.0, left: 40.0, right: 40.0),
+                child: Text(
+                  'addPlant1_body' .tr,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
-                child: Text("Please ensure your microcontroller is already up and running before you continue!", textAlign: TextAlign.center , style: TextStyle(fontSize: 20, ),),
               ),
               /*Container(
                 margin: EdgeInsets.only(left: 40, right: 40),
@@ -71,16 +74,17 @@ class AddPlantScreen1 extends StatelessWidget {
                 ),
               ),*/
               FlatButton(
-                child: Text("How do I add my microcontroller?",
+                child: Text('addPlant1_helpText' .tr,
                     style: TextStyle(
                         color: Colors.white.withAlpha(200), fontSize: 15)),
                 onPressed: () async {
-                  const helpUrl =
-                      "https://github.com/jdk-21/lazyplants/tree/esp";
+                  var helpUrl = 'addPlant1_helpUrl' .tr;
                   if (await canLaunch(helpUrl)) {
                     await launch(helpUrl);
                   } else {
-                    throw "Could not launch $helpUrl";
+                    final snackBar = SnackBar(content: Text('urlLaunchError' .tr + helpUrl));
+                    // Find the ScaffoldMessenger in the widget tree and use it to show a SnackBar.
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar); 
                   }
                 },
               ),
@@ -113,8 +117,8 @@ class AddPlantScreen1 extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.only(
                         left: 45.0, right: 45.0, top: 12, bottom: 12),
-                    child: const Text(
-                      'Next',
+                    child: Text(
+                      'next'.tr,
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
@@ -131,8 +135,8 @@ class AddPlantScreen1 extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),
-                  child: const Text(
-                    'Cancel',
+                  child: Text(
+                    'cancel' .tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

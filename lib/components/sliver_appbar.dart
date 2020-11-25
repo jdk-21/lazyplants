@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lazyplants/main.dart';
+import 'package:get/get.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double collapsedHeight;
@@ -83,7 +84,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             child: Row(
               children: [
                 Text(
-                  'Hi, John!',
+                  'hi' .tr + ', John!',
                   style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -122,7 +123,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       child: TextField(
                         onChanged: (value) {},
                         decoration: InputDecoration(
-                          hintText: "Search plant",
+                          hintText: 'home_searchText' .tr,
                           hintStyle: TextStyle(
                             color: kPrimaryColor.withOpacity(0.5),
                           ),

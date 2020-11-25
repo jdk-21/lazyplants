@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NavigationDrawer extends StatelessWidget {
   @override
@@ -75,7 +76,7 @@ class NavigationDrawer extends StatelessWidget {
               child: ListTile(
                 leading: Icon(Icons.house_outlined),
                 title: Text(
-                  "Home",
+                  "home" .tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -89,7 +90,7 @@ class NavigationDrawer extends StatelessWidget {
             ListTile(
                 leading: Icon(Icons.bar_chart_outlined),
                 title: Text(
-                  "Statistics",
+                  "statistics" .tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -102,7 +103,7 @@ class NavigationDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.wifi_tethering_outlined),
                 title: Text(
-                  "How to connect?",
+                  "howToConnect" .tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -115,7 +116,7 @@ class NavigationDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.settings_outlined),
                 title: Text(
-                  "Settings",
+                  "settings" .tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -129,7 +130,7 @@ class NavigationDrawer extends StatelessWidget {
                 child: ListTile(
                   leading: Icon(Icons.account_circle_outlined),
                   title: Text(
-                    "About",
+                    "about" .tr,
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 14,
@@ -143,7 +144,7 @@ class NavigationDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.logout, color: Colors.red[700],),
                 title: Text(
-                  "Logout",
+                  "logout" .tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
