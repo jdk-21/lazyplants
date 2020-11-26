@@ -173,11 +173,11 @@ void loop() {
   Serial.println();
 
   // Actions - Luftfeuchteok? Bodenfeuchte ok?
-  if (humidity < (soll_humidity * toleranz / 100 )) {
+  if (humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) {
     Serial.println("Luftfeuchte erhöhen!");
     luftfeuchtigkeit_erhoehen(Plant["humidity"]);
   }
-  if (soil_moisture < (soll_soil_moisture * toleranz / 100)) {
+  if (soil_moisture < (soll_soil_moisture-(soll_soil_moisture * toleranz / 100))) {
     Serial.println("Gießen!");
     giesen(Plant["soil_moisture"]);
     gegossen = true;
