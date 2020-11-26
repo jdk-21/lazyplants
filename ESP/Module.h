@@ -36,7 +36,7 @@ const String ipadresse = "178.238.227.46:3000"; // IP ADresse des Servers
 
 // Constanten
 const int feuchtemin = 0;
-const int feuchtemax = 3571; // Erfahrungswert, Arduino Reference sagt max. Wert bei 4095  //TODO: kallibrieren
+const int feuchtemax = 4095; //Normierung des Analogwerts
 
 //weitere Parameter
 #define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
@@ -108,54 +108,54 @@ bool connect(const char* ssid,const char* password){
 }
 
 String translate(int ResponseCode){
-  String msg ;
+  String f_msg ;
   switch (ResponseCode)
   {
   case 100:
-    msg = "100: Continue";
+    f_msg = "100: Continue";
     break;
   case 101:
-    msg = "101: Switching Protocols";
+    f_msg = "101: Switching Protocols";
     break;
   case 102:
-    msg = "102: Processing ";
+    f_msg = "102: Processing ";
     break;
   case 103:
-    msg = "103: Early Hints ";
+    f_msg = "103: Early Hints ";
     break;
   case 200:
-    msg = "200: OK ";
+    f_msg = "200: OK ";
     break;
   case 201:
-    msg = "201: Created";
+    f_msg = "201: Created";
     break;
   case 202:
-    msg = "202: Accepted";
+    f_msg = "202: Accepted";
     break;
   // Fehlend 203 bis 226 
   case 300:
-    msg = "300: Multiple Choices";
+    f_msg = "300: Multiple Choices";
     break;
   // Fehlend 301 bis 308
   case 400:
-    msg = "400: Bad Request";
+    f_msg = "400: Bad Request";
     break;
   case 401:
-    msg = "401: Unauthorized";
+    f_msg = "401: Unauthorized";
     break;
   case 403:
-    msg = "403: Forbidden";
+    f_msg = "403: Forbidden";
     break;
   case 404:
-    msg = "404: Not Found";
+    f_msg = "404: Not Found";
     break;
   // Fehlend ab 405
   default:
-    msg = ResponseCode +": unknown"; 
+    f_msg = ResponseCode +": unknown"; 
     break;
   }
-  Serial.println(msg);
-  return msg;
+  Serial.println(f_msg);
+  return f_msg;
 }
 
 JSONVar login(String email, String pw){
@@ -175,6 +175,7 @@ JSONVar login(String email, String pw){
   do{
     ResponseCode = http.POST(msg);
     counter++;
+    Serial.print("HTTP Response code: ");
     translate(ResponseCode);
     if (ResponseCode != 200){ // Auswertung ob Verbindung ustande kam
     Serial.print("Login failed! ");
@@ -200,7 +201,7 @@ int patch_json(String ServerPath, JSONVar Message){
     String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PATCH(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);    
+    translate(httpResponseCode);   
     
     http.end();
     return httpResponseCode;
@@ -218,13 +219,13 @@ int put_json(String ServerPath, JSONVar Message){
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PUT(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);    
+    translate(httpResponseCode);     
     
     http.end();
     return httpResponseCode;
   }
 
-int post_json(String ServerPath, JSONVar Message){
+int post_json_int(String ServerPath, JSONVar Message){
     // HTTP-POST
     // Anlegen eines neuen Datensatzes in der Datenbank (ServerPath). Der Inhalt ist im JSON Objekt enthalten.
     // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
@@ -237,10 +238,38 @@ int post_json(String ServerPath, JSONVar Message){
     int httpResponseCode = http.POST(msg); // Übertragung
 
     Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);    
+    translate(httpResponseCode);     
     
     http.end();
     return httpResponseCode;
+}
+
+JSONVar post_json_json(String ServerPath, JSONVar Message){
+  // HTTP-POST
+  // Anlegen eines neuen Datensatzes in der Datenbank (ServerPath). Der Inhalt ist im JSON Objekt enthalten.
+  // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
+
+  JSONVar Data;
+  HTTPClient http;
+  http.begin(ServerPath);
+  http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
+
+  String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
+  int httpResponseCode = http.POST(msg); // Übertragung
+
+  Serial.print("HTTP Response code: ");
+  translate(httpResponseCode);    
+
+  if (httpResponseCode == 200){
+    msg = http.getString();
+  } else{
+    msg = "{}";
+  }
+  
+  Data = JSON.parse(msg);
+
+  http.end();
+  return Data;
 }
 
 JSONVar get_json(String ServerPath){
@@ -252,19 +281,25 @@ JSONVar get_json(String ServerPath){
   HTTPClient http;
   http.begin(ServerPath); //Startet Verbindung zu Server
   int httpResponseCode = http.GET();
-  
+  Serial.println();
+  Serial.println("GET:");
   String payload = "{empty}"; 
   
-  if (httpResponseCode>0) {
+  if (httpResponseCode > 0) {
     Serial.print("HTTP Response code: ");
     translate(httpResponseCode);
-    payload = http.getString();
-    if (payload[0] == '[') {
-      payload.remove(0,1);
+    if (httpResponseCode == 200){
+      payload = http.getString();
+      if (payload[0] == '[') {
+        payload.remove(0,1);
+      }
+      if (payload[(payload.length()-1)] == ']'){
+        payload.remove((payload.length()-1),1);
+      }
+    } else{
+      payload = "{}"; // leeres JSON Objekt im Fehlerfall
     }
-    if (payload[(payload.length()-1)] == ']'){
-      payload.remove((payload.length()-1),1);
-    }
+    
   }
   else {
     Serial.print("Error code: ");
@@ -294,6 +329,7 @@ JSONVar get_json(String ServerPath){
     Serial.print(" = ");
     Serial.println(value);
   }
+  Serial.println();
   return myObject;
 }
 
@@ -320,8 +356,13 @@ int entfernung(){
   
 int fuellsstand(int Tankhoehe = max_Tankhoehe){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
-  int Value = entfernung();
-  return (Value/Tankhoehe *100);
+  int counter =0;
+  do{
+    int Value = entfernung();
+    delay(500);
+  }while(Value <= 0 && counter < (max_Retry*2));
+  Value = Value/Tankhoehe *100;
+  return (Value);
 }
 
 int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){

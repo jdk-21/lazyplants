@@ -1,10 +1,10 @@
 /* Name: Steuerung ESP
- * Projekt: LazyPlants
- * Erstelldatum:  01.11.2020 18:00
- * Änderungsdatum: 25.11.2020 22:00
- * Version: 0.1.2
- * History:
- */
+   Projekt: LazyPlants
+   Erstelldatum:  01.11.2020 18:00
+   Änderungsdatum: 26.11.2020 10:00
+   Version: 0.1.3
+   History:
+*/
 
 
 //Include
@@ -20,23 +20,28 @@ String table_get = "Plants"; // Pflanze
 String table_DB = "PlantData"; // Pflanzen Datensätze
 String email = "patrick@gmail.com";
 String pw_API = "test";
-String ServerPath = ("http://"+ ipadresse + "/api/" + table_login+ "?");
+String ServerPath = ("http://" + ipadresse + "/api/" + table_login + "?");
 //String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
-//String filter = "&filter[where][UserID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
+//String filter = "&filter[where][MemberID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
 
 // WLAN
-// const char* ssid = "TrojaNet";
-// const char* pw = "50023282650157230429";
-const char* ssid = "flottes_WLAN";
-const char* pw = "70175666528540340315";
+const char* ssid = "TrojaNet";
+const char* pw = "50023282650157230429";
+//const char* ssid = "flottes_WLAN";
+//const char* pw = "70175666528540340315";
 
 // Variablen
 JSONVar Data;
+JSONVar Plant;
+int soll_soil_moisture;
+int soll_humidity;
+String plantID;
 String id;
 String token;
-String UserID;
-String filter; //z.B. &filter[where][UserID]=1&filter[where][PlantID]=1
+String MemberID;
+String filter; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
 String msg;
+String Messages[9];
 int ResponseCode;
 int counter;
 String  Time;
@@ -49,14 +54,23 @@ RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten 
 #define TZ_INFO "WEST-1DWEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00" // Western European Time
 struct tm local;
 
+// Sensoren
+int soil_moisture;
+float humidity;
+float temp;
+int Tanklevel;
+bool gegossen = false;
+#define toleranz 20 // Angabe der Toleranz in %
+
 //Preferences preferences; // Permanentes Speichern von Variablen
 
-void firstStart(){
+void firstStart() {
+  delay(500);
   Serial.begin(115200);
   delay(500); // Warten bis Serial gestartet ist
   Serial.println("");
   Serial.println("Reset Start");
-
+  digitalWrite(PumpePIN, HIGH);
   connect(ssid, pw); //WLAN Verbindung einrichten
 
   Serial.println("Hole NTP Zeit");
@@ -65,7 +79,7 @@ void firstStart(){
 
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
-  pinMode(PumpePIN, OUTPUT);  
+  pinMode(PumpePIN, OUTPUT);
 
 }
 
@@ -74,9 +88,9 @@ void setup() {
   // Setup
   bootZaeler++;
   wakeup_cause = esp_sleep_get_wakeup_cause(); // wakeup Ursache holen
-  if (wakeup_cause != 3){
+  if (wakeup_cause != 3) {
     firstStart(); // Wenn wakeup durch Reset
-  } else{
+  } else {
     Serial.println("Start Nr.: " + String(bootZaeler));
   }
 
@@ -89,53 +103,119 @@ void setup() {
   Serial.print("Token: ");
   Serial.println(token);
 
-  UserID = Data["userId"];
-  Serial.print("UserID: ");
-  Serial.println(UserID);
-  if (token == "null"){
+  MemberID = Data["userId"];
+  Serial.print("MemberID: ");
+  Serial.println(MemberID);
+  if (token == "null") {
     Serial.println("Login nicht möglich!");
     ESP.restart();
-  }  
+  }
+  gegossen = false;
 }
 
 void loop() {
   //Zeit
   tm local;
   getLocalTime(&local); //Abrufen der Zeit
-  strftime (buffer,80,"20%y-%m-%dT%H:%M:%S.000Z",&local); //Formatieren der Zeit
+  strftime (buffer, 80, "20%y-%m-%dT%H:%M:%S.000Z", &local); //Formatieren der Zeit
   Time = buffer;
-  Serial.println("Time: "+ String(Time)); 
+  Serial.println("Time: " + String(Time));
 
   // prüfen ob Plant existiert
-  filter = "&filter[where][memberId]="+ UserID +"&filter[where][espId]=" + espID ;
-  ServerPath = ("http://"+ipadresse+"/api/"+ table_get + "?access_token=" + token + filter);
-  Data = get_json(ServerPath);
-  Serial.print("Data: ");
-  Serial.println(Data);
+  filter = "&filter[where][memberId]=" + MemberID + "&filter[where][espId]=" + espID ;
+  ServerPath = ("http://" + ipadresse + "/api/" + table_get + "?access_token=" + token + filter);
+  Plant = get_json(ServerPath);
+  Serial.print("Plant: ");
+  Serial.println(Plant);
 
-  // Plant existiert nicht
-  if (JSON.stringify(Data) == "[]"){
+  // Plant existiert nicht, POST default Plant
+  if (JSON.stringify(Plant) == "{}") {
     Serial.println("GET Plant failed");
-    ServerPath = ("http://"+ipadresse+"/api/"+ table_get + "?access_token=" + token);
+    //Default Plant zusammenstellen
+    ServerPath = ("http://" + ipadresse + "/api/" + table_get + "?access_token=" + token);
     Serial.print("New ServerPath: "); Serial.println(ServerPath);
-    msg = ("{\"plantname\":\"NEW\",\"plantdate\":\""+ Time +"\", \"espId\": \""+ espID +"\", \"room\": \"NON\", \"soil_moisture\":30, \"humidity\":30, \"memberId\":\"" + UserID + "\"}");
+    msg = ("{\"plantname\":\"NEW\",\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"room\": \"NON\", \"soil_moisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
     Serial.print("New Plant: "); Serial.println(msg);
     Data = JSON.parse(msg);
     counter = 0;
-    do{
-      ResponseCode = post_json(ServerPath, Data); // POST der default Werte
+    do {
+      Plant = post_json_json(ServerPath, Data); // POST der default Werte
       counter++;
       delay(1000);
-      if (counter == max_Retry){
-        Serial.println("POST new Plant failed");
+      if (counter > max_Retry) {
+        Serial.println("ERROR: POST new Plant failed");
       }
-    }while(ResponseCode != 200 && counter <= max_Retry);
+    } while (JSON.stringify(Plant) == "{}" && counter <= max_Retry);
 
-  } else{
+  } else {
     Serial.print("GET Plant with Name: ");
-    Serial.println(Data["plantname"]);
+    Serial.println(Plant["plantname"]);
+  }
+  Serial.println();
+  soll_soil_moisture = Plant["soil_moisture"];
+  Serial.print("Soll soil_moisture: "); Serial.print(soll_soil_moisture); Serial.println("%");
+  soll_humidity = Plant["humidity"];
+  Serial.print("Soll humidity: "); Serial.print(soll_humidity);  Serial.println("%");
+  //plantID = Plant["plantsId"];
+  //Serial.print("PlantID: "); Serial.println(plantID);
+
+  // Messwerte erfassen
+  temp = temperatur();
+  Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
+  int level = entfernung();
+  Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
+  Tanklevel = fuellsstand();
+  Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
+  soil_moisture = bodenfeuchte();
+  Serial.print("Bodenfeuchte: "); Serial.print(soil_moisture); Serial.println("%");
+  humidity = luftfeuchtigkeit();
+  Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
+  Serial.println();
+
+  // Actions - Luftfeuchteok? Bodenfeuchte ok?
+  if (humidity < (soll_humidity * toleranz / 100 )) {
+    Serial.println("Luftfeuchte erhöhen!");
+    luftfeuchtigkeit_erhoehen(Plant["humidity"]);
+  }
+  if (soil_moisture < (soll_soil_moisture * toleranz / 100)) {
+    Serial.println("Gießen!");
+    giesen(Plant["soil_moisture"]);
+    gegossen = true;
   }
 
+  // Datensatz bauen und übertragen
+  Messages[0] = "{\"espId\":\"" + espID + "\",";
+  Messages[1] = "\"soil_moisture\":\"" + String(soil_moisture) + "\",";
+  Messages[2] = "\"humidity\":\"" + String(humidity) + "\",";
+  Messages[3] = "\"temperature\":\"" + String(temp) + "\",";
+  Messages[4] = "\"watertank\":\"" + String(Tanklevel) + "\",";
+  Messages[5] = "\"water\":\"" + String(gegossen) + "\",";
+  Messages[6] = "\"measuring_time\":\"" + Time + "\",";
+  //Messages[7] = "\"plantsId\":\"" + plantID + "\",";
+  Messages[7] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
+
+  Serial.println(Messages[7]);
+  for(int i=0;i<= 7 ;i++){
+    msg = msg + Messages[i];
+    Serial.print(i);
+  }
+  Serial.println();
+  Serial.println(msg);
+
+  Serial.println();
+  ServerPath = ("http://" + ipadresse + "/api/" + table_DB + "?access_token=" + token);
+  Serial.println(ServerPath);
+  Data = JSON.parse(msg);
+  Serial.println(JSON.stringify(Data));
+  counter = 0;
+  do {
+    ResponseCode = post_json_int(ServerPath, Data);
+    counter++;
+    if (counter > max_Retry) {
+      Serial.println("ERROR: POST Messdaten nicht möglich!");
+    }
+  } while (ResponseCode != 200 && counter <= max_Retry);
+  // Deep Sleep
   Serial.println("Deep Sleep");
   esp_sleep_enable_timer_wakeup(IntervallTime);    // Deep Sleep Zeit einstellen
   esp_deep_sleep_start();
