@@ -340,28 +340,27 @@ int entfernung(){
     // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
     long entfernung=0;
     long zeit=0;
-  
-    digitalWrite(ultraschalltrigger, LOW);
-    delayMicroseconds(3);
-    noInterrupts();
-    digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
-    delayMicroseconds(10);
-    digitalWrite(ultraschalltrigger, LOW);
-    zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
-    interrupts();
-    zeit = (zeit/2); // Zeit halbieren, da der SChall den Weg hin und zurück überwindet
-    entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+    int counter=0;
+    do{
+      counter++;
+      digitalWrite(ultraschalltrigger, LOW);
+      delayMicroseconds(3);
+      noInterrupts();
+      digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
+      delayMicroseconds(10);
+      digitalWrite(ultraschalltrigger, LOW);
+      zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
+      interrupts();
+      zeit = (zeit/2); // Zeit halbieren, da der SChall den Weg hin und zurück überwindet
+      entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+    }while(entfernung  == 0 && counter < max_Retry);
     return(entfernung);
   }
   
 int fuellsstand(int Tankhoehe = max_Tankhoehe){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
-  int counter =0;
-  do{
-    int Value = entfernung();
-    delay(500);
-  }while(Value <= 0 && counter < (max_Retry*2));
-  Value = Value/Tankhoehe *100;
+  int Value = entfernung();
+  Value = Value*100/Tankhoehe;
   return (Value);
 }
 
@@ -369,11 +368,11 @@ int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
   // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
   // Der Normierte Wert wird in % angegeben.
   int value = analogRead(PIN);
-  Serial.print("Messwert: ");
+  Serial.print("Bodenfeuchte Messwert: ");
   Serial.println(value);
   value = (((value - feuchtemin) *100) /feuchtemax);
-  Serial.print("Normwert: ");
-  Serial.println(value);
+  //Serial.print("Bodenfeuchte Normwert: ");
+  //Serial.println(value);
   return value;
 }
 

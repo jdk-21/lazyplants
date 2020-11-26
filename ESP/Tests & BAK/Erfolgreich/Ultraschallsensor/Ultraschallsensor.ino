@@ -16,7 +16,6 @@
   #define Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
 
   #include <Esp.h>
-  #include <arduino>
 
 
 void setup() {
@@ -54,6 +53,6 @@ void loop() {
   Serial.print("Entfernung: ");
   Serial.println(entfernung());
   Serial.println();
-  delay(2500);  
+  delay(2000);  
 }
   

@@ -164,7 +164,7 @@ void loop() {
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  Tanklevel = fuellsstand();
+  Tanklevel = fuellsstand(max_Tankhoehe);
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
   soil_moisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soil_moisture); Serial.println("%");
