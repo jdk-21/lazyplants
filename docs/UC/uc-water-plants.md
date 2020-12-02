@@ -1,9 +1,9 @@
-# Use-Case Specification: Add Plant
+# Use-Case Specification: Water Plant
 
-# 1. Add Plant
+# 1. Water Plant
 
 ## 1.1 Brief Description
-The user can start the watering mechanism manually. When the moisture of the plant is low, the app shows you that the plant needs water and that you can water them. When there is enough moisture, you can't water your plant. This pervents that the user overwaters their plants.
+The watering of the plant is completely automatic, when creating the plant we set a default value (x) for the soil moisture of the plant. The user can adjust this value (x) via app to the corresponding plant.
 
 ## 1.2 Mockup
 ![Mockup](uc-water-plants-mockup.png)
