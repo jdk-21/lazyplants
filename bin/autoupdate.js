@@ -4,7 +4,7 @@
 const app = require('../server/server');
 const ds = app.datasources.db;
 
-ds.autoupdate(['Plants'], (err) => {
+ds.autoupdate(['Plants', 'PlantData'], (err) => {
     if (err) {
         throw err;
     }

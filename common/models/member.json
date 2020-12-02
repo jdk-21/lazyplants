@@ -12,7 +12,7 @@
     "lastname": {
       "type": "string"
     },
-    "memberpic": {
+    "memberPic": {
       "type": "any"
     }
   },

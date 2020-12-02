@@ -10,7 +10,7 @@
       "type": "string",
       "required": true
     },
-    "soil_moisture": {
+    "soilMoisture": {
       "type": "number"
     },
     "humidity": {
@@ -25,7 +25,7 @@
     "water": {
       "type": "boolean"
     },
-    "measuring_time": {
+    "measuringTime": {
       "type": "date",
       "required": true
     }

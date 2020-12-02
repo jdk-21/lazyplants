@@ -6,11 +6,11 @@
     "validateUpsert": true
   },
   "properties": {
-    "plantname": {
+    "plantName": {
       "type": "string",
       "required": true
     },
-    "plantdate": {
+    "plantDate": {
       "type": "date",
       "required": true
     },
@@ -21,13 +21,13 @@
     "room": {
       "type": "string"
     },
-    "soil_moisture": {
+    "soilMoisture": {
       "type": "number"
     },
     "humidity": {
       "type": "number"
     },
-    "plantpic": {
+    "plantPic": {
       "type": "any"
     }
   },
