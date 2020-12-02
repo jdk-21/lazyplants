@@ -23,5 +23,5 @@ Feature: Water Plants
     Scenario: water tank empty
         When Plant needs water
         And Water tank empty
-        Then show warning: Refill water tank       
+        Then show warning: refill your watertank       
         
