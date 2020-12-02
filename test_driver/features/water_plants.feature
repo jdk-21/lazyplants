@@ -1,14 +1,12 @@
 Feature: Water Plants
-    User should be able to water plants manually if they need water.
+    The system waters the plants automatically
 
     Scenario: everything fine
-        When Plant needs water
-        And Water tank full
-        Then show button water plants
-        When user taps on button water plants
+        When soilMoisture < x
+        And watertank has enough water
         And pump is online 
-        Then start pump via API
-        Then disable water plants button
+        Then pump starts
+        Then make a database entry
         Then set indicator light: green
 
     Scenario: pump offline
@@ -21,7 +19,8 @@ Feature: Water Plants
         Then set indicator light: red
 
     Scenario: water tank empty
-        When Plant needs water
-        And Water tank empty
-        Then show warning: refill your watertank       
+        When soilMoisture < x
+        And watertank has not enough water
+        Then show warning: refill your watertank  
+        Then go back to soilMoisture < x
         
