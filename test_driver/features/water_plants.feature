@@ -2,7 +2,7 @@ Feature: Water Plants
     The system waters the plants automatically
 
     Scenario: everything fine
-        When soilMoisture < x
+        When plant needs water
         And watertank has enough water
         And pump is online 
         Then pump starts
@@ -10,7 +10,7 @@ Feature: Water Plants
         Then set indicator light: green
 
     Scenario: pump offline
-        When Plant needs water
+        When plant needs water
         And Water tank full
         Then show button water plants
         When user taps on button water plants
@@ -19,8 +19,8 @@ Feature: Water Plants
         Then set indicator light: red
 
     Scenario: water tank empty
-        When soilMoisture < x
+        When plant needs water
         And watertank has not enough water
         Then show warning: refill your watertank  
-        Then go back to soilMoisture < x
+        Then go back to when plant needs water
         
