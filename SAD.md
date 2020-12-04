@@ -24,7 +24,7 @@ The scope of this SAD is to show the architecture of the project. Affected are t
 
 
 ## 4. Use-Case View 
-[Use Case Diagram](https:)
+[Use Case Diagram ADD Plant](https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/uc-add-plant.png)
 
 ## 5. Logical View
 [MVC-UML](https:)
