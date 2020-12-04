@@ -11,23 +11,23 @@ It is intended to capture and convey the significant architectural decisions whi
 The scope of this SAD is to show the architecture of the vnv project. Affected are the class structure, the use cases and the data representation.
 
 ### 1.3 References
-- [GitHub](https://gitlab.com/dhbwar1/dhbwar)
-- [Blog](https://dhbwar.wordpress.com/)
-- [Documentation](https://gitlab.com/dhbwar1/dhbwar-docu)
-- [Software Requirements Specification](ReadMe.md)
+- [GitHub](https:)
+- [Blog](https:)
+- [Documentation](https:)
+- [Software Requirements Specification]()
 
 
 ## 2. Architectural Representation
-[MVC] (https://gitlab.com/dhbwar1/dhbwar-docu/-/blob/master/MVC.png)
+[MVC] (https:)
 
 ## 3.Architectural Goals and Constraints 
-Since we use Andriod we dont use a generated MVC. It's important for us to seperate the view and the model, so we could replace the view easily (maybe for a PC-port).
+
 
 ## 4. Use-Case View 
-[Use Case Diagram](https://gitlab.com/dhbwar1/dhbwar-docu/-/raw/master/Untitled%20Diagram.png)
+[Use Case Diagram](https:)
 
 ## 5. Logical View
-[MVC-UML](https://gitlab.com/dhbwar1/dhbwar-docu/-/raw/master/UMLMVC.png)
+[MVC-UML](https:)
 
 
 ## 6. Process View
@@ -38,13 +38,13 @@ Since we use Andriod we dont use a generated MVC. It's important for us to seper
 
 
 ## 8. Implementation View
-![UML][]
+
 
 ## 9. Data View
 
 
 ## 10. Size and Performance
-tbd
+
 
 ## 11. Quality
 
