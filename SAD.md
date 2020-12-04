@@ -18,7 +18,7 @@ The scope of this SAD is to show the architecture of the project. Affected are t
 
 
 ## 2. Architectural Representation
-[MVC] (docs/UC/MVC-Diagram.png)
+![MVC] (https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/MVC-Diagram.png)
 
 ## 3.Architectural Goals and Constraints 
 
