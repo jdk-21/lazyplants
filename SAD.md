@@ -18,7 +18,7 @@ The scope of this SAD is to show the architecture of the vnv project. Affected a
 
 
 ## 2. Architectural Representation
-[MVC] (https:)
+[MVC] (https://github.com/jdk-21/lazyplants/blob/master/docs/UC/MVC%20Diagram.png)
 
 ## 3.Architectural Goals and Constraints 
 
