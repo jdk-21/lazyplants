@@ -18,7 +18,7 @@ The scope of this SAD is to show the architecture of the vnv project. Affected a
 
 
 ## 2. Architectural Representation
-[MVC] (https://github.com/jdk-21/lazyplants/blob/master/docs/UC/MVC%20Diagram.png)
+[MVC] (https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/MVC%20Diagram.png)
 
 ## 3.Architectural Goals and Constraints 
 
@@ -48,7 +48,3 @@ The scope of this SAD is to show the architecture of the vnv project. Affected a
 
 ## 11. Quality
 
-
-
-<!-- picture links -->
-[UML]: https://gitlab.com/dhbwar1/dhbwar-docu/-/blob/master/Week%207/UML.png "UML Diagram"
