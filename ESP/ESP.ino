@@ -15,12 +15,12 @@
 // Declarationen
 // Connections
 const String espID = "ESP_Blume_Test";
-String table_login = "Member"; // stelle an der sich der ESP bei der API einloggen muss
-String table_get = "Plants"; // Pflanze
-String table_DB = "PlantData"; // Pflanzen Datensätze
+String tableLogin = "Member"; // stelle an der sich der ESP bei der API einloggen muss
+String tableGet = "Plants"; // Pflanze
+String tableDB = "PlantData"; // Pflanzen Datensätze
 String email = "patrick@gmail.com";
 String pw_API = "test";
-String ServerPath = ("http://" + ipadresse + "/api/" + table_login + "?");
+String ServerPath = ("http://" + ipadresse + "/api/" + tableLogin + "?");
 //String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
 //String filter = "&filter[where][MemberID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
 
@@ -33,7 +33,7 @@ const char* pw = "50023282650157230429";
 // Variablen
 JSONVar Data;
 JSONVar Plant;
-int soll_soil_moisture;
+int soll_soilMoisture;
 int soll_humidity;
 String plantID;
 String id;
@@ -55,12 +55,12 @@ RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten 
 struct tm local;
 
 // Sensoren
-int soil_moisture;
+int soilMoisture;
 float humidity;
 float temp;
 int Tanklevel;
 bool gegossen = false;
-#define toleranz 20 // Angabe der Toleranz in %
+const int toleranz = 20 // Angabe der Toleranz in %
 
 //Preferences preferences; // Permanentes Speichern von Variablen
 
@@ -105,7 +105,7 @@ void setup() {
 
   MemberID = Data["userId"];
   Serial.print("MemberID: ");
-  Serial.println(MemberID);
+  Serial.println(MemberId);
   if (token == "null") {
     Serial.println("Login nicht möglich!");
     ESP.restart();
@@ -123,7 +123,7 @@ void loop() {
 
   // prüfen ob Plant existiert
   filter = "&filter[where][memberId]=" + MemberID + "&filter[where][espId]=" + espID ;
-  ServerPath = ("http://" + ipadresse + "/api/" + table_get + "?access_token=" + token + filter);
+  ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token + filter);
   Plant = get_json(ServerPath);
   Serial.print("Plant: ");
   Serial.println(Plant);
@@ -132,9 +132,10 @@ void loop() {
   if (JSON.stringify(Plant) == "{}") {
     Serial.println("GET Plant failed");
     //Default Plant zusammenstellen
-    ServerPath = ("http://" + ipadresse + "/api/" + table_get + "?access_token=" + token);
+    ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token);
     Serial.print("New ServerPath: "); Serial.println(ServerPath);
-    msg = ("{\"plantname\":\"NEW\",\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"room\": \"NON\", \"soil_moisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
+    msg = ("{\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"soilMoisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
+    //msg = ("{\"plantname\":\"NEW\",\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"soilMoisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
     Serial.print("New Plant: "); Serial.println(msg);
     Data = JSON.parse(msg);
     counter = 0;
@@ -152,12 +153,12 @@ void loop() {
     Serial.println(Plant["plantname"]);
   }
   Serial.println();
-  soll_soil_moisture = Plant["soil_moisture"];
-  Serial.print("Soll soil_moisture: "); Serial.print(soll_soil_moisture); Serial.println("%");
+  soll_soilMoisture = Plant["soilMoisture"];
+  Serial.print("Soll soilMoisture: "); Serial.print(soll_soilMoisture); Serial.println("%");
   soll_humidity = Plant["humidity"];
   Serial.print("Soll humidity: "); Serial.print(soll_humidity);  Serial.println("%");
-  //plantID = Plant["plantsId"];
-  //Serial.print("PlantID: "); Serial.println(plantID);
+  plantID = Plant["plantsId"];
+  Serial.print("PlantID: "); Serial.println(plantID);
 
   // Messwerte erfassen
   temp = temperatur();
@@ -166,8 +167,8 @@ void loop() {
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
   Tanklevel = fuellsstand(max_Tankhoehe);
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
-  soil_moisture = bodenfeuchte();
-  Serial.print("Bodenfeuchte: "); Serial.print(soil_moisture); Serial.println("%");
+  soilMoisture = bodenfeuchte();
+  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
@@ -177,25 +178,24 @@ void loop() {
     Serial.println("Luftfeuchte erhöhen!");
     luftfeuchtigkeit_erhoehen(Plant["humidity"]);
   }
-  if (soil_moisture < (soll_soil_moisture-(soll_soil_moisture * toleranz / 100))) {
+  if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * toleranz / 100))) {
     Serial.println("Gießen!");
-    giesen(Plant["soil_moisture"]);
+    giesen(Plant["soilMoisture"]);
     gegossen = true;
   }
 
   // Datensatz bauen und übertragen
   Messages[0] = "{\"espId\":\"" + espID + "\",";
-  Messages[1] = "\"soil_moisture\":\"" + String(soil_moisture) + "\",";
+  Messages[1] = "\"soilMoisture\":\"" + String(soilMoisture) + "\",";
   Messages[2] = "\"humidity\":\"" + String(humidity) + "\",";
   Messages[3] = "\"temperature\":\"" + String(temp) + "\",";
   Messages[4] = "\"watertank\":\"" + String(Tanklevel) + "\",";
   Messages[5] = "\"water\":\"" + String(gegossen) + "\",";
   Messages[6] = "\"measuring_time\":\"" + Time + "\",";
-  //Messages[7] = "\"plantsId\":\"" + plantID + "\",";
-  Messages[7] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
+  Messages[7] = "\"plantsId\":\"" + plantID + "\",";
+  Messages[8] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
 
-  Serial.println(Messages[7]);
-  for(int i=0;i<= 7 ;i++){
+  for(int i=0;i<= 8 ;i++){
     msg = msg + Messages[i];
     Serial.print(i);
   }
@@ -203,7 +203,7 @@ void loop() {
   Serial.println(msg);
 
   Serial.println();
-  ServerPath = ("http://" + ipadresse + "/api/" + table_DB + "?access_token=" + token);
+  ServerPath = ("http://" + ipadresse + "/api/" + tableDB + "?access_token=" + token);
   Serial.println(ServerPath);
   Data = JSON.parse(msg);
   Serial.println(JSON.stringify(Data));

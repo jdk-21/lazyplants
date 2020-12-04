@@ -39,7 +39,8 @@ const int feuchtemin = 0;
 const int feuchtemax = 4095; //Normierung des Analogwerts
 
 //weitere Parameter
-#define max_Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
+#define maxTankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
+#define minTanklevel 10 //Füllgrad in % b dem die Pumpe nicht mehr gießt
 
 /*
 void setup() {
@@ -357,17 +358,21 @@ int entfernung(){
     return(entfernung);
   }
   
-int fuellsstand(int Tankhoehe = max_Tankhoehe){
+int fuellsstand(){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
+  int Tankhoehe = maxTankhoehe;
   int Value = entfernung();
   Value = Value*100/Tankhoehe;
+  if (value <= minTanklevel){
+    value = 0; // Sicherheitsspielraum für die Pumpe
+  }
   return (Value);
 }
 
-int bodenfeuchte(int PIN = BodenfeuchtigkeitPIN){
+int bodenfeuchte(){
   // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
   // Der Normierte Wert wird in % angegeben.
-  int value = analogRead(PIN);
+  int value = analogRead(BodenfeuchtigkeitPIN);
   Serial.print("Bodenfeuchte Messwert: ");
   Serial.println(value);
   value = (((value - feuchtemin) *100) /feuchtemax);
@@ -411,32 +416,40 @@ void giesen(int Feuchtigkeitswert){
   // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
   // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
 
-  int feuchte_aktuell = bodenfeuchte(BodenfeuchtigkeitPIN);
-  const int lange_giesen = 5000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
+  int feuchteAktuell = bodenfeuchte();
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int lange_giesen = kurz_giesen * 1,5; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
+  bool ok = false;
 
-  if (feuchte_aktuell >= Feuchtigkeitswert){
-    Serial.println("Boden feucht genug.");
+  if (fuellsstand() > minTanklevel){
+    ok = true;
+  }
+  if (feuchteAktuell >= Feuchtigkeitswert && ok){
+    Serial.print("Boden feucht genug. Wert: ");
+    Serial.print(feuchteAktuell);
+    Serial.println("%");
     return;
-  } else if (feuchte_aktuell <= (Feuchtigkeitswert / 2)) { // Hoher Wasserbedarf
+  } else if (feuchteAktuell <= (Feuchtigkeitswert / 2) && ok) { // Hoher Wasserbedarf
     Serial.println("Lange gießen.");
     pumpen(true);
     delay(lange_giesen);
     pumpen(false);
     delay(wartezeit);
+    feuchteAktuell = bodenfeuchte();
     giesen(Feuchtigkeitswert);
-  } else if (feuchte_aktuell < Feuchtigkeitswert){
+  } else if (feuchteAktuell < Feuchtigkeitswert && ok){
     Serial.println("Kurz gießen.");
     pumpen(true);
     delay(kurz_giesen);
     pumpen(false);
     delay(wartezeit);
+    feuchteAktuell = bodenfeuchte();
     giesen(Feuchtigkeitswert);
   }
 }
 
-void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
+void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGround){
 
   //Konstanten
   const int spruezeit = 2000; // Sprühzeit in ms (Wert sollte recht klein sein)
@@ -444,10 +457,11 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
   const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
   int counter = 0;
 
-  int feuchte_aktuell = luftfeuchtigkeit();
+  int feuchteAktuell = luftfeuchtigkeit();
+  int feuchteAktuellBoden = bodenfeuchte();
 
   // Optimierung: evtl. Test ob Deckel zu ist
-  while ((feuchte_aktuell < Feuchtigkeitswert) && (counter < 10))
+  while ((feuchteAktuell < Feuchtigkeitswert) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
   {
     counter++;
     Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
@@ -456,7 +470,8 @@ void luftfeuchtigkeit_erhoehen(int Feuchtigkeitswert){
     delay(spruezeit);
     pumpen(false);
     delay(wartezeit);
-    feuchte_aktuell = luftfeuchtigkeit();
+    feuchteAktuell = luftfeuchtigkeit();
+    feuchteAktuellBoden = bodenfeuchte();
   }
   Serial.println("Luftfeuchtigkeit erreicht.");
   return;
