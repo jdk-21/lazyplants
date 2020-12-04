@@ -12,9 +12,9 @@ The scope of this SAD is to show the architecture of the project. Affected are t
 
 ### 1.3 References
 - [GitHub](https://github.com/jdk-21/lazyplants)
-- [Blog](https:)
-- [Documentation](https:)
-- [Software Requirements Specification]()
+- [Blog](https://lazysmartplants.wordpress.com/)
+- [WIKI](https://github.com/jdk-21/lazyplants/wiki)
+- [Software Requirements Specification](https://github.com/jdk-21/lazyplants/wiki/SRS)
 
 
 ## 2. Architectural Representation
