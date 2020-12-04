@@ -42,7 +42,7 @@ The scope of this SAD is to show the architecture of the project. Affected are t
 [UML](https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/classdiagramm.png)
 
 ## 9. Data View
-
+![Database Design](https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/databasediagramm.png)
 
 ## 10. Size and Performance
 
