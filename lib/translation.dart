@@ -9,7 +9,7 @@ class Translation extends Translations {
           'cancel': 'Cancel',
           'finish': 'Finish',
           'back': 'Back',
-          'needHelp': 'Nedd help?',
+          'needHelp': 'Need help?',
           'ok': 'OK',
           'urlLaunchError': 'Could not launch URL:',
           'useCamera': 'Use Camera',
@@ -23,6 +23,7 @@ class Translation extends Translations {
           'evening': 'Good Evening',
           'night': 'Good Night',
           'home_searchText': 'Search plant',
+          'home_noPlant': 'There is no plant here. Add one!',
 
           // navigation drawer
           'home': 'Home',
@@ -40,6 +41,9 @@ class Translation extends Translations {
           'addPlant1_helpUrl': 'https://github.com/jdk-21/lazyplants/tree/esp',
           'addPlant2_title': 'What\'s your name?',
           'addPlant2_helpText': 'Name, please',
+          'addPlant2_dropDown': 'Select ESP',
+          'addPlant2_noName': 'Please, add a name!',
+          'addPlant2_noEsp': 'Please, select an ESP from the dropdown!',
           'addPlant2_hintName': 'Totally creative name',
           'addPlant3_title': 'Set your defaults',
           'addPlant3_humidityText':

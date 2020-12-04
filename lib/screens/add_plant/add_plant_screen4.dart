@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'dart:io';
 import 'package:lazyplants/main.dart';
@@ -7,8 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen4 extends StatefulWidget {
-  const AddPlantScreen4({
+  Plant plant;
+
+  AddPlantScreen4({
     Key key,
+    @required this.plant,
   }) : super(key: key);
 
   @override
@@ -23,26 +27,30 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
     var pickedFile;
     if (type == "camera") {
       pickedFile = await picker.getImage(source: ImageSource.camera);
-    }
-    else if (type== "gallery")
-    {
+    } else if (type == "gallery") {
       pickedFile = await picker.getImage(source: ImageSource.gallery);
     }
 
     setState(() {
       if (pickedFile != null) {
         // dart:io -> File isn't available in Flutter Web
-        if(kIsWeb)
-        {
+        if (kIsWeb) {
           _image = Image.network(pickedFile.path);
-        }
-        else {
+        } else {
           _image = Image.file(File(pickedFile.path));
         }
       } else {
         print('No image selected.');
       }
     });
+  }
+
+  saveChanges() {
+    print(widget.plant.plantName.toString());
+    print(widget.plant.plantId.toString());
+    print(widget.plant.soilMoisture.toString());
+    api.patchPlant(widget.plant.plantId, widget.plant.plantName,
+        widget.plant.room, widget.plant.soilMoisture.toString(), widget.plant.plantPic);
   }
 
   @override
@@ -66,7 +74,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 80),
                 child: Text(
-                  'addPlant4_title' .tr,
+                  'addPlant4_title'.tr,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -81,6 +89,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
+                  saveChanges();
                 },
                 highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
@@ -101,7 +110,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   padding: const EdgeInsets.only(
                       left: 30.0, right: 30.0, top: 12, bottom: 12),
                   child: Text(
-                    'useCamera' .tr,
+                    'useCamera'.tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -116,6 +125,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
+                  saveChanges();
                 },
                 highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
@@ -136,7 +146,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   padding: const EdgeInsets.only(
                       left: 35.0, right: 35.0, top: 12, bottom: 12),
                   child: Text(
-                    'pickGallery' .tr,
+                    'pickGallery'.tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -158,7 +168,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10, bottom: 10),
                         child: Text(
-                          'back' .tr,
+                          'back'.tr,
                           style: TextStyle(fontSize: 14),
                         ),
                       ),
@@ -166,6 +176,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                     Text("|"),
                     FlatButton(
                       onPressed: () {
+                        saveChanges();
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -179,7 +190,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         padding: const EdgeInsets.only(
                             right: 15.0, top: 10, bottom: 10),
                         child: Text(
-                          'finish' .tr,
+                          'finish'.tr,
                           style: TextStyle(fontSize: 14),
                         ),
                       ),

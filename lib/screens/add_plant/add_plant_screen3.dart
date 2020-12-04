@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen4.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen3 extends StatefulWidget {
-  const AddPlantScreen3({
+  Plant plant;
+
+  AddPlantScreen3({
     Key key,
+    @required this.plant,
   }) : super(key: key);
 
   @override
@@ -13,7 +17,6 @@ class AddPlantScreen3 extends StatefulWidget {
 }
 
 class _AddPlantScreen3State extends State<AddPlantScreen3> {
-
   double _currentHumiditySliderValue = 70;
 
   Future _showMyDialog() async {
@@ -27,13 +30,14 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
             child: ListBody(
               children: <Widget>[
                 Text(
-                  'addPlant3_helpHumidityTitle' .tr,
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  'addPlant3_helpHumidityTitle'.tr,
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0),
                   child: Text(
-                    'addPlant3_helpHumidityText' .tr,
+                    'addPlant3_helpHumidityText'.tr,
                     style: TextStyle(color: Colors.black, fontSize: 16),
                   ),
                 ),
@@ -74,7 +78,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 80),
                 child: Text(
-                  "addPlant3_title" .tr,
+                  "addPlant3_title".tr,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -84,7 +88,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
               Padding(
                 padding: EdgeInsets.only(left: 60.0, right: 60.0),
                 child: Text(
-                  'addPlant3_humidityText' .tr,
+                  'addPlant3_humidityText'.tr,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -99,6 +103,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                     activeColor: Colors.blueAccent,
                     label: _currentHumiditySliderValue.round().toString(),
                     onChanged: (double value) {
+                      widget.plant.soilMoisture = value;
                       setState(() {
                         _currentHumiditySliderValue = value;
                       });
@@ -119,7 +124,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                     top: 10,
                   ),
                   child: Text(
-                    'needHelp' .tr,
+                    'needHelp'.tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -127,9 +132,15 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
               const SizedBox(height: 10),
               FlatButton(
                 onPressed: () {
+                  // set default value if nothing has changed
+                  if (widget.plant.soilMoisture == null) {
+                    widget.plant.soilMoisture = _currentHumiditySliderValue;
+                  }
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddPlantScreen4()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddPlantScreen4(plant: widget.plant)),
                   );
                 },
                 highlightColor: Colors.transparent,
@@ -151,7 +162,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                   padding: const EdgeInsets.only(
                       left: 45.0, right: 45.0, top: 12, bottom: 12),
                   child: Text(
-                    'next' .tr,
+                    'next'.tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -168,7 +179,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),
                   child: Text(
-                    'back' .tr,
+                    'back'.tr,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/db_models.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lazyplants/main.dart';
 import 'add_plant_screen2.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen1 extends StatelessWidget {
-  const AddPlantScreen1({
+  
+  AddPlantScreen1({
     Key key,
   }) : super(key: key);
+
+  final Plant plant = Plant();
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +100,7 @@ class AddPlantScreen1 extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AddPlantScreen2()),
+                          builder: (context) => AddPlantScreen2(plant: plant,)),
                     );
                   },
                   highlightColor: Colors.transparent,

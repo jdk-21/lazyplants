@@ -84,7 +84,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             child: Row(
               children: [
                 Text(
-                  'hi' .tr + ', John!',
+                  'hi'.tr + ', John!',
                   style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -123,7 +123,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       child: TextField(
                         onChanged: (value) {},
                         decoration: InputDecoration(
-                          hintText: 'home_searchText' .tr,
+                          hintText: 'home_searchText'.tr,
                           hintStyle: TextStyle(
                             color: kPrimaryColor.withOpacity(0.5),
                           ),
@@ -159,7 +159,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     children: <Widget>[
                       IconButton(
                         icon: Icon(Icons.menu_rounded, color: Colors.white),
-                        onPressed: () {
+                        onPressed: () async {
                           Scaffold.of(context).openDrawer();
                         },
                       ),
