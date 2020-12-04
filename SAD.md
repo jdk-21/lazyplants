@@ -8,10 +8,10 @@ using a number of different architectural views to depict different aspects of t
 It is intended to capture and convey the significant architectural decisions which have been made on the system.
 
 ### 1.2 Scope
-The scope of this SAD is to show the architecture of the vnv project. Affected are the class structure, the use cases and the data representation.
+The scope of this SAD is to show the architecture of the project. Affected are the class structure, the use cases and the data representation.
 
 ### 1.3 References
-- [GitHub](https:)
+- [GitHub](https://github.com/jdk-21/lazyplants)
 - [Blog](https:)
 - [Documentation](https:)
 - [Software Requirements Specification]()
