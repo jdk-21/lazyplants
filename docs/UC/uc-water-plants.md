@@ -3,10 +3,10 @@
 # 1. Water Plant
 
 ## 1.1 Brief Description
-The watering of the plant is completely automatic, when creating the plant we set a default value (x) for the soil moisture of the plant. The user can adjust this value (x) via app to the corresponding plant.
+The watering of the plant is completely automatic, when creating the plant we set a default value (30) for the soil moisture of the plant. The user can adjust this value (30) via app to the corresponding plant.
 
 ## 1.2 Mockup
-![Mockup](uc-water-plants-mockup.png)
+n/a
 
 ## 1.3 Screenshot
 n/a
