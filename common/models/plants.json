@@ -1,22 +1,21 @@
 {
   "name": "Plants",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
     "plantName": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "plantDate": {
-      "type": "date",
-      "required": true
+      "type": "date"
     },
     "espId": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": {"unique": true}
     },
     "room": {
       "type": "string"

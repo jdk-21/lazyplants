@@ -26,16 +26,16 @@
     "plantData": {
       "type": "hasMany",
       "model": "PlantData",
-      "foreignKey": ""
+      "foreignKey": "memberId"
     }
   },
-  "acls" : [
+  "acls": [
     {
-     "accessType": "READ",
-     "principalType": "ROLE",
-     "principalId": "$everyone",
-     "permission": "ALLOW"
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
     }
-   ],
+  ],
   "methods": {}
 }
