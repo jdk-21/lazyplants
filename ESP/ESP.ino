@@ -153,6 +153,8 @@ void loop() {
     Serial.println(Plant["plantname"]);
   }
   Serial.println();
+  
+  // Pflanzen Daten ausgeben
   soll_soilMoisture = Plant["soilMoisture"];
   Serial.print("Soll soilMoisture: "); Serial.print(soll_soilMoisture); Serial.println("%");
   soll_humidity = Plant["humidity"];
@@ -174,7 +176,7 @@ void loop() {
   Serial.println();
 
   // Actions - Luftfeuchteok? Bodenfeuchte ok?
-  if (humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) {
+  if ((humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) && Tanklevel > minTanklevel ) {
     Serial.println("Luftfeuchte erhöhen!");
     luftfeuchtigkeit_erhoehen(soll_humidity, soll_soilMoisture);
   }

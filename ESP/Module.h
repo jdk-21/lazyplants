@@ -455,6 +455,7 @@ void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGr
   const int wartezeit = 10000; // Wartezeit in ms (Wert sollte recht hoch sein)
   const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
   int counter = 0;
+  bool ok = false;
 
   int feuchteAktuell = luftfeuchtigkeit();
   int feuchteAktuellBoden = bodenfeuchte();
@@ -462,15 +463,22 @@ void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGr
   // Optimierung: evtl. Test ob Deckel zu ist
   while ((feuchteAktuell < FeuchtigkeitswertAir) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
   {
-    counter++;
-    Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
-    Serial.println(counter);
-    pumpen(true);
-    delay(spruezeit);
-    pumpen(false);
-    delay(wartezeit);
-    feuchteAktuell = luftfeuchtigkeit();
-    feuchteAktuellBoden = bodenfeuchte();
+    counter++;  
+    if (fuellsstand() > minTanklevel){
+      
+      Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
+      Serial.println(counter);
+      pumpen(true);
+      delay(spruezeit);
+      pumpen(false);
+      delay(wartezeit);
+      feuchteAktuell = luftfeuchtigkeit();
+      feuchteAktuellBoden = bodenfeuchte();
+    } else{
+      Serial.println("ERROR: Tank nicht voll genug!");
+      return;
+    }
+    
   }
   Serial.println("Luftfeuchtigkeit erreicht.");
   return;
