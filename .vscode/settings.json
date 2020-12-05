@@ -1,0 +1,6 @@
+{
+    "atlascode.bitbucket.enabled": false,
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
+}
