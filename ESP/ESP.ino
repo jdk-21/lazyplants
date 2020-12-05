@@ -60,7 +60,7 @@ float humidity;
 float temp;
 int Tanklevel;
 bool gegossen = false;
-const int toleranz = 20 // Angabe der Toleranz in %
+const int toleranz = 20; // Angabe der Toleranz in %
 
 //Preferences preferences; // Permanentes Speichern von Variablen
 
@@ -105,7 +105,7 @@ void setup() {
 
   MemberID = Data["userId"];
   Serial.print("MemberID: ");
-  Serial.println(MemberId);
+  Serial.println(MemberID);
   if (token == "null") {
     Serial.println("Login nicht möglich!");
     ESP.restart();
@@ -165,7 +165,7 @@ void loop() {
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  Tanklevel = fuellsstand(max_Tankhoehe);
+  Tanklevel = fuellsstand();
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
   soilMoisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
@@ -176,7 +176,7 @@ void loop() {
   // Actions - Luftfeuchteok? Bodenfeuchte ok?
   if (humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) {
     Serial.println("Luftfeuchte erhöhen!");
-    luftfeuchtigkeit_erhoehen(Plant["humidity"]);
+    luftfeuchtigkeit_erhoehen(soll_humidity, soll_soilMoisture);
   }
   if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * toleranz / 100))) {
     Serial.println("Gießen!");

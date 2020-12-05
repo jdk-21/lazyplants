@@ -361,12 +361,12 @@ int entfernung(){
 int fuellsstand(){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
   int Tankhoehe = maxTankhoehe;
-  int Value = entfernung();
-  Value = Value*100/Tankhoehe;
+  int value = entfernung();
+  value = value * 100 / Tankhoehe;
   if (value <= minTanklevel){
     value = 0; // Sicherheitsspielraum für die Pumpe
   }
-  return (Value);
+  return (value);
 }
 
 int bodenfeuchte(){
@@ -376,7 +376,6 @@ int bodenfeuchte(){
   Serial.print("Bodenfeuchte Messwert: ");
   Serial.println(value);
   value = (((value - feuchtemin) *100) /feuchtemax);
-  //Serial.print("Bodenfeuchte Normwert: ");
   //Serial.println(value);
   return value;
 }
@@ -418,7 +417,7 @@ void giesen(int Feuchtigkeitswert){
 
   int feuchteAktuell = bodenfeuchte();
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
-  const int lange_giesen = kurz_giesen * 1,5; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
+  const int lange_giesen = 4000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
   bool ok = false;
 
@@ -461,7 +460,7 @@ void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGr
   int feuchteAktuellBoden = bodenfeuchte();
 
   // Optimierung: evtl. Test ob Deckel zu ist
-  while ((feuchteAktuell < Feuchtigkeitswert) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
+  while ((feuchteAktuell < FeuchtigkeitswertAir) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
   {
     counter++;
     Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
