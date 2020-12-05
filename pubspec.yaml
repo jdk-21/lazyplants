@@ -25,10 +25,17 @@ dependencies:
     sdk: flutter
   url_launcher: ^5.7.10
   image_picker: ^0.6.7+14
+  get: ^3.17.1
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
+  path_provider: ^1.6.24
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: ^0.8.2
+  build_runner: ^1.10.6
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

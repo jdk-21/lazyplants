@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lazyplants/screens/home_screen.dart';
+import 'package:get/get.dart';
+import 'package:lazyplants/translation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+import 'components/api_connector.dart';
+import 'components/db_models.dart';
+
+var api = ApiConnector();
 
 const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;
@@ -19,15 +29,32 @@ Map<int, Color> primaryMaterialColor =
 900:Color.fromRGBO(12,140,94, 1),
 };
 
-void main() {
+void main() async  {
+  WidgetsFlutterBinding.ensureInitialized();
+  Directory dir = await getApplicationDocumentsDirectory();
+    Hive
+      ..init(dir.path)
+      ..registerAdapter(PlantAdapter())
+      ..registerAdapter(PlantDataAdapter());
+    print('init end');
+    await api.initBox();
+    print('box opened');
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // constant colors
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // gets the system locale, doesn't work with web
+    final String defaultLocale = Platform.localeName;
+
+    return GetMaterialApp(
+      // set translation
+      translations: Translation(),
+      
+      locale: Locale(defaultLocale), // translations will be displayed in that locale
+      fallbackLocale: Locale('en', 'US'), // specify the fallback locale in case an invalid locale is selected.
       debugShowCheckedModeBanner: false,
       title: 'LazyPlants',
       theme: ThemeData(
