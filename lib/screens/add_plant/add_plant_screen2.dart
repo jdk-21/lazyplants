@@ -142,6 +142,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                       api.readPlant().forEach((key, value) {
                         if(value['espId'] == dropdownHelper) {
                           widget.plant.plantId = value['id'];
+                          widget.plant.memberId = value['memberId'];
                         }
                       });
                       Navigator.push(

@@ -40,6 +40,7 @@ class ApiConnector {
     try {
       var response = await http.get(baseUrl + "Plants?access_token=" + token);
       if (response.statusCode == 200) {
+        print("ok");
         return await jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         // show login screen
@@ -51,10 +52,10 @@ class ApiConnector {
     }
   }
 
-  patchPlant(plantId, plantName, room, soilMoisture, plantPic) async {
+  patchPlant(plantId, espId, plantName, room, soilMoisture, plantPic, memberId) async {
     try {
       var response = await http.patch(baseUrl + "Plants?access_token=" + token,
-          body: {"plantName": plantName, "plantId": plantId, "soilMoisture": soilMoisture});
+          body: {"plantName": plantName, "espId": espId, "id": plantId, "soilMoisture": soilMoisture, "memberId": memberId});
       if (response.statusCode == 200) {
         print("ok");
         return await jsonDecode(response.body);
