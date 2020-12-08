@@ -28,7 +28,7 @@ The scope of this SAD is to show the architecture of the project. Affected are t
 [Use Case Diagram Water Plant](https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UC/uc-water-plants.png)
 
 ## 5. Logical View
-[MVC-UML](https:)
+[MVC-UML](https://raw.githubusercontent.com/jdk-21/lazyplants/master/docs/UML/out/class_diagram_20201208.png)
 
 
 ## 6. Process View
