@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/splashscreen.dart';
 import 'package:lazyplants/translation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,6 +39,7 @@ void main() async  {
       ..registerAdapter(PlantDataAdapter());
     print('init end');
     await api.initBox();
+    await api.cachePlant();
     print('box opened');
   runApp(MyApp());
 }
@@ -62,7 +64,7 @@ class MyApp extends StatelessWidget {
         textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white),
         primarySwatch: MaterialColor(0xff0C8C5E, primaryMaterialColor),
       ),
-      home: SplashScreen(),
+      home: HomeScreen(),
     ); 
   }
 }

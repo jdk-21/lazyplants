@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 class ApiConnector {
   var baseUrl = 'https://api.kie.one/api/';
   var token =
-      "ZnH7XjCmYRFpp09fifE4B3eZl980ZNepC4ADOwTM4Qif30H2FHxT0HMtDAurRYBa";
+      "yr0apRPVhOxcDn4DoTAq427osxh4of7c78iepw4ALCcBJHnpfKO3wgYkWpd4aA4O";
 
   Box dataBox;
   Box plantBox;
@@ -44,8 +44,10 @@ class ApiConnector {
         return await jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         // show login screen
+        print(response.statusCode);
         return "error";
       } else
+        print(response.statusCode);
         return "error";
     } catch (SocketException) {
       print('No internet connection');
@@ -85,6 +87,7 @@ class ApiConnector {
           for (var d in data) {
             plantBox.add(d);
           }
+          print('cached');
         });
       }
     });
