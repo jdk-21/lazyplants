@@ -34,7 +34,5 @@ void loop() {
   delay(500);
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
-  connect(ssid, pw); //WLAN Verbindung einrichten
-}
-  
+  connect(ssid, pw); //WLAN Verbindung einrichten  
 }
