@@ -15,9 +15,9 @@
 #include <time.h> 
 
 // PINs
-#define ultraschalltrigger 34 // Pin an HC-SR04 Trig
-#define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 14
+#define ultraschalltrigger 15 // Pin an HC-SR04 Trig
+#define ultraschallecho 4    // Pin an HC-SR04 Echo
+#define BodenfeuchtigkeitPIN 39
 #define PumpePIN 17
 #define dhtPIN 23
 #define dhtType DHT22
@@ -56,11 +56,10 @@ bool connect(const char* ssid,const char* password){
     WiFi.begin(ssid, password);
     delay(500);
     Serial.println();
-    Serial.print("Connecting to WiFi..");
     bool Stop = false;
     int counter =0;
-
-    while ((WiFi.status() != WL_CONNECTED) && !(Stop)) {
+    Serial.print("Connecting to WiFi");
+    while ((WiFi.status() != WL_CONNECTED) && !(Stop)) {      
       counter ++;
       delay(1000);
       Serial.print(".");
@@ -107,7 +106,6 @@ bool connect(const char* ssid,const char* password){
     
 
 }
-
 String translate(int ResponseCode){
   String f_msg ;
   switch (ResponseCode)
@@ -342,22 +340,19 @@ int entfernung(){
     // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
     long entfernung=0;
     long zeit=0;
-    int counter=0;
-    do{
-      counter++;
-      digitalWrite(ultraschalltrigger, LOW);
-      delayMicroseconds(3);
-      noInterrupts();
-      digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
-      delayMicroseconds(10);
-      digitalWrite(ultraschalltrigger, LOW);
-      zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
-      interrupts();
-      zeit = (zeit/2); // Zeit halbieren, da der SChall den Weg hin und zurück überwindet
-      entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
-    }while(entfernung  == 0 && counter < max_Retry);
+  
+    digitalWrite(ultraschalltrigger, LOW);
+    delayMicroseconds(3);
+    noInterrupts();
+    digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
+    delayMicroseconds(10);
+    digitalWrite(ultraschalltrigger, LOW);
+    zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
+    interrupts();
+    zeit = (zeit/2); // Zeit halbieren
+    entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
     return(entfernung);
-  }
+}
   
 int fuellsstand(){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
@@ -370,15 +365,15 @@ int fuellsstand(){
   return (value);
 }
 
-int bodenfeuchte(){
+int bodenfeuchte (int BodenfeuchtePIN){
   // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
   // Der Normierte Wert wird in % angegeben.
-    int value = analogRead(BodenfeuchtigkeitPIN);
-    Serial.print("fMesswert: ");
-    Serial.println(value);
+    int value = analogRead(BodenfeuchtePIN);
+    //Serial.print("fMesswert: ");
+    //Serial.println(value);
     value = 100 - (((value - feuchtemin) *100) /feuchtemax);
-    Serial.print("fNormwert: ");
-    Serial.println(value);
+    //Serial.print("fNormwert: ");
+    //Serial.println(value);
     return value;
 }
 
@@ -412,26 +407,33 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
     Serial.println("OFF");
   }
 }
+/*
+void giesen(int Feuchtigkeitswert){
+  // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
+  // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
 
-void giesen(int sollFeuchtigkeitswert, int Tanklevel){
+  //int feuchteAktuell = bodenfeuchte();
+  const int giesenZeit = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
+  bool ok = false;
 
-  int feuchteAktuell = bodenfeuchte();
-  const int giesenZeit = 5000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
-
-  if (Tanklevel > minTanklevel){
-    if (feuchteAktuell >= sollFeuchtigkeitswert){
-      Serial.print("Boden feucht genug. Wert: ");
-      Serial.print(feuchteAktuell);
-      Serial.println("%");
-      return;
-    }else{
-      Serial.println("Gießen.");
-      pumpen(true);
-      delay(giesenZeit);
-      pumpen(false);
-    }
+  if (fuellsstand() > minTanklevel){
+    ok = true;
   }
-  
+  if (feuchteAktuell >= Feuchtigkeitswert && ok){
+    Serial.print("Boden feucht genug. Wert: ");
+    Serial.print(feuchteAktuell);
+    Serial.println("%");
+    return;
+  }else if (feuchteAktuell < Feuchtigkeitswert && ok){
+    Serial.println("Gießen.");
+    pumpen(true);
+    delay(giesenZeit);
+    pumpen(false);
+    delay(wartezeit);
+    //feuchteAktuell = bodenfeuchte();
+    giesen(Feuchtigkeitswert);
+  }
 }
 
 void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGround){
@@ -443,7 +445,7 @@ void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGr
   int counter = 0;
 
   int feuchteAktuell = luftfeuchtigkeit();
-  int feuchteAktuellBoden = bodenfeuchte();
+  //int feuchteAktuellBoden = bodenfeuchte();
 
   // Optimierung: evtl. Test ob Deckel zu ist
   while ((feuchteAktuell < FeuchtigkeitswertAir) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
@@ -456,8 +458,8 @@ void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGr
     pumpen(false);
     delay(wartezeit);
     feuchteAktuell = luftfeuchtigkeit();
-    feuchteAktuellBoden = bodenfeuchte();
+    //feuchteAktuellBoden = bodenfeuchte();
   }
   Serial.println("Luftfeuchtigkeit erreicht.");
   return;
-}
+}*/

@@ -1,8 +1,8 @@
 /* Name: Steuerung ESP
    Projekt: LazyPlants
    Erstelldatum:  01.11.2020 18:00
-   Änderungsdatum: 26.11.2020 10:00
-   Version: 0.1.3
+   Änderungsdatum: 05.02.2021 12:30
+   Version: 0.1.4
    History:
 */
 
@@ -14,7 +14,7 @@
 
 // Declarationen
 // Connections
-const String espID = "ESP_Blume_Test";
+const String espID = "espBlume3";
 String tableLogin = "Member"; // stelle an der sich der ESP bei der API einloggen muss
 String tableGet = "Plants"; // Pflanze
 String tableDB = "PlantData"; // Pflanzen Datensätze
@@ -71,12 +71,7 @@ void firstStart() {
   Serial.println("");
   Serial.println("Reset Start");
   digitalWrite(PumpePIN, HIGH);
-  connect(ssid, pw); //WLAN Verbindung einrichten
-
-  Serial.println("Hole NTP Zeit");
-  configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
-  getLocalTime(&  local, 5000);        // Versuche 5 s zu Synchronisieren
-
+  
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
@@ -94,9 +89,32 @@ void setup() {
     Serial.println("Start Nr.: " + String(bootZaeler));
   }
 
+}
+void loop() {
+
+  // Messwerte erfassen
+  temp = temperatur();
+  Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
+  int level = entfernung();
+  delay(500);
+  Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
+  Tanklevel = fuellsstand();
+  delay(500);
+  Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
+  soilMoisture = bodenfeuchte();
+  delay(500);
+  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
+  humidity = luftfeuchtigkeit();
+  delay(500);
+  Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
+  Serial.println();
+
+  // WiFi
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
-
+  
+  connect(ssid, pw); //WLAN Verbindung einrichten
+  
   Data = login(email, pw_API); // Login bei API und Token erhalten
 
   token = Data["id"];
@@ -106,14 +124,16 @@ void setup() {
   MemberID = Data["userId"];
   Serial.print("MemberID: ");
   Serial.println(MemberID);
-  if (token == "null") {
-    Serial.println("Login nicht möglich!");
-    ESP.restart();
-  }
+    if (token == "null") {
+      Serial.println("Login nicht möglich!");
+      ESP.restart();
+    }
   gegossen = false;
-}
 
-void loop() {
+  Serial.println("Hole NTP Zeit");
+  configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
+  getLocalTime(&  local, 5000);        // Versuche 5 s zu Synchronisieren
+  
   //Zeit
   tm local;
   getLocalTime(&local); //Abrufen der Zeit
@@ -150,37 +170,21 @@ void loop() {
 
   } else {
     Serial.print("GET Plant with Name: ");
-    Serial.println(Plant["plantname"]);
+    Serial.println(Plant["plantName"]);
   }
   Serial.println();
   soll_soilMoisture = Plant["soilMoisture"];
   Serial.print("Soll soilMoisture: "); Serial.print(soll_soilMoisture); Serial.println("%");
   soll_humidity = Plant["humidity"];
   Serial.print("Soll humidity: "); Serial.print(soll_humidity);  Serial.println("%");
-  plantID = Plant["plantsId"];
+  plantID = Plant["id"];
   Serial.print("PlantID: "); Serial.println(plantID);
 
-  // Messwerte erfassen
-  temp = temperatur();
-  Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
-  int level = entfernung();
-  Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  Tanklevel = fuellsstand();
-  Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
-  soilMoisture = bodenfeuchte();
-  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
-  humidity = luftfeuchtigkeit();
-  Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
-  Serial.println();
-
-  // Actions - Luftfeuchteok? Bodenfeuchte ok?
-  if (humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) {
-    Serial.println("Luftfeuchte erhöhen!");
-    luftfeuchtigkeit_erhoehen(soll_humidity, soll_soilMoisture);
-  }
-  if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * toleranz / 100))) {
+  // Actions - Bodenfeuchte ok?
+  
+  if (soilMoisture < (soll_soilMoisture- - (soll_soilMoisture  * (toleranz / 100)))) {
     Serial.println("Gießen!");
-    giesen(Plant["soilMoisture"]);
+    giesen(Plant["soilMoisture"],Tanklevel );
     gegossen = true;
   }
 
@@ -191,13 +195,13 @@ void loop() {
   Messages[3] = "\"temperature\":\"" + String(temp) + "\",";
   Messages[4] = "\"watertank\":\"" + String(Tanklevel) + "\",";
   Messages[5] = "\"water\":\"" + String(gegossen) + "\",";
-  Messages[6] = "\"measuring_time\":\"" + Time + "\",";
+  Messages[6] = "\"measuringTime\":\"" + Time + "\",";
   Messages[7] = "\"plantsId\":\"" + plantID + "\",";
   Messages[8] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
 
   for(int i=0;i<= 8 ;i++){
     msg = msg + Messages[i];
-    Serial.print(i);
+    //Serial.print(i);
   }
   Serial.println();
   Serial.println(msg);
@@ -209,14 +213,17 @@ void loop() {
   Serial.println(JSON.stringify(Data));
   counter = 0;
   do {
-    ResponseCode = post_json_int(ServerPath, Data);
-    counter++;
-    if (counter > max_Retry) {
-      Serial.println("ERROR: POST Messdaten nicht möglich!");
+    if(counter > 0){
+      delay(500);
     }
-  } while (ResponseCode != 200 && counter <= max_Retry);
+    ResponseCode = post_json_int (ServerPath, Data);
+    counter ++;
+    if (counter > max_Retry ) {
+      Serial.println("ERROR: POST Messdaten nicht möglich!" );
+    }
+  } while (ResponseCode != 200 && counter <= max_Retry );
   // Deep Sleep
   Serial.println("Deep Sleep");
-  esp_sleep_enable_timer_wakeup(IntervallTime);    // Deep Sleep Zeit einstellen
-  esp_deep_sleep_start();
+  esp_sleep_enable_timer_wakeup  (IntervallTime );    // Deep Sleep Zeit einstellen
+  esp_deep_sleep_start  ();
 }

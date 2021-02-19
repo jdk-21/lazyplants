@@ -9,8 +9,8 @@
 //Declarationen
 
   //Sensoren 
-  #define ultraschalltrigger 34 // Arduino Pin an HC-SR04 Trig
-  #define ultraschallecho 35    // Arduino Pin an HC-SR04 Echo
+  #define ultraschalltrigger 15 // Arduino Pin an HC-SR04 Trig
+  #define ultraschallecho 4    // Arduino Pin an HC-SR04 Echo
 
   //weitere Parameter
   #define Tankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt

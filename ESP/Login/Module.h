@@ -239,7 +239,6 @@ int post_json_int(String ServerPath, JSONVar Message){
     int httpResponseCode = http.POST(msg); // Übertragung
 
     Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
     translate(httpResponseCode);     
     
     http.end();
@@ -373,13 +372,12 @@ int fuellsstand(){
 int bodenfeuchte(){
   // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
   // Der Normierte Wert wird in % angegeben.
-    int value = analogRead(BodenfeuchtigkeitPIN);
-    Serial.print("fMesswert: ");
-    Serial.println(value);
-    value = 100 - (((value - feuchtemin) *100) /feuchtemax);
-    Serial.print("fNormwert: ");
-    Serial.println(value);
-    return value;
+  int value = analogRead(BodenfeuchtigkeitPIN);
+  Serial.print("Bodenfeuchte Messwert: ");
+  Serial.println(value);
+ value = 100 - (((value - feuchtemin) *100) /feuchtemax);
+  //Serial.println(value);
+  return value;
 }
 
 float luftfeuchtigkeit(){
@@ -413,25 +411,41 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
   }
 }
 
-void giesen(int sollFeuchtigkeitswert, int Tanklevel){
+void giesen(int Feuchtigkeitswert){
+  // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
+  // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
 
   int feuchteAktuell = bodenfeuchte();
-  const int giesenZeit = 5000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
+  const int lange_giesen = 4000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
+  const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
+  bool ok = false;
 
-  if (Tanklevel > minTanklevel){
-    if (feuchteAktuell >= sollFeuchtigkeitswert){
-      Serial.print("Boden feucht genug. Wert: ");
-      Serial.print(feuchteAktuell);
-      Serial.println("%");
-      return;
-    }else{
-      Serial.println("Gießen.");
-      pumpen(true);
-      delay(giesenZeit);
-      pumpen(false);
-    }
+  if (fuellsstand() > minTanklevel){
+    ok = true;
   }
-  
+  if (feuchteAktuell >= Feuchtigkeitswert && ok){
+    Serial.print("Boden feucht genug. Wert: ");
+    Serial.print(feuchteAktuell);
+    Serial.println("%");
+    return;
+  } else if (feuchteAktuell <= (Feuchtigkeitswert / 2) && ok) { // Hoher Wasserbedarf
+    Serial.println("Lange gießen.");
+    pumpen(true);
+    delay(lange_giesen);
+    pumpen(false);
+    delay(wartezeit);
+    feuchteAktuell = bodenfeuchte();
+    giesen(Feuchtigkeitswert);
+  } else if (feuchteAktuell < Feuchtigkeitswert && ok){
+    Serial.println("Kurz gießen.");
+    pumpen(true);
+    delay(kurz_giesen);
+    pumpen(false);
+    delay(wartezeit);
+    feuchteAktuell = bodenfeuchte();
+    giesen(Feuchtigkeitswert);
+  }
 }
 
 void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGround){
