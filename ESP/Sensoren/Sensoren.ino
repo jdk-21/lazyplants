@@ -6,13 +6,14 @@ const char* ssid = "TrojaNet";
 const char* pw = "50023282650157230429";
 
 void setup() {
+  Serial.begin(115200);
   delay(500);
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(BodenfeuchtigkeitPIN, INPUT);
   //pinMode(axyz, INPUT);
-  Serial.begin(115200);
   delay(1000);
+  
   
 }
 
