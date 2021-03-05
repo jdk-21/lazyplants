@@ -75,7 +75,8 @@ void setup() {
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
-  connect(ssid, pw); //WLAN Verbindung einrichten  
+  dht.setup(dhtPIN, DHTesp::dhtType);
+  connect(ssid, pw); //WLAN Verbindung einrichten
   Serial.println("Zeitzone einstellen");
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
@@ -164,12 +165,13 @@ void loop() {
     Serial.print("PlantID: "); Serial.println(plantID);
 
   
-    // Actions - Bodenfeuchte ok?    
+    // Actions - Bodenfeuchte ok?
+    gegossen = false;
     if (soilMoisture < (soll_soilMoisture - (soll_soilMoisture  * (toleranz / 100)))) {
       Serial.println("Gießen!");
       gegossen = giesen(Plant["soilMoisture"],Tanklevel );
     }
-
+    Serial.println(Time);
     // Datensatz bauen
     Messages[0] = "{\"espId\":\"" + espID + "\",";
     Messages[1] = "\"soilMoisture\":\"" + String(soilMoisture) + "\",";
@@ -180,15 +182,18 @@ void loop() {
     Messages[6] = "\"measuringTime\":\"" + Time + "\",";
     Messages[7] = "\"plantsId\":\"" + plantID + "\",";
     Messages[8] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
-  
+
+    msg = "";
     for(int i=0;i<= 8 ;i++){
       msg = msg + Messages[i];
+      Serial.println(Messages[i]);
     }
     //Serial.println();
     //Serial.println(msg);
 
     // Datensatz übertragen
     Serial.println();
+    Serial.println("Uebertragen: ");
     ServerPath = ("http://" + ipadresse + "/api/" + tableDB + "?access_token=" + token);
     Serial.println(ServerPath);
     Data = JSON.parse(msg);
@@ -206,5 +211,8 @@ void loop() {
     } while ((ResponseCode != 200) && (counter <= max_Retry));
   
     Serial.println("Sleep");
+    Serial.println();
+    Serial.println();
+    Serial.println();
     delay(IntervallTime-1000);    // Wartezeit einstellen
 }

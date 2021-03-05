@@ -7,7 +7,7 @@
  */
 
 #include <WiFi.h> // Verbinden mit dem WLAN (Bibliothek: Arduino Uno WiFi Dev Ed Library)
-#include "DHT.h" //DHT Bibliothek laden
+#include "DHTesp.h" //DHT Bibliothek laden
 #include <Arduino_JSON.h> // Erstellen von JSON Objekten (Bibliothek: Arduino_JSON )
 #include <HTTPClient.h> // HTTP Requests (Bibliothek: ArduinoHttpClient )
 #include <NTPClient.h> // Zeit abfrage (Bibliothek: NTPClient)
@@ -22,8 +22,7 @@
 #define PumpePIN 17
 #define dhtPIN 23
 #define dhtType DHT22
-DHT dht(dhtPIN, dhtType);
-
+DHTesp dht;
 // Umfeld
 #define Relai_Schaltpunkt LOW // definition on Relai bei HIGH oder LOW schaltet
 
@@ -378,23 +377,25 @@ int bodenfeuchte (int BodenfeuchtePIN){
 }
 
 float luftfeuchtigkeit(){
-  dht.begin();
+  //dht.begin();
   int counter = 0;
   float Luftfeuchte;
   do{
     counter++;
-    Luftfeuchte = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeuchte“ speichern
+    Luftfeuchte = dht.getHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeuchte“ speichern
+    delayMicroseconds(40);
   }while((Luftfeuchte > 100) && (counter < max_Retry));
   return Luftfeuchte;  
 }
 
 float temperatur(){
-  dht.begin();  
+  //dht.begin();  
   int counter = 0;
   float Temp;
   do{
     counter++;
-    Temp = dht.readTemperature(); // die Temperatur auslesen und unter „Temp“ speichern
+    Temp = dht.getTemperature(); // die Temperatur auslesen und unter „Temp“ speichern
+    delayMicroseconds(40);
   }while((Temp > 100) && (counter < max_Retry));
   return Temp;  
 }
