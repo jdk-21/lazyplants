@@ -30,8 +30,41 @@ DHTesp dht;
 const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
 const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zeit
 String login_table = "Members"; // zum Anmelden an der API
-const String ipadresse = "178.238.227.46:3000"; // IP ADresse des Servers
+const String domain = "api.kie.one"; // Domain des Servers
 #define max_Retry 5
+const char* root_ca = \
+"-----BEGIN CERTIFICATE-----\n"\
+"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\n"\
+"-----END CERTIFICATE-----\n";
+
 
 
 // Constanten
@@ -164,11 +197,11 @@ JSONVar login(String email, String pw){
   int ResponseCode;
   int counter = 0;
 
-  String ServerPath_login = ("http://"+ ipadresse +"/api/"+ login_table +"/login?");
+  String ServerPath_login = ("https://"+ domain +"/api/"+ login_table +"/login?");
   msg = "{\"email\":\""+ email +"\",\"password\":\""+ pw +"\"}";
 
   HTTPClient http;
-  http.begin(ServerPath_login);
+  http.begin(ServerPath_login, root_ca);
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
   do{
@@ -195,7 +228,7 @@ int patch_json(String ServerPath, JSONVar Message){
     // Wichtig! Der Datensatz muss komplett im JSON Objekt hinterlegt sein nicht nur der zu ändernde Teil und es dürfen keine Undefinierten Inhalte enthalten sein (Errorcode: 402).
     
     HTTPClient http;
-    http.begin(ServerPath);
+    http.begin(ServerPath, root_ca);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
     String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PATCH(msg); // Übertragung
@@ -213,7 +246,7 @@ int put_json(String ServerPath, JSONVar Message){
     // Nicht Definierte Inhalte des DAtensatzes werden neu angelegt. Sollte kein Datensatz vorhanden sein der zum ServerPAth passt wird dieser neue angelegt.
 
     HTTPClient http;
-    http.begin(ServerPath);
+    http.begin(ServerPath, root_ca);
     http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PUT(msg); // Übertragung
@@ -230,7 +263,7 @@ int post_json_int(String ServerPath, JSONVar Message){
     // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
 
     HTTPClient http;
-    http.begin(ServerPath);
+    http.begin(ServerPath, root_ca);
     http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
@@ -250,7 +283,7 @@ JSONVar post_json_json(String ServerPath, JSONVar Message){
 
   JSONVar Data;
   HTTPClient http;
-  http.begin(ServerPath);
+  http.begin(ServerPath, root_ca);
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
   String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
@@ -278,7 +311,7 @@ JSONVar get_json(String ServerPath){
   // Return das den Datensatz als JSON Objekt
 
   HTTPClient http;
-  http.begin(ServerPath); //Startet Verbindung zu Server
+  http.begin(ServerPath, root_ca); //Startet Verbindung zu Server
   int httpResponseCode = http.GET();
   Serial.println();
   Serial.println("GET:");

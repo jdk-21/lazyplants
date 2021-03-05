@@ -20,8 +20,7 @@ String tableGet = "Plants"; // Pflanze
 String tableDB = "PlantData"; // Pflanzen Datensätze
 String email = "patrick@gmail.com";
 String pw_API = "test";
-String ServerPath = ("http://" + ipadresse + "/api/" + tableLogin + "?");
-//String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
+String ServerPath = ("https://" + domain + "/api/" + tableLogin + "?");
 //String filter = "&filter[where][MemberID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
 
 // WLAN
@@ -128,7 +127,7 @@ void loop() {
   
     // prüfen ob Plant existiert
     filter = "&filter[where][memberId]=" + MemberID + "&filter[where][espId]=" + espID ;
-    ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token + filter);
+    ServerPath = ("https://" + domain + "/api/" + tableGet + "?access_token=" + token + filter);
     Plant = get_json(ServerPath);
     Serial.print("Plant: ");
     Serial.println(Plant);
@@ -137,7 +136,7 @@ void loop() {
     if (JSON.stringify(Plant) == "{}") {
       Serial.println("GET Plant failed");
       //Default Plant zusammenstellen
-      ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token);
+      ServerPath = ("https://" + domain + "/api/" + tableGet + "?access_token=" + token);
       Serial.print("New ServerPath: "); Serial.println(ServerPath);
       msg = ("{\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"soilMoisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
       Serial.print("New Plant: "); Serial.println(msg);
@@ -194,7 +193,7 @@ void loop() {
     // Datensatz übertragen
     Serial.println();
     Serial.println("Uebertragen: ");
-    ServerPath = ("http://" + ipadresse + "/api/" + tableDB + "?access_token=" + token);
+    ServerPath = ("https://" + domain + "/api/" + tableDB + "?access_token=" + token);
     Serial.println(ServerPath);
     Data = JSON.parse(msg);
     Serial.println(JSON.stringify(Data));
