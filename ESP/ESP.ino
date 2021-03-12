@@ -54,10 +54,16 @@ RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten 
 struct tm local;
 
 // Sensoren
-int soilMoisture;
-float humidity;
-float temp;
-int Tanklevel;
+int soilMoisture = 0;
+int C_soilMoisture = 0;
+float humidity = 0.0;
+float C_humidity = 0.0;
+float temp = 0.0;
+float C_temp = 0.0;
+int level = 0;
+int C_level = 0;
+int Tanklevel = 0;
+int C_Tanklevel = 0;
 bool gegossen = false;
 const int toleranz = 20; // Angabe der Toleranz in %
 
@@ -101,19 +107,39 @@ void setup() {
 
 void loop() {
     Serial.println("Loop");
-    float temp = temperatur();
+    C_temp = temp;
+    temp = temperatur();
+    if(isnan(temp)){
+      temp = C_temp;
+    }
     delay(1000);
     Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
-    int level = entfernung();
+    C_level = level;
+    level = entfernung();
+    if(isnan(level)){
+      level = C_level;
+    }
     delay(1000);
     Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-    int Tanklevel = fuellsstand();
+    C_Tanklevel = Tanklevel;
+    Tanklevel = fuellsstand();
+    if(isnan(Tanklevel)){
+      Tanklevel = C_Tanklevel;
+    }
     delay(1000);
     Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
-    int soilMoisture = bodenfeuchte(BodenfeuchtigkeitPIN);
+    C_soilMoisture = soilMoisture;
+    soilMoisture = bodenfeuchte(BodenfeuchtigkeitPIN);
+    if(isnan(soilMoisture)){
+      soilMoisture = C_soilMoisture;
+    }
     delay(1000);
     Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
-    float humidity = luftfeuchtigkeit();
+    C_humidity = humidity;
+    humidity = luftfeuchtigkeit();
+    if(isnan(humidity)){
+      humidity = C_humidity;
+    }
     delay(1000);
     Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
     Serial.println();

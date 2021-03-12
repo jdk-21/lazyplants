@@ -372,41 +372,49 @@ int entfernung(){
     // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
     long entfernung=0;
     long zeit=0;
-  
-    digitalWrite(ultraschalltrigger, LOW);
-    delayMicroseconds(3);
-    noInterrupts();
-    digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
-    delayMicroseconds(10);
-    digitalWrite(ultraschalltrigger, LOW);
-    zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
-    interrupts();
-    zeit = (zeit/2); // Zeit halbieren
-    entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+    int counter = 0;
+    do{
+      digitalWrite(ultraschalltrigger, LOW);
+      delayMicroseconds(3);
+      noInterrupts();
+      digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
+      delayMicroseconds(10);
+      digitalWrite(ultraschalltrigger, LOW);
+      zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
+      interrupts();
+      zeit = (zeit/2); // Zeit halbieren
+      entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+      counter++;
+    }while((entfernung > maxTankhoehe) && (counter < max_Retry));
     return(entfernung);
 }
   
 int fuellsstand(){
   // Berechnung des Füllstandes des Tanks Aufgrund der Tankhöhe und der Entfernung zwischen Sensor und Wasseroberfläche. Angabe in %.
-  int Tankhoehe = maxTankhoehe;
-  int value = entfernung();
-  value = value * 100 / Tankhoehe;
-  if (value <= minTanklevel){
-    value = 0; // Sicherheitsspielraum für die Pumpe
-  }
+  int counter = 0;
+  int value;
+  do{
+    value = entfernung();
+    value = value * 100 / maxTankhoehe;
+    if (value <= minTanklevel){
+      value = 0; // Sicherheitsspielraum für die Pumpe
+    }
+    counter++;
+  }while((value > maxTankhoehe)&&(counter < max_Retry));
   return (value);
 }
 
 int bodenfeuchte (int BodenfeuchtePIN){
   // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
   // Der Normierte Wert wird in % angegeben.
-    int value = analogRead(BodenfeuchtePIN);
-    //Serial.print("fMesswert: ");
-    //Serial.println(value);
+  int counter = 0;
+  int value;
+  do{
+    value = analogRead(BodenfeuchtePIN);
     value = 100 - (((value - feuchtemin) *100) /feuchtemax);
-    //Serial.print("fNormwert: ");
-    //Serial.println(value);
-    return value;
+    counter++;
+  }while((value > 100)&&(value < 0) && (counter < max_Retry));
+  return value;
 }
 
 float luftfeuchtigkeit(){
@@ -417,7 +425,7 @@ float luftfeuchtigkeit(){
     counter++;
     Luftfeuchte = dht.getHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeuchte“ speichern
     delayMicroseconds(40);
-  }while((Luftfeuchte > 100) && (counter < max_Retry));
+  }while((Luftfeuchte > 100)&&(Luftfeuchte < 0)&&(counter < max_Retry));
   return Luftfeuchte;  
 }
 
@@ -429,7 +437,7 @@ float temperatur(){
     counter++;
     Temp = dht.getTemperature(); // die Temperatur auslesen und unter „Temp“ speichern
     delayMicroseconds(40);
-  }while((Temp > 100) && (counter < max_Retry));
+  }while((Temp > 100)&&(Temp < -20) && (counter < max_Retry));
   return Temp;  
 }
 
