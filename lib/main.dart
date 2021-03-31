@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:lazyplants/screens/home_screen.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/screens/home_screen.dart';
+import 'package:lazyplants/screens/splashscreen.dart';
 import 'package:lazyplants/translation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -38,6 +39,7 @@ void main() async  {
       ..registerAdapter(PlantDataAdapter());
     print('init end');
     await api.initBox();
+    await api.cachePlant();
     print('box opened');
   runApp(MyApp());
 }
