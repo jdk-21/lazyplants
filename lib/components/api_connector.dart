@@ -19,10 +19,10 @@ class ApiConnector {
 
   getData() async {
     try {
-      var response = await http.get(baseUrl +
+      var response = await http.get(Uri.parse(baseUrl +
           "PlantData?access_token=" +
           token +
-          "&filter[order]=date%20DESC&filter[limit]=20");
+          "&filter[order]=date%20DESC&filter[limit]=20"));
       if (response.statusCode == 200) {
         print(await jsonDecode(response.body));
         return await jsonDecode(response.body);
@@ -38,7 +38,7 @@ class ApiConnector {
 
   getPlant() async {
     try {
-      var response = await http.get(baseUrl + "Plants?access_token=" + token);
+      var response = await http.get(Uri.parse(baseUrl + "Plants?access_token=" + token));
       if (response.statusCode == 200) {
         print("ok");
         return await jsonDecode(response.body);
@@ -56,7 +56,7 @@ class ApiConnector {
 
   patchPlant(plantId, espId, plantName, room, soilMoisture, plantPic, memberId) async {
     try {
-      var response = await http.patch(baseUrl + "Plants?access_token=" + token,
+      var response = await http.patch(Uri.parse(baseUrl + "Plants?access_token=" + token),
           body: {"plantName": plantName, "espId": espId, "id": plantId, "soilMoisture": soilMoisture, "memberId": memberId});
       if (response.statusCode == 200) {
         print("ok");

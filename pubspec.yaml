@@ -23,21 +23,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  url_launcher: ^5.7.10
-  image_picker: ^0.6.7+14
-  get: ^3.17.1
-  hive: ^1.4.4+1
-  hive_flutter: ^0.3.1
-  path_provider: ^1.6.24
+  url_launcher: ^6.0.3
+  image_picker: ^0.7.4
+  get: ^4.1.1
+  hive: ^2.0.1
+  hive_flutter: ^1.0.0
+  path_provider: ^2.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^0.8.2
-  build_runner: ^1.10.6
-  flutter_gherkin: ^1.1.9
-  bdd_widget_test: ^0.1.6
-  clock: ^1.0.1
+  hive_generator: ^1.0.1
+  build_runner: ^1.12.2
+  bdd_widget_test: ^1.0.1
+  clock: ^1.1.0
 
 
 # For information on the generic Dart part of this file, see the
