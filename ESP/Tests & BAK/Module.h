@@ -133,7 +133,7 @@ String translate(int ResponseCode){
   case 404:
     msg = "404: Not Found";
     break;
-  // Fehlend ab 405
+  // Fehlend ab 405 
   default:
     msg = ResponseCode +": unknown"; 
     break;
