@@ -7,6 +7,7 @@ import 'package:lazyplants/main.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();

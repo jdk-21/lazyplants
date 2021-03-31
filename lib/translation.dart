@@ -5,6 +5,11 @@ class Translation extends Translations {
   Map<String, Map<String, String>> get keys => {
         'en_US': {
           //
+          'lazyPlants': 'LazyPlants',
+          'aNewWay': 'A new way to water your plants!',
+          'login': 'Login',
+          'welcomeBack': 'Welcome\nBack',
+          'createAccount': 'Create Accoutn',
           'next': 'Next',
           'cancel': 'Cancel',
           'finish': 'Finish',
