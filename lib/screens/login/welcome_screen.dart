@@ -10,7 +10,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/background.png'),
+              image: AssetImage('assets/images/background.jpg'),
               fit: BoxFit.cover),
         ),
         child: Column(

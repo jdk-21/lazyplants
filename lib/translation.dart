@@ -7,9 +7,11 @@ class Translation extends Translations {
           //
           'lazyPlants': 'LazyPlants',
           'aNewWay': 'A new way to water your plants!',
+          'email': 'E-Mail',
+          'password': 'Password',
           'login': 'Login',
-          'welcomeBack': 'Welcome\nBack',
-          'createAccount': 'Create Accoutn',
+          'helloThere': 'Hello\nThere!',
+          'createAccount': 'Create Account',
           'next': 'Next',
           'cancel': 'Cancel',
           'finish': 'Finish',
@@ -19,6 +21,10 @@ class Translation extends Translations {
           'urlLaunchError': 'Could not launch URL:',
           'useCamera': 'Use Camera',
           'pickGallery': 'Pick from gallery',
+          'credentialsIncorrect': 'Your credentials are incorrect. Try correcting your e-mail or password.',
+          'credentialsMissing': 'Empty credentials',
+          'somethingWrong': 'Something went wrong.',
+          'successfulLogout': 'You successfully logged out.',
 
           // homescreen
           'hi': 'Hi',
