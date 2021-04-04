@@ -83,6 +83,32 @@ class ApiConnector {
     }
   }
 
+  Future<int> getMembersData(String userId) async {
+    try {
+      var response = await http.get(Uri.parse(baseUrl +
+          "Members/" +
+          userId +
+          "?access_token=" +
+          settingsBox.get('token')));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        settingsBox.put('firstName', data['firstname']);
+        settingsBox.put('lastName', data['lastname']);
+        print("got Members data");
+        return 0;
+      } else if (response.statusCode == 401) {
+        // show login screen
+        print(response.statusCode);
+        return 1;
+      } else
+        print(response.statusCode);
+      return 1;
+    } catch (SocketException) {
+      print('No internet connection');
+      return 1;
+    }
+  }
+
   checkLoggedIn() {
     if (settingsBox.get("token") != null)
       return true;
@@ -98,6 +124,8 @@ class ApiConnector {
         print("ok");
         var data = await jsonDecode(response.body);
         settingsBox.put("token", data["id"]);
+        settingsBox.put("userId", data['userId']);
+        await getMembersData(data['userId']);
         return 0;
       } else {
         print(response.statusCode.toString());
@@ -129,6 +157,50 @@ class ApiConnector {
       print(SocketException.toString());
       print('No internet connection');
       return 1;
+    }
+  }
+
+  Future<int> postCreateAccount(String firstName, String lastName,
+      String username, String mail, String password) async {
+    try {
+      var response =
+          await http.post(Uri.parse(baseUrl + "Members/createAccount"), body: {
+        "firstname": firstName,
+        "lastname": lastName,
+        "username": username,
+        "email": mail,
+        "password": password
+      });
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        settingsBox.put('userId', data['id']);
+        settingsBox.put('firstName', data['firstname']);
+        settingsBox.put('lastName', data['lastname']);
+        print("created Account");
+        if (postLogin(mail, password) != 0) return 4;
+        return 0;
+      } else if (response.statusCode == 422) {
+        var data = jsonDecode(response.body);
+        bool emailExists = data['error']['details']['messages']['email'][0] ==
+            "Email already exists";
+        bool usernameExists = data['error']['details']['messages']['username']
+                [0] ==
+            "User already exists";
+        if (emailExists && usernameExists)
+          return 1;
+        else if (emailExists)
+          return 2;
+        else if (usernameExists) return 3;
+        return 0;
+      } else {
+        print(response.statusCode.toString());
+        print('error');
+        return 4;
+      }
+    } catch (SocketException) {
+      print(SocketException.toString());
+      print('No internet connection');
+      return 4;
     }
   }
 

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lazyplants/main.dart';
+import 'package:get/get.dart';
 import 'package:lazyplants/screens/home_screen.dart';
-import 'package:lazyplants/screens/login/create_account_screen1.dart';
-import 'package:lazyplants/screens/login/create_account_screen2.dart';
-import 'package:lazyplants/screens/login/loading_screen.dart';
+import 'package:lazyplants/screens/login/login_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class CreateAccountScreen2 extends StatelessWidget {
+  String firstName;
+  String lastName;
+  String username;
   String mail;
   String password;
+
+  CreateAccountScreen2(this.firstName, this.lastName);
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +24,64 @@ class LoginScreen extends StatelessWidget {
                 fit: BoxFit.cover),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 225, left: 25, bottom: 100),
+                padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'helloThere'.tr,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 45),
+                  'createAccount'.tr,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, left: 45, right: 45),
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  height: 46,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, 0),
+                          blurRadius: 50,
+                          color: Colors.black38,
+                        )
+                      ]),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 0.0),
+                        child: Icon(Icons.person_outline, color: kPrimaryColor),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          onChanged: (value) {
+                            username = value;
+                          },
+                          decoration: InputDecoration(
+                            hintText: "username".tr,
+                            hintStyle: TextStyle(
+                              color: kPrimaryColor.withOpacity(0.5),
+                            ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                              left: 12.0,
+                              right: 12.0,
+                            ),
+                          ),
+                          style: TextStyle(color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Padding(
@@ -131,27 +184,44 @@ class LoginScreen extends StatelessWidget {
                 child: TextButton(
                   onPressed: () async {
                     if (mail != null && password != null) {
-                      if (await api.postLogin(mail, password) == 0) {
+                      var success = await api.postCreateAccount(
+                          firstName, lastName, username, mail, password);
+                      if (success == 0) {
                         // if login was successfull push to HomeScreen()
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
-                      } else {
+                      }
+                      if (success == 1 || success == 2) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('credentialsIncorrect'.tr),
+                            content: Text('emailExists'.tr),
                           ),
                         );
                       }
+                      if (success == 1 || success == 3) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('usernameExists'.tr),
+                          ),
+                        );
+                      }
+                      if (success == 4) {
+                        // no internet connection or something else
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('somethingWrong'.tr),
+                          ),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('credentialsMissing'.tr),
+                        ),
+                      );
                     }
-                    else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('credentialsMissing'.tr),
-                          ),
-                        );
-                      }
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith<Color>(
@@ -177,9 +247,9 @@ class LoginScreen extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CreateAccountScreen1()),
-                        );
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
                 },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.resolveWith<Color>(
@@ -188,7 +258,7 @@ class LoginScreen extends StatelessWidget {
                   }),
                 ),
                 child: Text(
-                  'createAccount'.tr,
+                  'loginInstead'.tr,
                   style: TextStyle(fontSize: 14, color: Colors.white),
                   textAlign: TextAlign.center,
                 ),

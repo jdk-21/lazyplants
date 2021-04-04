@@ -25,6 +25,12 @@ class Translation extends Translations {
           'credentialsMissing': 'Empty credentials',
           'somethingWrong': 'Something went wrong.',
           'successfulLogout': 'You successfully logged out.',
+          'username': 'Username',
+          'loginInstead': 'Login instead?',
+          'firstName': 'First Name',
+          'lastName': 'Last Name',
+          'emailExists': 'This email is already in use.',
+          'usernameExists': 'This username is already in use.',
 
           // homescreen
           'hi': 'Hi',
