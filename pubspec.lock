@@ -29,6 +29,8 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0"
+<<<<<<< HEAD
+=======
   bdd_widget_test:
     dependency: "direct dev"
     description:
@@ -36,6 +38,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+>>>>>>> 5e3802fe3c3611d131151dba3fe36abcd73685c5
   boolean_selector:
     dependency: transitive
     description:
@@ -489,7 +492,11 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
+    version: "1.8.0"
+=======
     version: "1.8.1"
+>>>>>>> 5e3802fe3c3611d131151dba3fe36abcd73685c5
   stack_trace:
     dependency: transitive
     description:
@@ -532,6 +539,16 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.19"
+<<<<<<< HEAD
+  time:
+    dependency: transitive
+    description:
+      name: time
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
+=======
+>>>>>>> 5e3802fe3c3611d131151dba3fe36abcd73685c5
   timing:
     dependency: transitive
     description:
@@ -631,5 +648,9 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
+<<<<<<< HEAD
+  dart: ">=2.12.0-0.0 <3.0.0"
+=======
   dart: ">=2.12.0 <3.0.0"
+>>>>>>> 5e3802fe3c3611d131151dba3fe36abcd73685c5
   flutter: ">=1.22.0"
