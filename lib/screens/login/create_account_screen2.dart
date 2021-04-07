@@ -183,7 +183,7 @@ class CreateAccountScreen2 extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: TextButton(
                   onPressed: () async {
-                    if (mail != null && password != null) {
+                    if (mail != null && password != null && username != null) {
                       var success = await api.postCreateAccount(
                           firstName, lastName, username, mail, password);
                       if (success == 0) {

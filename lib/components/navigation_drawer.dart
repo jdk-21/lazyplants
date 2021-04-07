@@ -153,8 +153,8 @@ class NavigationDrawer extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                onTap: () {
-                  if (api.postLogout() == 0) {
+                onTap: () async {
+                  if (await api.postLogout() == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('successfulLogout'.tr),

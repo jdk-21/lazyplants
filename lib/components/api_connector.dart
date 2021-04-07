@@ -142,7 +142,7 @@ class ApiConnector {
   Future<int> postLogout() async {
     try {
       var response = await http.post(Uri.parse(
-          baseUrl + "Members/logout?access_token" + settingsBox.get('token')));
+          baseUrl + "Members/logout?access_token=" + settingsBox.get('token')));
       if (response.statusCode == 204) {
         settingsBox.delete('token');
         print("logged out");
@@ -164,7 +164,7 @@ class ApiConnector {
       String username, String mail, String password) async {
     try {
       var response =
-          await http.post(Uri.parse(baseUrl + "Members/createAccount"), body: {
+          await http.post(Uri.parse(baseUrl + "Members"), body: {
         "firstname": firstName,
         "lastname": lastName,
         "username": username,
@@ -177,7 +177,7 @@ class ApiConnector {
         settingsBox.put('firstName', data['firstname']);
         settingsBox.put('lastName', data['lastname']);
         print("created Account");
-        if (postLogin(mail, password) != 0) return 4;
+        if (await postLogin(mail, password) != 0) return 4;
         return 0;
       } else if (response.statusCode == 422) {
         var data = jsonDecode(response.body);
