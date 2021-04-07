@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/screens/login/login_screen.dart';
+
+import '../main.dart';
 
 class NavigationDrawer extends StatelessWidget {
   @override
@@ -150,8 +153,25 @@ class NavigationDrawer extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                onTap: () {
-                  Navigator.of(context).pop();
+                onTap: () async {
+                  if (await api.postLogout() == 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('successfulLogout'.tr),
+                          ),
+                        );
+                    Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                        );
+                  }
+                  else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('somethingWrong'.tr),
+                          ),
+                        );
+                  }
                 },
               ),
           ],
