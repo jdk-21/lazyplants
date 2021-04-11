@@ -127,7 +127,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                           content: Text('addPlant2_noName' .tr),
                         ),
                       );
-                    } else if (dropdownHelper == "addPlant2_dropDown" .tr) {
+                    } else if (dropdownHelper == "addPlant2_dropDown" .tr || dropdownHelper == null) {
+                      print(dropdownHelper);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('addPlant2_noESP' .tr),

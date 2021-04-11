@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 _buildList() {
-  List<Widget> listItems = List();
+  List<Widget> listItems = [];
   //Map data;
   var data = api.readPlant();
   data.forEach((key, value) {
