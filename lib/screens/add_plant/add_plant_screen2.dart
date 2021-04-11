@@ -22,7 +22,6 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
   String plantName;
 
   espList() {
-    api.cachePlant();
     var list = <String>["addPlant2_dropDown".tr];
     var data = api.readPlant();
     data.forEach((key, value) {
@@ -127,7 +126,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                           content: Text('addPlant2_noName' .tr),
                         ),
                       );
-                    } else if (dropdownHelper == "addPlant2_dropDown" .tr) {
+                    } else if (dropdownHelper == "addPlant2_dropDown" .tr || dropdownHelper == null) {
+                      print(dropdownHelper);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('addPlant2_noESP' .tr),
