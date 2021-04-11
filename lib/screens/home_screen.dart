@@ -7,13 +7,120 @@ import 'package:lazyplants/main.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    loadDataInList();
+  }
+
+  List<Widget> plantList = [];
+
+  _buildList(List<dynamic> data) {
+    List<Widget> listItems = [];
+    //Map data;
+
+    data.forEach((element) {
+      Plant plant = Plant();
+      element.forEach((key, value) {
+        switch (key) {
+          case 'plantDate':
+            plant.plantDate = DateTime.parse(value);
+            break;
+          case 'plantName':
+            plant.plantName = value;
+            break;
+        }
+      });
+      if (plant.plantName != null && plant.plantDate != null) {
+        listItems.add(Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          child: Card(
+            elevation: 15,
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  child: Column(
+                    children: [
+                      CustomPaint(
+                        painter: CircleIndicator(),
+                        child: Container(
+                          height: 30,
+                        ),
+                      ),
+                      CustomPaint(
+                        painter: WaterIndicator(percentage: 0.6),
+                        child: Container(height: 80),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          plant.plantName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          "15 days alive",
+                          style: TextStyle(
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          'last sync: ' + plant.plantDate.toString(),
+                          style: TextStyle(color: Colors.black45),
+                        ),
+                      ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        "https://images.unsplash.com/photo-1467043198406-dc953a3defa0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=670&q=80",
+                      )),
+                )
+              ],
+            ),
+          ),
+        ));
+      }
+    });
+    if (listItems.length == 0) {
+      listItems.add(Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50.0),
+          child: Text(
+            'home_noPlant'.tr,
+            style: TextStyle(color: Colors.black87),
+          ),
+        ),
+      ));
+    }
+    return listItems;
+  }
+
+  Future<Null> loadDataInList() async {
+    List<dynamic> data = await api.getPlant();
+    setState(() {
+      plantList = _buildList(data);
+    });
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,120 +137,29 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        body: Material(
-            child: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: MySliverAppBar(
-                collapsedHeight: 60,
-                expandedHeight: 250,
-                paddingTop: 20,
-                title: "LazyPlants",
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.only(top: 40),
-              sliver:
-                  SliverList(delegate: SliverChildListDelegate(_buildList())),
-            ),
-          ],
-        )));
-  }
-}
-
-_buildList() {
-  List<Widget> listItems = [];
-  //Map data;
-  var data = api.readPlant();
-  data.forEach((key, value) {
-    Plant plant = Plant();
-    value.forEach((key, value) {
-      switch (key) {
-        case 'plantDate':
-          plant.plantDate = DateTime.parse(value);
-          break;
-        case 'plantName':
-          plant.plantName = value;
-          break;
-      }
-    });
-    if (plant.plantName != null && plant.plantDate != null) {
-      listItems.add(Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-        child: Card(
-          elevation: 15,
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                child: Column(
-                  children: [
-                    CustomPaint(
-                      painter: CircleIndicator(),
-                      child: Container(
-                        height: 30,
-                      ),
-                    ),
-                    CustomPaint(
-                      painter: WaterIndicator(percentage: 0.6),
-                      child: Container(height: 80),
-                    ),
-                  ],
+        body: RefreshIndicator(
+          // adds pull to refresh functionality
+          onRefresh: loadDataInList,
+                  child: CustomScrollView(
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: MySliverAppBar(
+                  collapsedHeight: 60,
+                  expandedHeight: 250,
+                  paddingTop: 20,
+                  title: "LazyPlants",
                 ),
               ),
-              Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        plant.plantName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        "15 days alive",
-                        style: TextStyle(
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'last sync: ' + plant.plantDate.toString(),
-                        style: TextStyle(color: Colors.black45),
-                      ),
-                    ]),
+              SliverPadding(
+                padding: const EdgeInsets.only(top: 40),
+                sliver: SliverList(delegate: SliverChildListDelegate(plantList)),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(
-                      "https://images.unsplash.com/photo-1467043198406-dc953a3defa0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=670&q=80",
-                    )),
-              )
             ],
           ),
-        ),
-      ));
-    }
-  });
-  if (listItems.length == 0) {
-    listItems.add(Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 50.0),
-        child: Text(
-          'home_noPlant'.tr,
-          style: TextStyle(color: Colors.black87),
-        ),
-      ),
-    ));
+        ));
   }
-  return listItems;
 }
-
 
 class CircleIndicator extends CustomPainter {
   @override

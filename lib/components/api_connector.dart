@@ -39,7 +39,7 @@ class ApiConnector {
       var response = await http.get(Uri.parse(
           baseUrl + "Plants?access_token=" + settingsBox.get('token')));
       if (response.statusCode == 200) {
-        print("ok");
+        print("got plants");
         return await jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         // show login screen

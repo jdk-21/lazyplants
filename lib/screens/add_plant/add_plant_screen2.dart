@@ -22,7 +22,6 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
   String plantName;
 
   espList() {
-    api.cachePlant();
     var list = <String>["addPlant2_dropDown".tr];
     var data = api.readPlant();
     data.forEach((key, value) {
