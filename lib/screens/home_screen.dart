@@ -126,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         drawer: NavigationDrawer(),
         floatingActionButton: FloatingActionButton(
+          key: Key('fab'),
           child: Icon(
             Icons.add_rounded,
           ),

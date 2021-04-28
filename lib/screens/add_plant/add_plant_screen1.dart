@@ -123,6 +123,7 @@ class AddPlantScreen1 extends StatelessWidget {
                         left: 45.0, right: 45.0, top: 12, bottom: 12),
                     child: Text(
                       'next'.tr,
+                      key: Key('nextButton'),
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
