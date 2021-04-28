@@ -31,12 +31,16 @@ dependencies:
   path_provider: ^2.0.1
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
   hive_generator: ^1.0.1
   build_runner: ^1.12.2
   bdd_widget_test: ^1.0.1
-  clock: ^1.1.0
+  clock: ^1.1.0 
 
 
 # For information on the generic Dart part of this file, see the
