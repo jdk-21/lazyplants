@@ -6,6 +6,7 @@ import 'package:lazyplants/components/sliver_appbar.dart';
 import 'package:lazyplants/main.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -80,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'last sync: ' + plant.plantDate.toString(),
+                          'last sync: ' + DateFormat("yy-MM-dd hh:mm").format(DateTime.parse(plant.plantDate.toString())),
                           style: TextStyle(color: Colors.black45),
                         ),
                       ]),
@@ -115,6 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> loadDataInList() async {
     List<dynamic> data = await api.getPlant();
+    if(data == null) {
+      
+    }
+    await api.getData();
     setState(() {
       plantList = _buildList(data);
     });

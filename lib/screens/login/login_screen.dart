@@ -4,8 +4,14 @@ import 'package:lazyplants/main.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/login/create_account_screen1.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   String mail;
+
   String password;
 
   @override
