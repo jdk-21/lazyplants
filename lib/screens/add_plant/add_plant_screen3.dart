@@ -5,7 +5,7 @@ import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen3 extends StatefulWidget {
-  Plant plant;
+  final Plant plant;
 
   AddPlantScreen3({
     Key key,

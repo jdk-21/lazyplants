@@ -4,14 +4,22 @@ import 'package:get/get.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/login/login_screen.dart';
 
-class CreateAccountScreen2 extends StatelessWidget {
-  String firstName;
-  String lastName;
-  String username;
-  String mail;
-  String password;
+class CreateAccountScreen2 extends StatefulWidget {
+  final String firstName;
+  final String lastName;
 
   CreateAccountScreen2(this.firstName, this.lastName);
+
+  @override
+  _CreateAccountScreen2State createState() => _CreateAccountScreen2State();
+}
+
+class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
+  String username;
+
+  String mail;
+
+  String password;
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +193,7 @@ class CreateAccountScreen2 extends StatelessWidget {
                   onPressed: () async {
                     if (mail != null && password != null && username != null) {
                       var success = await api.postCreateAccount(
-                          firstName, lastName, username, mail, password);
+                          widget.firstName, widget.lastName, username, mail, password);
                       if (success == 0) {
                         // if login was successfull push to HomeScreen()
                         Navigator.push(

@@ -9,7 +9,7 @@ void main() {
     IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
     final fabFinder = find.byKey(Key('fab'));
-    final nextButtonFinder = find.byKey(Key('nextButton'));
+    //final nextButtonFinder = find.byKey(Key('nextButton'));
     final emailFinder = find.byKey(Key('email'));
     final passwordFinder = find.byKey(Key('password'));
     final loginFinder = find.byKey(Key('login'));

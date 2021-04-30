@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
-import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/login/login_screen.dart';
 
 import 'create_account_screen2.dart';
 
+// ignore: must_be_immutable
 class CreateAccountScreen1 extends StatelessWidget {
   String firstName;
   String lastName;

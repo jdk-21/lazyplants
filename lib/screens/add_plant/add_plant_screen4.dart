@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen4 extends StatefulWidget {
-  Plant plant;
+  final Plant plant;
 
   AddPlantScreen4({
     Key key,
@@ -20,6 +20,7 @@ class AddPlantScreen4 extends StatefulWidget {
 }
 
 class _AddPlantScreen4State extends State<AddPlantScreen4> {
+  // ignore: unused_field
   Image _image;
   final picker = ImagePicker();
 
