@@ -64,7 +64,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightGreen, kPrimaryColor],
+              colors: addGradientColors,
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
             ),
@@ -109,14 +109,17 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                       });
                     }),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   _showMyDialog();
                 },
-                textColor: Colors.white,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   padding: const EdgeInsets.only(
                     left: 15.0,
@@ -130,7 +133,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                 ),
               ),
               const SizedBox(height: 10),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   // set default value if nothing has changed
                   if (widget.plant.soilMoisture == null) {
@@ -143,19 +146,22 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                             AddPlantScreen4(plant: widget.plant)),
                   );
                 },
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                textColor: Colors.white,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
                     gradient: LinearGradient(
                       colors: <Color>[
                         // TODO: Better gradient
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
                       ],
                     ),
                   ),
@@ -167,14 +173,17 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                   ),
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                textColor: Colors.white,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),
