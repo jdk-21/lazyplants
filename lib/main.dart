@@ -40,7 +40,6 @@ void main() async  {
       ..registerAdapter(PlantDataAdapter());
     print('init end');
     await api.initBox();
-    await api.cachePlant();
     print('box opened');
   runApp(MyApp());
 }

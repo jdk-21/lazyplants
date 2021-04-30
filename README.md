@@ -1,16 +1,8 @@
-# lazyplants
+# LazyPlants
+[![codecov](https://codecov.io/gh/jdk-21/lazyplants/branch/master/graph/badge.svg?token=U44AHOMHCS)](https://codecov.io/gh/jdk-21/lazyplants)
 
-A new Flutter project.
+Our vision is to create an automatic plant watering system for all those that cant keep their plants alive because they’re too lazy to water them. With ‚LazyPlants‘ we want to save those sad, dried out plants. To give them back the joy of life, we want to develop a cost-effective solution.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Documentation
+Documenatation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
+Blog: [here](https://lazysmartplants.wordpress.com/)

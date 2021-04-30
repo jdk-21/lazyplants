@@ -58,6 +58,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextField(
+                            key: Key('email'),
                             onChanged: (value) {
                               mail = value;
                             },
@@ -105,6 +106,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextField(
+                            key: Key('password'),
                             obscureText: true,
                             onChanged: (value) {
                               password = value;
@@ -131,10 +133,13 @@ class LoginScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: TextButton(
+                    key: Key('login'),
                     onPressed: () async {
                       if (mail != null && password != null) {
+                        print("found credentials");
                         if (await api.postLogin(mail, password) == 0) {
                           // if login was successfull push to HomeScreen()
+                          print("successful login");
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -148,6 +153,7 @@ class LoginScreen extends StatelessWidget {
                         }
                       }
                       else {
+                        print("no credentials");
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('credentialsMissing'.tr),
