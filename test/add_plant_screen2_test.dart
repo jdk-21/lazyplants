@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen2.dart';
 
 void main() {
@@ -10,7 +11,8 @@ void main() {
     final backFinder = find.text('back');
 
     testWidgets('create Add plant Screen 2', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: AddPlantScreen2()));
+      Plant plant;
+      await tester.pumpWidget(MaterialApp(home: AddPlantScreen2(plant: plant)));
 
       expect(titleFinder, findsOneWidget);
       expect(nextFinder, findsOneWidget);
