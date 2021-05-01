@@ -1,6 +1,23 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
+
+class Album {
+  final int userId;
+  final int id;
+  final String title;
+
+  Album({@required this.userId, @required this.id, @required this.title});
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      userId: json['userId'],
+      id: json['id'],
+      title: json['title'],
+    );
+  }
+}
 
 class ApiConnector {
   var baseUrl = 'https://api.kie.one/api/';
@@ -15,6 +32,27 @@ class ApiConnector {
     settingsBox = await Hive.openBox('settings');
   }
 
+  getData(http.Client client) async {
+    try {
+      var response = await client.get(Uri.https(
+          'api.kie.one',
+          "/api/PlantData?access_token=" +
+              settingsBox.get('token') +
+              "&filter[order]=date%20DESC&filter[limit]=20"));
+      if (response.statusCode == 200) {
+        print(await jsonDecode(response.body));
+        return await jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        // show login screen
+        return "error";
+      } else
+        return "error";
+    } catch (socketException) {
+      print('No internet connection');
+    }
+  }
+
+/*
   getData() async {
     try {
       var response = await http.get(Uri.parse(baseUrl +
@@ -33,6 +71,7 @@ class ApiConnector {
       print('No internet connection');
     }
   }
+*/
 
   getPlant() async {
     try {
@@ -163,8 +202,7 @@ class ApiConnector {
   Future<int> postCreateAccount(String firstName, String lastName,
       String username, String mail, String password) async {
     try {
-      var response =
-          await http.post(Uri.parse(baseUrl + "Members"), body: {
+      var response = await http.post(Uri.parse(baseUrl + "Members"), body: {
         "firstname": firstName,
         "lastname": lastName,
         "username": username,
