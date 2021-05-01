@@ -24,12 +24,14 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
   espList() {
     var list = <String>["addPlant2_dropDown".tr];
     var data = api.readPlant();
+    if (data != null) {
     data.forEach((key, value) {
       if (!value.containsKey('plantName')) {
         list.add(value['espId']);
       }
     });
     print(list.toString());
+    }
     dropdownValue = list[0];
     return list;
   }
