@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 // ignore: must_be_immutable
 class AddPlantScreen4 extends StatefulWidget {
-  Plant plant;
+  final Plant plant;
 
   AddPlantScreen4({
     Key key,
@@ -64,7 +64,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightGreen, kPrimaryColor],
+              colors: addGradientColors,
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
             ),
@@ -86,7 +86,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                 ),
               ),
               const SizedBox(height: 10),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   getImage("camera");
                   Navigator.push(
@@ -95,19 +95,22 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   );
                   saveChanges();
                 },
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                textColor: Colors.white,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
                     gradient: LinearGradient(
                       colors: <Color>[
                         // TODO: Better gradient
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
                       ],
                     ),
                   ),
@@ -122,7 +125,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
               const SizedBox(
                 height: 5,
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   getImage("gallery");
                   Navigator.push(
@@ -131,19 +134,22 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   );
                   saveChanges();
                 },
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                textColor: Colors.white,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
                     gradient: LinearGradient(
                       colors: <Color>[
                         // TODO: Better gradient
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
+                        Color(0xFF00897B),
                       ],
                     ),
                   ),
@@ -160,14 +166,17 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      textColor: Colors.white,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      //   textColor: Colors.white,
+                      //   highlightColor: Colors.transparent,
+                      //   hoverColor: Colors.transparent,
+                      //  splashColor: Colors.transparent,
                       child: Container(
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10, bottom: 10),
@@ -178,7 +187,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                       ),
                     ),
                     Text("|"),
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         saveChanges();
                         Navigator.push(
@@ -186,10 +195,13 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                           MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       },
-                      textColor: Colors.white,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      //   textColor: Colors.white,
+                      //   highlightColor: Colors.transparent,
+                      //   hoverColor: Colors.transparent,
+                      //  splashColor: Colors.transparent,
                       child: Container(
                         padding: const EdgeInsets.only(
                             right: 15.0, top: 10, bottom: 10),

@@ -20,7 +20,7 @@ class AddPlantScreen1 extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightGreen, kPrimaryColor],
+              colors: addGradientColors,
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
             ),
@@ -77,7 +77,7 @@ class AddPlantScreen1 extends StatelessWidget {
                   ],
                 ),
               ),*/
-              FlatButton(
+              TextButton(
                 child: Text('addPlant1_helpText' .tr,
                     style: TextStyle(
                         color: Colors.white.withAlpha(200), fontSize: 15)),
@@ -95,7 +95,7 @@ class AddPlantScreen1 extends StatelessWidget {
               const SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -103,19 +103,22 @@ class AddPlantScreen1 extends StatelessWidget {
                           builder: (context) => AddPlantScreen2(plant: plant,)),
                     );
                   },
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  textColor: Colors.white,
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  //   textColor: Colors.white,
+                  //   highlightColor: Colors.transparent,
+                  //   hoverColor: Colors.transparent,
+                  //  splashColor: Colors.transparent,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       gradient: LinearGradient(
                         colors: <Color>[
                           // TODO: Better gradient
-                          Color(0xFF0D47A1),
-                          Color(0xFF1976D2),
-                          Color(0xFF42A5F5),
+                          Color(0xFF00897B),
+                          Color(0xFF00897B),
+                          Color(0xFF00897B),
                         ],
                       ),
                     ),
@@ -129,14 +132,17 @@ class AddPlantScreen1 extends StatelessWidget {
                   ),
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                textColor: Colors.white,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),

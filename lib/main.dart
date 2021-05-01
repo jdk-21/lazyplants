@@ -15,6 +15,8 @@ const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;
 const Color kTextDark = Colors.black54;
 
+const List<Color> addGradientColors = [Color(0xFF1B5E20), Color(0xFFA5D6A7)];
+
 Map<int, Color> primaryMaterialColor =
 {
 50:Color.fromRGBO(12,140,94, .1),

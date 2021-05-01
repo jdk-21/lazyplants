@@ -29,7 +29,7 @@ class ApiConnector {
         return "error";
       } else
         return "error";
-    } catch (SocketException) {
+    } catch (socketException) {
       print('No internet connection');
     }
   }
@@ -48,7 +48,7 @@ class ApiConnector {
       } else
         print(response.statusCode);
       return "error";
-    } catch (SocketException) {
+    } catch (socketException) {
       print('No internet connection');
     }
   }
@@ -77,8 +77,8 @@ class ApiConnector {
         print('error');
         return 'error';
       }
-    } catch (SocketException) {
-      print(SocketException.toString());
+    } catch (socketException) {
+      print(socketException.toString());
       print('No internet connection');
     }
   }
@@ -103,7 +103,7 @@ class ApiConnector {
       } else
         print(response.statusCode);
       return 1;
-    } catch (SocketException) {
+    } catch (socketException) {
       print('No internet connection');
       return 1;
     }
@@ -132,8 +132,8 @@ class ApiConnector {
         print('error');
         return 1;
       }
-    } catch (SocketException) {
-      print(SocketException.toString());
+    } catch (socketException) {
+      print(socketException.toString());
       print('No internet connection');
       return 1;
     }
@@ -153,8 +153,8 @@ class ApiConnector {
         print('error');
         return 1;
       }
-    } catch (SocketException) {
-      print(SocketException.toString());
+    } catch (socketException) {
+      print(socketException.toString());
       print('No internet connection');
       return 1;
     }
@@ -196,8 +196,8 @@ class ApiConnector {
         print('error');
         return 4;
       }
-    } catch (SocketException) {
-      print(SocketException.toString());
+    } catch (socketException) {
+      print(socketException.toString());
       print('No internet connection');
       return 4;
     }

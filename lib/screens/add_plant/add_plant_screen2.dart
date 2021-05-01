@@ -5,7 +5,7 @@ import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen2 extends StatefulWidget {
-  Plant plant;
+  final Plant plant;
 
   AddPlantScreen2({
     Key key,
@@ -43,7 +43,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightGreen, kPrimaryColor],
+              colors: addGradientColors,
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
             ),
@@ -120,7 +120,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
                     if (plantName == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -156,19 +156,22 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                       );
                     }
                   },
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  textColor: Colors.white,
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  //   textColor: Colors.white,
+                  //   highlightColor: Colors.transparent,
+                  //   hoverColor: Colors.transparent,
+                  //  splashColor: Colors.transparent,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       gradient: LinearGradient(
                         colors: <Color>[
                           // TODO: Better gradient
-                          Color(0xFF0D47A1),
-                          Color(0xFF1976D2),
-                          Color(0xFF42A5F5),
+                          Color(0xFF00897B),
+                          Color(0xFF00897B),
+                          Color(0xFF00897B),
                         ],
                       ),
                     ),
@@ -181,14 +184,17 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                   ),
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                textColor: Colors.white,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                //   textColor: Colors.white,
+                //   highlightColor: Colors.transparent,
+                //   hoverColor: Colors.transparent,
+                //  splashColor: Colors.transparent,
                 child: Container(
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 10, bottom: 10),
