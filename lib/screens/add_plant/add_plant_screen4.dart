@@ -7,6 +7,7 @@ import 'package:lazyplants/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class AddPlantScreen4 extends StatefulWidget {
   final Plant plant;
 
@@ -20,6 +21,7 @@ class AddPlantScreen4 extends StatefulWidget {
 }
 
 class _AddPlantScreen4State extends State<AddPlantScreen4> {
+  // _image isn't unused
   // ignore: unused_field
   Image _image;
   final picker = ImagePicker();

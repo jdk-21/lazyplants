@@ -163,8 +163,7 @@ class ApiConnector {
   Future<int> postCreateAccount(String firstName, String lastName,
       String username, String mail, String password) async {
     try {
-      var response =
-          await http.post(Uri.parse(baseUrl + "Members"), body: {
+      var response = await http.post(Uri.parse(baseUrl + "Members"), body: {
         "firstname": firstName,
         "lastname": lastName,
         "username": username,
@@ -223,8 +222,11 @@ class ApiConnector {
   cachePlantData() {}
 
   readPlant() {
-    Map plantMap = plantBox.toMap();
-    print(plantMap);
+    Map plantMap;
+    if (plantBox != null) {
+      plantMap = plantBox.toMap();
+      print(plantMap);
+    }
     return plantMap;
   }
 
