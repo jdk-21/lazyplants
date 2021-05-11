@@ -7,9 +7,11 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 import 'components/api_connector.dart';
+import 'package:http/http.dart' as http;
 import 'components/db_models.dart';
 
-var api = ApiConnector();
+http.Client client;
+var api = ApiConnector(client);
 
 const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;
