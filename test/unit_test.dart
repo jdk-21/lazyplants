@@ -261,13 +261,15 @@ void main() async {
 
     group('postCreateAccount', () {
       var uri = Uri.parse(baseUrl + "Members");
+      var uriLogin = Uri.parse(baseUrl + "Members/login");
       var firstName = "Reiner";
       var lastName = "Zufall";
       var username = "Reinerzufall";
       var mail = "r@zufall.de";
       var password = "passwort";
       var userId = "id";
-      var response_succsess = '{"firstname": "' +
+      var token = api.settingsBox.get('token');
+      var responseSuccsess = '{"firstname": "' +
           firstName +
           '","lastname": "' +
           lastName +
@@ -276,6 +278,11 @@ void main() async {
           '","email": "' +
           mail +
           '","id": "' +
+          userId +
+          '"}';
+      var responseLogin = '{"id": "' +
+          token +
+          '","ttl": 1209600,"created": "2021-05-10T17:35:49.490Z","userId": "' +
           userId +
           '"}';
       test('postCreateAccount successful', () async {
@@ -287,19 +294,22 @@ void main() async {
           "username": username,
           "email": mail,
           "password": password
-        })).thenAnswer((_) async => http.Response(response_succsess, 200));
+        })).thenAnswer((_) async => http.Response(responseSuccsess, 200));
+        when(client.post(uriLogin, body: {"email": mail, "password": password}))
+            .thenAnswer((_) async => http.Response(responseLogin, 200));
         expect(
             await api.postCreateAccount(
                 firstName, lastName, username, mail, password),
-            4);
+            0);
         expect(api.settingsBox.get('userId'), userId);
         expect(api.settingsBox.get('firstName'), firstName);
         expect(api.settingsBox.get('lastName'), lastName);
+        expect(api.settingsBox.get('token'), token);
+        expect(api.settingsBox.get('userId'), userId);
       });
 
       test('postCreateAccount with exist Account', () async {
         print("Test: postCreateAccount, exist Account");
-        var uriLogin = Uri.parse(baseUrl + "Members/login");
         var response = 'error';
         var token = api.settingsBox.get('token');
         // mock the api request
@@ -309,24 +319,27 @@ void main() async {
           "username": username,
           "email": mail,
           "password": password
-        })).thenAnswer((_) async => http.Response(response_succsess, 200));
+        })).thenAnswer((_) async => http.Response(responseSuccsess, 200));
 
         when(client.post(uriLogin, body: {"email": mail, "password": password}))
-            .thenAnswer((_) async => http.Response('error', 401));
+            .thenAnswer((_) async => http.Response(response, 401));
         expect(
             await api.postCreateAccount(
                 firstName, lastName, username, mail, password),
-            0);
+            4);
         expect(api.settingsBox.get('token'), token);
         expect(api.settingsBox.get('userId'), userId);
         expect(api.settingsBox.get('firstName'), firstName);
         expect(api.settingsBox.get('lastName'), lastName);
       });
-/*
-      test('postCreateAccount with exception Email', () async {
+
+      test('postCreateAccount with exist Email', () async {
         print("Test: postCreateAccount, error");
-        var response = '{"error": {"statusCode": 422,"name": "ValidationError","message": "The `Member` instance is not valid. Details: `email` Email already exists (value: \"max@max.com\").","details": {"context": "Member","codes": {"email": ["uniqueness"]},"messages": {"email": ["Email already exists"]}},"stack": "ValidationError: The `Member` instance is not valid. Details: `email` Email already exists (value: \"max@max.com\").\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:373:12\n    at Member.<anonymous> (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:590:13)\n    at Member.next (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/hooks.js:93:12)\n    at done (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:587:25)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:665:7\n    at Member.<anonymous> (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:445:5)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1737:9\n    at /root/lazyplants/node_modules/async/dist/async.js:1140:9\n    at /root/lazyplants/node_modules/async/dist/async.js:473:16\n    at iteratorCallback (/root/lazyplants/node_modules/async/dist/async.js:1064:13)\n    at /root/lazyplants/node_modules/async/dist/async.js:969:16\n    at /root/lazyplants/node_modules/async/dist/async.js:1137:13\n    at buildResult (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1703:11)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1717:13\n    at doNotify (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/observer.js:155:49)\n    at doNotify (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/observer.js:155:49)"}}';
-        var token = api.settingsBox.get('token');
+        var response = '{"error":' +
+            '{"details":' +
+            '{"messages":' +
+            '{"email":[' +
+            '"Email already exists"]}}}}';
         // mock the api request
         when(client.post(uri, body: {
           "firstname": firstName,
@@ -340,12 +353,14 @@ void main() async {
                 firstName, lastName, username, mail, password),
             2);
       });
-    
-      test('postCreateAccount with exception Username', () async {
+
+      test('postCreateAccount with exist Username', () async {
         print("Test: postCreateAccount, error");
-        var response =
-            '{"error": {"statusCode": 422,"name": "ValidationError","message": "The `Member` instance is not valid. Details: `username` User already exists (value: \"myCustomUsername\").","details": {"context": "Member","codes": {"username": ["uniqueness"]},"messages": {"username": ["User already exists"]}},"stack": "ValidationError: The `Member` instance is not valid. Details: `username` User already exists (value: \"myCustomUsername\").\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:373:12\n    at Member.<anonymous> (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:590:13)\n    at Member.next (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/hooks.js:93:12)\n    at done (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:587:25)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:665:7\n    at Member.<anonymous> (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/validations.js:445:5)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1737:9\n    at /root/lazyplants/node_modules/async/dist/async.js:1140:9\n    at /root/lazyplants/node_modules/async/dist/async.js:473:16\n    at iteratorCallback (/root/lazyplants/node_modules/async/dist/async.js:1064:13)\n    at /root/lazyplants/node_modules/async/dist/async.js:969:16\n    at /root/lazyplants/node_modules/async/dist/async.js:1137:13\n    at buildResult (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1703:11)\n    at /root/lazyplants/node_modules/loopback-datasource-juggler/lib/dao.js:1717:13\n    at doNotify (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/observer.js:155:49)\n    at doNotify (/root/lazyplants/node_modules/loopback-datasource-juggler/lib/observer.js:155:49)"}}';
-        // mock the api request
+        var response = '{"error":' +
+            '{"details":' +
+            '{"messages":' +
+            '{"username":[' +
+            '"User already exists"]}}}}'; // mock the api request
         when(client.post(uri, body: {
           "firstname": firstName,
           "lastname": lastName,
@@ -358,7 +373,26 @@ void main() async {
                 firstName, lastName, username, mail, password),
             0);
       });
-*/
+      test('postCreateAccount with exist Username & Email', () async {
+        print("Test: postCreateAccount, error");
+        var response = '{"error":' +
+            '{"details":' +
+            '{"messages":' +
+            '{"username":["User already exists"],' +
+            '"email":["Email already exists"]' +
+            '}}}}'; // mock the api request
+        when(client.post(uri, body: {
+          "firstname": firstName,
+          "lastname": lastName,
+          "username": username,
+          "email": mail,
+          "password": password
+        })).thenAnswer((_) async => http.Response(response, 422));
+        expect(
+            await api.postCreateAccount(
+                firstName, lastName, username, mail, password),
+            1);
+      });
       test('postCreateAccount with exception', () async {
         print("Test: postCreateAccount, error");
         var response = "error";
