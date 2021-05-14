@@ -238,8 +238,11 @@ class ApiConnector {
   cachePlantData() {}
 
   readPlant() {
-    Map plantMap = plantBox.toMap();
-    print(plantMap);
+    Map plantMap;
+    if (plantBox != null) {
+      plantMap = plantBox.toMap();
+      print(plantMap);
+    }
     return plantMap;
   }
 
