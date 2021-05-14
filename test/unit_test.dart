@@ -340,6 +340,7 @@ void main() async {
             '{"messages":' +
             '{"email":[' +
             '"Email already exists"]}}}}';
+        print(response);
         // mock the api request
         when(client.post(uri, body: {
           "firstname": firstName,
@@ -371,7 +372,7 @@ void main() async {
         expect(
             await api.postCreateAccount(
                 firstName, lastName, username, mail, password),
-            0);
+            3);
       });
       test('postCreateAccount with exist Username & Email', () async {
         print("Test: postCreateAccount, error");

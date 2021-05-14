@@ -185,11 +185,22 @@ class ApiConnector {
         return 0;
       } else if (response.statusCode == 422) {
         var data = jsonDecode(response.body);
-        bool emailExists = data['error']['details']['messages']['email'][0] ==
+        bool usernameExists;
+        bool emailExists;
+        try {
+        emailExists = data['error']['details']['messages']['email'][0] ==
             "Email already exists";
-        bool usernameExists = data['error']['details']['messages']['username']
-                [0] ==
-            "User already exists";
+        }
+        catch (e) {
+          emailExists = false;
+        }
+        try {
+          usernameExists = data['error']['details']['messages']['username']
+                  [0] ==
+              "User already exists";
+        } catch (e) {
+          usernameExists = false;
+        }
         if (emailExists && usernameExists)
           return 1;
         else if (emailExists)
