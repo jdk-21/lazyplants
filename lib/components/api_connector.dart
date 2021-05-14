@@ -3,6 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
 class ApiConnector {
+  http.Client client;
+  ApiConnector(http.Client client) {
+    this.client = client;
+  }
+
   var baseUrl = 'https://api.kie.one/api/';
 
   Box dataBox;
@@ -17,8 +22,8 @@ class ApiConnector {
 
   getData() async {
     try {
-      var response = await http.get(Uri.parse(baseUrl +
-          "PlantData?access_token=" +
+      var response = await client.get(Uri.parse(baseUrl +
+          "Plants?access_token=" +
           settingsBox.get('token') +
           "&filter[order]=date%20DESC&filter[limit]=20"));
       if (response.statusCode == 200) {
@@ -36,7 +41,7 @@ class ApiConnector {
 
   getPlant() async {
     try {
-      var response = await http.get(Uri.parse(
+      var response = await client.get(Uri.parse(
           baseUrl + "Plants?access_token=" + settingsBox.get('token')));
       if (response.statusCode == 200) {
         print("got plants");
@@ -56,7 +61,7 @@ class ApiConnector {
   patchPlant(
       plantId, espId, plantName, room, soilMoisture, plantPic, memberId) async {
     try {
-      var response = await http.patch(
+      var response = await client.patch(
           Uri.parse(
               baseUrl + "Plants?access_token=" + settingsBox.get('token')),
           body: {
@@ -85,7 +90,7 @@ class ApiConnector {
 
   Future<int> getMembersData(String userId) async {
     try {
-      var response = await http.get(Uri.parse(baseUrl +
+      var response = await client.get(Uri.parse(baseUrl +
           "Members/" +
           userId +
           "?access_token=" +
@@ -118,7 +123,7 @@ class ApiConnector {
 
   Future<int> postLogin(mail, password) async {
     try {
-      var response = await http.post(Uri.parse(baseUrl + "Members/login"),
+      var response = await client.post(Uri.parse(baseUrl + "Members/login"),
           body: {"email": mail, "password": password});
       if (response.statusCode == 200) {
         print("ok");
@@ -141,7 +146,7 @@ class ApiConnector {
 
   Future<int> postLogout() async {
     try {
-      var response = await http.post(Uri.parse(
+      var response = await client.post(Uri.parse(
           baseUrl + "Members/logout?access_token=" + settingsBox.get('token')));
       if (response.statusCode == 204) {
         settingsBox.delete('token');
@@ -163,7 +168,7 @@ class ApiConnector {
   Future<int> postCreateAccount(String firstName, String lastName,
       String username, String mail, String password) async {
     try {
-      var response = await http.post(Uri.parse(baseUrl + "Members"), body: {
+      var response = await client.post(Uri.parse(baseUrl + "Members"), body: {
         "firstname": firstName,
         "lastname": lastName,
         "username": username,
@@ -180,11 +185,22 @@ class ApiConnector {
         return 0;
       } else if (response.statusCode == 422) {
         var data = jsonDecode(response.body);
-        bool emailExists = data['error']['details']['messages']['email'][0] ==
+        bool usernameExists;
+        bool emailExists;
+        try {
+        emailExists = data['error']['details']['messages']['email'][0] ==
             "Email already exists";
-        bool usernameExists = data['error']['details']['messages']['username']
-                [0] ==
-            "User already exists";
+        }
+        catch (e) {
+          emailExists = false;
+        }
+        try {
+          usernameExists = data['error']['details']['messages']['username']
+                  [0] ==
+              "User already exists";
+        } catch (e) {
+          usernameExists = false;
+        }
         if (emailExists && usernameExists)
           return 1;
         else if (emailExists)
