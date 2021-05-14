@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/main.dart';
+import 'package:http/http.dart' as http;
 
 class ApiConnector {
   static const baseUrl = 'https://api.kie.one/api/';
@@ -62,20 +63,22 @@ class Login extends ApiMember {
   Future request() async {
     var uri = Uri.parse(ApiConnector.baseUrl + "Members/login");
     RequestVerhalten rv = requestVerhalten;
-    var body = jsonDecode('{"email": $mail, "password": $pw}');
-    var response = requestVerhalten.request(uri, body);
-    if (response.statusCode == 200) {
+    String jsonString = '{"email": "$mail", "password": "$pw"}';
+    var body = jsonDecode(jsonString);
+    setRequest(PostRequest());
+    var response = await requestVerhalten.request(uri, body);
+    setRequest(rv);
+    if (response != 1) {
       print("ok");
-      var data = await jsonDecode(response.body);
+      var data = response;
       settingsBox.put("token", data["id"]);
       settingsBox.put("userId", data['userId']);
       userId = data['userId'];
       setRequest(GetRequest());
       await request(); //first- and lastName to DB
-      setRequest(rv);
       return 0;
     } else {
-      print('error: ' + response.statusCode.toString());
+      print('error: ' + response.toString());
       return 1;
     }
   }
@@ -256,22 +259,26 @@ class GetRequest implements RequestVerhalten {
 
 class PostRequest implements RequestVerhalten {
   @override
-  request(Uri uri, var body) async {
-    try {
-      var response = await client.post(uri, body: body);
+  request(Uri uri, Object body) async {
+    print(uri);
+    print(body);
+    //try {
+      var request = http.Request('POST', uri);
+      request.bodyFields = body;
+      var response = await client.send(request);
       if (response.statusCode == 200) {
         print("ok");
-        return await jsonDecode(response.body);
+        return await jsonDecode(await response.stream.bytesToString());
       } else {
         print(response.statusCode.toString());
         print('error');
         return 1;
       }
-    } catch (socketException) {
+    /*} catch (socketException) {
       print(socketException.toString());
       print('No internet connection');
       return 1;
-    }
+    }*/
   }
 }
 
