@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/components/api_connector2.dart';
 import 'package:lazyplants/screens/login/login_screen.dart';
 
 import '../main.dart';
@@ -79,7 +80,7 @@ class NavigationDrawer extends StatelessWidget {
               child: ListTile(
                 leading: Icon(Icons.house_outlined),
                 title: Text(
-                  "home" .tr,
+                  "home".tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -91,9 +92,49 @@ class NavigationDrawer extends StatelessWidget {
               ),
             ),
             ListTile(
-                leading: Icon(Icons.bar_chart_outlined),
+              leading: Icon(Icons.bar_chart_outlined),
+              title: Text(
+                "statistics".tr,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.wifi_tethering_outlined),
+              title: Text(
+                "howToConnect".tr,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings_outlined),
+              title: Text(
+                "settings".tr,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            Expanded(
+              child: ListTile(
+                leading: Icon(Icons.account_circle_outlined),
                 title: Text(
-                  "statistics" .tr,
+                  "about".tr,
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -103,77 +144,41 @@ class NavigationDrawer extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.wifi_tethering_outlined),
-                title: Text(
-                  "howToConnect" .tr,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.logout,
+                color: Colors.red[700],
               ),
-              ListTile(
-                leading: Icon(Icons.settings_outlined),
-                title: Text(
-                  "settings" .tr,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
+              title: Text(
+                "logout".tr,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
                 ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
               ),
-              Expanded(
-                child: ListTile(
-                  leading: Icon(Icons.account_circle_outlined),
-                  title: Text(
-                    "about" .tr,
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
+              onTap: () async {
+                Logout logout = new Logout();
+                logout.setRequest(new PostRequest());
+                if (await logout.request() == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('successfulLogout'.tr),
                     ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.logout, color: Colors.red[700],),
-                title: Text(
-                  "logout" .tr,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-                onTap: () async {
-                  if (await api.postLogout() == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('successfulLogout'.tr),
-                          ),
-                        );
-                    Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
-                        );
-                  }
-                  else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('somethingWrong'.tr),
-                          ),
-                        );
-                  }
-                },
-              ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('somethingWrong'.tr),
+                    ),
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),

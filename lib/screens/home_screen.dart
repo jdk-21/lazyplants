@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/api_connector2.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'dart:ui' as ui;
 import 'package:lazyplants/components/navigation_drawer.dart';
@@ -114,7 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Null> loadDataInList() async {
-    List<dynamic> data = await api.getPlant();
+    ApiPlant apiPlant = new ApiPlant();
+    List<dynamic> data = await apiPlant.request();
     setState(() {
       plantList = _buildList(data);
     });
@@ -141,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: RefreshIndicator(
           // adds pull to refresh functionality
           onRefresh: loadDataInList,
-                  child: CustomScrollView(
+          child: CustomScrollView(
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
@@ -154,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SliverPadding(
                 padding: const EdgeInsets.only(top: 40),
-                sliver: SliverList(delegate: SliverChildListDelegate(plantList)),
+                sliver:
+                    SliverList(delegate: SliverChildListDelegate(plantList)),
               ),
             ],
           ),

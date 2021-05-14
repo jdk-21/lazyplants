@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/api_connector2.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 import 'package:lazyplants/screens/home_screen.dart';
@@ -192,8 +193,14 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                 child: TextButton(
                   onPressed: () async {
                     if (mail != null && password != null && username != null) {
-                      var success = await api.postCreateAccount(
-                          widget.firstName, widget.lastName, username, mail, password);
+                      ApiMember apiMember = new ApiMember.createAccount(
+                          widget.firstName,
+                          widget.lastName,
+                          username,
+                          mail,
+                          password);
+                      apiMember.setRequest(PostRequest());
+                      var success = await apiMember.request();
                       if (success == 0) {
                         // if login was successfull push to HomeScreen()
                         Navigator.push(

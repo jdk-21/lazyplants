@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/api_connector2.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'dart:io';
 import 'package:lazyplants/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/components/api_fnk.dart';
 
 class AddPlantScreen4 extends StatefulWidget {
   final Plant plant;
@@ -50,9 +52,19 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
     print(widget.plant.plantName.toString());
     print(widget.plant.plantId.toString());
     print(widget.plant.soilMoisture.toString());
-    api.patchPlant(widget.plant.plantId, widget.plant.espId, widget.plant.plantName,
-        widget.plant.room, widget.plant.soilMoisture.toString(), widget.plant.plantPic, widget.plant.memberId);
-    api.cachePlant();
+    Plant plant = new Plant();
+    plant.memberId = widget.plant.memberId;
+    plant.plantId = widget.plant.plantId;
+    plant.espId = widget.plant.espId;
+    plant.plantName = widget.plant.plantName;
+    plant.room = widget.plant.room;
+    plant.plantPic = widget.plant.plantPic;
+    plant.memberId = widget.plant.memberId;
+    plant.soilMoisture = widget.plant.soilMoisture;
+    ApiPlant apiPlant = new ApiPlant.patch(plant);
+    apiPlant.setRequest(new PatchRequest());
+    apiPlant.request();
+    cachePlant();
   }
 
   @override
@@ -94,7 +106,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   saveChanges();
                 },
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
                 ),
                 //   textColor: Colors.white,
                 //   highlightColor: Colors.transparent,
@@ -133,7 +146,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                   saveChanges();
                 },
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
                 ),
                 //   textColor: Colors.white,
                 //   highlightColor: Colors.transparent,
@@ -169,7 +183,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         Navigator.of(context).pop();
                       },
                       style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       //   textColor: Colors.white,
                       //   highlightColor: Colors.transparent,
@@ -194,7 +209,8 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         );
                       },
                       style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       //   textColor: Colors.white,
                       //   highlightColor: Colors.transparent,

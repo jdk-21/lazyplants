@@ -1,8 +1,4 @@
 import 'dart:convert';
-import 'dart:js';
-import 'package:flutter/cupertino.dart';
-import 'package:get/get_connect/http/src/request/request.dart';
-import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/main.dart';
@@ -25,7 +21,7 @@ a.setRequest(new Post); // Umschalten auf Post
 a.request(); //post
 a.login.request
 */
-abstract class ApiMember extends ApiConnector {
+class ApiMember extends ApiConnector {
 //Post Plant wird nicht verwendet
   String mail;
   String pw;
@@ -33,6 +29,7 @@ abstract class ApiMember extends ApiConnector {
   String lastName;
   String userName;
   String userId;
+  ApiMember();
   ApiMember.createAccount(String mail, String pw, String firstName,
       String lastName, String userName) {
     this.mail = mail;
@@ -90,7 +87,23 @@ class Logout extends ApiMember {
     uri = Uri.parse(
         uri.toString() + "/logout?access_token=" + settingsBox.get('token'));
     var body = "";
-    return requestVerhalten.request(uri, body);
+    var response = requestVerhalten.request(uri, body);
+    try {
+      if (response.statusCode == 204) {
+        settingsBox.delete('token');
+        print("logged out");
+
+        return 0;
+      } else {
+        print(response.statusCode.toString());
+        print('error');
+        return 1;
+      }
+    } catch (socketException) {
+      print(socketException.toString());
+      print('No internet connection');
+      return 1;
+    }
   }
 }
 
@@ -180,7 +193,7 @@ class MemberData extends ApiMember {
   }
 }
 
-abstract class ApiPlantData extends ApiConnector {
+class ApiPlantData extends ApiConnector {
   //Patch und Post wird nicht verwendet
   var uri = Uri.parse(ApiConnector.baseUrl +
       "Plants?access_token=" +
@@ -197,10 +210,11 @@ abstract class ApiPlantData extends ApiConnector {
   }
 }
 
-abstract class ApiPlant extends ApiConnector {
+class ApiPlant extends ApiConnector {
   //Post Plant wird nicht verwendet
-  final Plant plant;
-  ApiPlant(this.plant);
+  Plant plant;
+  ApiPlant();
+  ApiPlant.patch(this.plant);
   var uri = Uri.parse(
       ApiConnector.baseUrl + "Plants?access_token=" + settingsBox.get('token'));
 

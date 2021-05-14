@@ -6,12 +6,18 @@ import 'package:lazyplants/translation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
-import 'components/api_connector.dart';
+import 'components/api_connector2.dart';
 import 'package:http/http.dart' as http;
 import 'components/db_models.dart';
 
 http.Client client;
-var api = ApiConnector(client);
+var api = ApiConnector();
+var apiMember = ApiMember();
+var apiPlantData = ApiPlantData();
+
+Box dataBox;
+Box plantBox;
+Box settingsBox;
 
 const Color kPrimaryColor = Color(0xff0C8C5E);
 const double kPadding = 20;

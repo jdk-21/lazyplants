@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/components/api_connector2.dart';
 import 'package:lazyplants/main.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/login/create_account_screen1.dart';
@@ -32,7 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 200, left: 25, bottom: 100),
+                  padding:
+                      const EdgeInsets.only(top: 200, left: 25, bottom: 100),
                   child: Text(
                     'helloThere'.tr,
                     textAlign: TextAlign.left,
@@ -59,8 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                          child: Icon(Icons.email_outlined, color: kPrimaryColor),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 0.0),
+                          child:
+                              Icon(Icons.email_outlined, color: kPrimaryColor),
                         ),
                         Expanded(
                           child: TextField(
@@ -107,7 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 0.0),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 0.0),
                           child: Icon(Icons.lock_outline, color: kPrimaryColor),
                         ),
                         Expanded(
@@ -143,12 +148,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () async {
                       if (mail != null && password != null) {
                         print("found credentials");
-                        if (await api.postLogin(mail, password) == 0) {
+                        Login login = new Login(mail, password);
+                        login.setRequest(PostRequest());
+                        if (await login.request() == 0) {
                           // if login was successfull push to HomeScreen()
                           print("successful login");
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -157,15 +165,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         }
-                      }
-                      else {
+                      } else {
                         print("no credentials");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('credentialsMissing'.tr),
-                            ),
-                          );
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('credentialsMissing'.tr),
+                          ),
+                        );
+                      }
                     },
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.resolveWith<Color>(
@@ -191,14 +198,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CreateAccountScreen1()),
-                          );
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreateAccountScreen1()),
+                    );
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith<Color>(
                         (Set<MaterialState> states) {
-                      return Colors.transparent; // Defer to the widget's default.
+                      return Colors
+                          .transparent; // Defer to the widget's default.
                     }),
                   ),
                   child: Text(

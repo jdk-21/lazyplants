@@ -3,6 +3,7 @@ import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen3.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/components/api_fnk.dart';
 
 class AddPlantScreen2 extends StatefulWidget {
   final Plant plant;
@@ -23,7 +24,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
 
   espList() {
     var list = <String>["addPlant2_dropDown".tr];
-    var data = api.readPlant();
+    var data = readPlant();
     data.forEach((key, value) {
       if (!value.containsKey('plantName')) {
         list.add(value['espId']);
@@ -123,14 +124,15 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                     if (plantName == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('addPlant2_noName' .tr),
+                          content: Text('addPlant2_noName'.tr),
                         ),
                       );
-                    } else if (dropdownHelper == "addPlant2_dropDown" .tr || dropdownHelper == null) {
+                    } else if (dropdownHelper == "addPlant2_dropDown".tr ||
+                        dropdownHelper == null) {
                       print(dropdownHelper);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('addPlant2_noESP' .tr),
+                          content: Text('addPlant2_noESP'.tr),
                         ),
                       );
                     } else {
@@ -139,8 +141,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                       widget.plant.espId = dropdownHelper;
                       print(widget.plant.espId);
                       // get plantId from espId
-                      api.readPlant().forEach((key, value) {
-                        if(value['espId'] == dropdownHelper) {
+                      readPlant().forEach((key, value) {
+                        if (value['espId'] == dropdownHelper) {
                           widget.plant.plantId = value['id'];
                           widget.plant.memberId = value['memberId'];
                         }
@@ -155,7 +157,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                     }
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   //   textColor: Colors.white,
                   //   highlightColor: Colors.transparent,
@@ -187,7 +190,8 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                   Navigator.of(context).pop();
                 },
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
                 ),
                 //   textColor: Colors.white,
                 //   highlightColor: Colors.transparent,
