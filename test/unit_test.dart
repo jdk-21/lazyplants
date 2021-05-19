@@ -53,7 +53,7 @@ void main() async {
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 200));
-        var data = await api.getData();
+        var data = await api.getExactPlantData(1, "EspBlume3");
         expect(data, jsonDecode(response));
         //clear();
       });
@@ -63,7 +63,7 @@ void main() async {
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 401));
-        var data = await api.getData();
+        var data = await api.getExactPlantData(1, "EspBlume3");
         expect(data, "error");
         //clear();
       });

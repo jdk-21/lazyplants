@@ -36,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
           case 'plantName':
             plant.plantName = value;
             break;
+          case 'soilMoisture':
+            plant.soilMoisture = value;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       CustomPaint(
-                        painter: WaterIndicator(percentage: 0.6),
+                        painter: WaterIndicator(percentage: double.parse(api.getExactPlantData(1, plant.espId)[0]["soilMoisture"])),
                         child: Container(height: 80),
                       ),
                     ],
@@ -116,10 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> loadDataInList() async {
     List<dynamic> data = await api.getPlant();
-    if(data == null) {
-      
-    }
-    await api.getData();
     setState(() {
       plantList = _buildList(data);
     });
@@ -183,7 +181,7 @@ class CircleIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 class WaterIndicator extends CustomPainter {
@@ -208,5 +206,5 @@ class WaterIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
