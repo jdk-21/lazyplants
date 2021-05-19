@@ -1,6 +1,25 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_PlantData_userId: {
+        name: 'fk_PlantData_userId',
+        entity: 'User',
+        entityKey: 'id',
+        foreignKey: 'userId',
+        onDelete: 'cascade',
+      },
+      fk_PlantData_plantId: {
+        name: 'fk_PlantData_plantId',
+        entity: 'Plant',
+        entityKey: 'id',
+        foreignKey: 'plantId',
+        onDelete: 'cascade',
+      },
+    },
+  },
+})
 export class PlantData extends Entity {
   @property({
     type: 'string',
@@ -45,6 +64,16 @@ export class PlantData extends Entity {
     required: true,
   })
   measuringTime: string;
+
+  @property({
+    type: 'string',
+  })
+  userId?: string;
+
+  @property({
+    type: 'string',
+  })
+  plantId?: string;
 
   constructor(data?: Partial<PlantData>) {
     super(data);

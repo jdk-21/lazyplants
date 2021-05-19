@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Plant} from './plant.model';
+import {PlantData} from './plant-data.model';
 
 @model()
 export class User extends Entity {
@@ -11,6 +13,21 @@ export class User extends Entity {
 
   @property({
     type: 'string',
+    required: true,
+    index: {
+      unique: true
+  }
+  })
+  email: string;
+
+ @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+
+  @property({
+    type: 'string',
   })
   firstName?: string;
 
@@ -19,18 +36,11 @@ export class User extends Entity {
   })
   lastName?: string;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  email: string;
+  @hasMany(() => Plant)
+  plants: Plant[];
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  password: string;
-
+  @hasMany(() => PlantData)
+  plantData: PlantData[];
 
   constructor(data?: Partial<User>) {
     super(data);

@@ -1,6 +1,19 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {PlantData} from './plant-data.model';
 
-@model()
+@model(  {
+  settings: {
+    foreignKeys: {
+      fk_Plant_userId: {
+        name: 'fk_Plant_userId',
+        entity: 'User',
+        entityKey: 'id',
+        foreignKey: 'userId',
+        onDelete: 'cascade',
+      },
+    },
+  },
+})
 export class Plant extends Entity {
   @property({
     type: 'string',
@@ -40,6 +53,13 @@ export class Plant extends Entity {
   })
   humidity?: number;
 
+  @property({
+    type: 'string',
+  })
+  userId?: string;
+
+  @hasMany(() => PlantData)
+  plantData: PlantData[];
 
   constructor(data?: Partial<Plant>) {
     super(data);
