@@ -1,9 +1,75 @@
-# LazyPlants
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e1dc68a8ab224306aff76362d67d6b62)](https://app.codacy.com/gh/jdk-21/lazyplants?utm_source=github.com&utm_medium=referral&utm_content=jdk-21/lazyplants&utm_campaign=Badge_Grade_Settings)
-[![codecov](https://codecov.io/gh/jdk-21/lazyplants/branch/master/graph/badge.svg?token=U44AHOMHCS)](https://codecov.io/gh/jdk-21/lazyplants)
+# lazyplants
 
-Our vision is to create an automatic plant watering system for all those that cant keep their plants alive because they’re too lazy to water them. With ‚LazyPlants‘ we want to save those sad, dried out plants. To give them back the joy of life, we want to develop a cost-effective solution.
+This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) with the
+[initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
 
-## Documentation
-Documenatation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
-Blog: [here](https://lazysmartplants.wordpress.com/)
+## Install dependencies
+
+By default, dependencies were installed when this application was generated.
+Whenever dependencies in `package.json` are changed, run the following command:
+
+```sh
+npm install
+```
+
+To only install resolved dependencies in `package-lock.json`:
+
+```sh
+npm ci
+```
+
+## Run the application
+
+```sh
+npm start
+```
+
+You can also run `node .` to skip the build step.
+
+Open http://127.0.0.1:3000 in your browser.
+
+## Rebuild the project
+
+To incrementally build the project:
+
+```sh
+npm run build
+```
+
+To force a full build by cleaning up cached artifacts:
+
+```sh
+npm run rebuild
+```
+
+## Fix code style and formatting issues
+
+```sh
+npm run lint
+```
+
+To automatically fix such issues:
+
+```sh
+npm run lint:fix
+```
+
+## Other useful commands
+
+- `npm run migrate`: Migrate database schemas for models
+- `npm run openapi-spec`: Generate OpenAPI spec into a file
+- `npm run docker:build`: Build a Docker image for this application
+- `npm run docker:run`: Run this application inside a Docker container
+
+## Tests
+
+```sh
+npm test
+```
+
+## What's next
+
+Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
+understand how you can continue to add features to this application.
+
+[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
