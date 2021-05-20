@@ -7,6 +7,7 @@ import 'package:lazyplants/main.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lazyplants/components/custom_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -36,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
           case 'plantName':
             plant.plantName = value;
             break;
+          case 'espId':
+            plant.espId = value;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
@@ -116,10 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> loadDataInList() async {
     List<dynamic> data = await api.getPlant();
-    if(data == null) {
-      
-    }
-    await api.getData();
     setState(() {
       plantList = _buildList(data);
     });
@@ -135,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Icon(
             Icons.add_rounded,
           ),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: CustomColors.kPrimaryColor,
           onPressed: () {
             Navigator.push(
               context,
@@ -173,7 +172,7 @@ class CircleIndicator extends CustomPainter {
     final paint = Paint();
 
     // set the color property of the paint
-    paint.color = kPrimaryColor;
+    paint.color = CustomColors.kPrimaryColor;
 
     // center of the canvas is (x,y) => (width/2, height/2)
     var center = Offset(25, 25);
@@ -183,7 +182,7 @@ class CircleIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 class WaterIndicator extends CustomPainter {
@@ -208,5 +207,5 @@ class WaterIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

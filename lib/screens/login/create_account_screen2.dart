@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/custom_colors.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
+import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 import 'package:lazyplants/screens/home_screen.dart';
@@ -50,7 +53,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     top: 10, bottom: 10, left: 45, right: 45),
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                   height: 46,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -66,7 +69,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.person_outline, color: kPrimaryColor),
+                        child: Icon(Icons.person_outline, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
                         child: TextField(
@@ -76,7 +79,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                           decoration: InputDecoration(
                             hintText: "username".tr,
                             hintStyle: TextStyle(
-                              color: kPrimaryColor.withOpacity(0.5),
+                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -97,7 +100,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     top: 10, bottom: 10, left: 45, right: 45),
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                   height: 46,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -113,7 +116,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.email_outlined, color: kPrimaryColor),
+                        child: Icon(Icons.email_outlined, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
                         child: TextField(
@@ -123,7 +126,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                           decoration: InputDecoration(
                             hintText: "email".tr,
                             hintStyle: TextStyle(
-                              color: kPrimaryColor.withOpacity(0.5),
+                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -144,7 +147,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     top: 10, bottom: 10, left: 45, right: 45),
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                   height: 46,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -160,7 +163,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.lock_outline, color: kPrimaryColor),
+                        child: Icon(Icons.lock_outline, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
                         child: TextField(
@@ -171,7 +174,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                           decoration: InputDecoration(
                             hintText: "password".tr,
                             hintStyle: TextStyle(
-                              color: kPrimaryColor.withOpacity(0.5),
+                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -189,11 +192,15 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: TextButton(
+                child: LPCustomButton(
                   onPressed: () async {
                     if (mail != null && password != null && username != null) {
                       var success = await api.postCreateAccount(
-                          widget.firstName, widget.lastName, username, mail, password);
+                          widget.firstName,
+                          widget.lastName,
+                          username,
+                          mail,
+                          password);
                       if (success == 0) {
                         // if login was successfull push to HomeScreen()
                         Navigator.push(
@@ -231,46 +238,15 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                       );
                     }
                   },
-                  style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      return Colors
-                          .transparent; // Defer to the widget's default.
-                    }),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: kPrimaryColor,
-                    ),
-                    padding: const EdgeInsets.only(
-                        left: 45.0, right: 45.0, top: 12, bottom: 12),
-                    child: Text(
-                      'login'.tr,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  ),
+                  btnText: 'createAccount'.tr,
                 ),
               ),
-              TextButton(
-                onPressed: () {
+              LPCustomTextButton(onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
-                },
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    return Colors.transparent; // Defer to the widget's default.
-                  }),
-                ),
-                child: Text(
-                  'loginInstead'.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+                }, btnText: 'loginInstead' .tr),
             ],
           ),
         ));

@@ -20,12 +20,15 @@ class ApiConnector {
     settingsBox = await Hive.openBox('settings');
   }
 
-  getData() async {
+  getExactPlantData(int limit, String espId) async {
     try {
       var response = await client.get(Uri.parse(baseUrl +
-          "Plants?access_token=" +
+          "PlantData?access_token=" +
           settingsBox.get('token') +
-          "&filter[order]=date%20DESC&filter[limit]=20"));
+          "&filter[order]=date%20DESC&filter[limit]=" +
+          limit.toString() +
+          "&filter[espId]=" +
+          espId));
       if (response.statusCode == 200) {
         print(await jsonDecode(response.body));
         return await jsonDecode(response.body);
@@ -35,6 +38,7 @@ class ApiConnector {
       } else
         return "error";
     } catch (socketException) {
+      print(socketException);
       print('No internet connection');
     }
   }
@@ -188,10 +192,9 @@ class ApiConnector {
         bool usernameExists;
         bool emailExists;
         try {
-        emailExists = data['error']['details']['messages']['email'][0] ==
-            "Email already exists";
-        }
-        catch (e) {
+          emailExists = data['error']['details']['messages']['email'][0] ==
+              "Email already exists";
+        } catch (e) {
           emailExists = false;
         }
         try {

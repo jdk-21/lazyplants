@@ -40,30 +40,32 @@ void main() async {
 
   var baseUrl = 'https://api.kie.one/api/';
   group('GET', () {
-    group('getData', () {
+    group('getExactPlantData', () {
+      const int limit = 1;
+      const String espId = "espBlume3";
       var uri = Uri.parse(baseUrl +
-          "Plants?access_token=" +
+          "PlantData?access_token=" +
           api.settingsBox.get('token') +
-          "&filter[order]=date%20DESC&filter[limit]=20");
-      test('getData successful', () async {
+          "&filter[order]=date%20DESC&filter[limit]=" + limit.toString() + "&filter[espId]=" + espId);
+      test('getexactPlantData successful', () async {
         print("Test: getData, working");
-
+        print(uri);
         var response =
             '{"espId": "espBlume3","soilMoisture": 26,"humidity": 41,"temperature": 24.4,"watertank": 36,"water": false,"measuringTime": "2021-03-05T13:43:46.000Z","id": "6042278d701e762c3a840970","plantsId": "5fcf98e9f106a01bbacc5a79","memberId": "5fbd47595421905a1a869a55"}';
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 200));
-        var data = await api.getData();
+        var data = await api.getExactPlantData(limit, espId);
         expect(data, jsonDecode(response));
         //clear();
       });
-      test('getData with exception', () async {
-        print("Test: getData, error");
+      test('getExactPlantData with exception', () async {
+        print("Test: getExactPlantData, error");
         var response = 'error';
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 401));
-        var data = await api.getData();
+        var data = await api.getExactPlantData(limit, espId);
         expect(data, "error");
         //clear();
       });
