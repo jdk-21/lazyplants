@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/custom_colors.dart';
 import 'package:lazyplants/components/lp_custom_button.dart';
 import 'package:lazyplants/components/lp_custom_text_button.dart';
-import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 import 'package:lazyplants/screens/login/login_screen.dart';
 
@@ -41,7 +41,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                     top: 10, bottom: 10, left: 45, right: 45),
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                   height: 46,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -57,7 +57,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.person_outline, color: kPrimaryColor),
+                        child: Icon(Icons.person_outline, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
                         child: TextField(
@@ -67,7 +67,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                           decoration: InputDecoration(
                             hintText: "firstName".tr,
                             hintStyle: TextStyle(
-                              color: kPrimaryColor.withOpacity(0.5),
+                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -88,7 +88,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                     top: 10, bottom: 10, left: 45, right: 45),
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: kPadding),
+                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                   height: 46,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -104,7 +104,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.person_outline, color: kPrimaryColor),
+                        child: Icon(Icons.person_outline, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
                         child: TextField(
@@ -114,7 +114,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                           decoration: InputDecoration(
                             hintText: "lastName".tr,
                             hintStyle: TextStyle(
-                              color: kPrimaryColor.withOpacity(0.5),
+                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,

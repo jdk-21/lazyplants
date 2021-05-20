@@ -7,6 +7,7 @@ import 'package:lazyplants/main.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lazyplants/components/custom_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Icon(
             Icons.add_rounded,
           ),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: CustomColors.kPrimaryColor,
           onPressed: () {
             Navigator.push(
               context,
@@ -171,7 +172,7 @@ class CircleIndicator extends CustomPainter {
     final paint = Paint();
 
     // set the color property of the paint
-    paint.color = kPrimaryColor;
+    paint.color = CustomColors.kPrimaryColor;
 
     // center of the canvas is (x,y) => (width/2, height/2)
     var center = Offset(25, 25);

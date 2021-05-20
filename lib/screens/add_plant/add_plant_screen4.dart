@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/custom_gradient_background.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/components/lp_custom_button.dart';
 import 'package:lazyplants/screens/home_screen.dart';
@@ -66,107 +67,94 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(children: [
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: addGradientColors,
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
+    return CustomGradientBackground(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Text(
+              'addPlant4_title'.tr,
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 80),
-                child: Text(
-                  'addPlant4_title'.tr,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+          const SizedBox(height: 10),
+          LP_CustomButton(
+              onPressed: () {
+                getImage("camera");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+                saveChanges();
+              },
+              btnText: 'useCamera'.tr),
+          const SizedBox(
+            height: 5,
+          ),
+          LP_CustomButton(
+              onPressed: () {
+                getImage("gallery");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+                saveChanges();
+              },
+              btnText: 'pickGallery'.tr),
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                  ),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.only(left: 15.0, top: 10, bottom: 10),
+                    child: Text(
+                      'back'.tr,
+                      style: TextStyle(fontSize: 14),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              LP_CustomButton(
+                Text("|"),
+                TextButton(
                   onPressed: () {
-                    getImage("camera");
+                    saveChanges();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomeScreen()),
                     );
-                    saveChanges();
                   },
-                  btnText: 'useCamera'.tr),
-              const SizedBox(
-                height: 5,
-              ),
-              LP_CustomButton(
-                  onPressed: () {
-                    getImage("gallery");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
-                    saveChanges();
-                  },
-                  btnText: 'pickGallery'.tr),
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.transparent),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                            left: 15.0, top: 10, bottom: 10),
-                        child: Text(
-                          'back'.tr,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                  ),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.only(right: 15.0, top: 10, bottom: 10),
+                    child: Text(
+                      'finish'.tr,
+                      style: TextStyle(fontSize: 14),
                     ),
-                    Text("|"),
-                    TextButton(
-                      onPressed: () {
-                        saveChanges();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.transparent),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                            right: 15.0, top: 10, bottom: 10),
-                        child: Text(
-                          'finish'.tr,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

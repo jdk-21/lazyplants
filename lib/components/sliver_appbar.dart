@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
+
+import 'custom_colors.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double collapsedHeight;
@@ -32,7 +33,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
     final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255)
         .clamp(0, 255)
         .toInt();
-    return kPrimaryColor.withAlpha(alpha);
+    return CustomColors.kPrimaryColor.withAlpha(alpha);
     //return Color.fromARGB(alpha, 255, 255, 255);
   }
 
@@ -59,13 +60,13 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           // Background image
           Container(
             padding: EdgeInsets.only(
-              left: kPadding + 10,
-              right: kPadding + 10,
-              bottom: kPadding,
+              left: CustomColors.kPadding + 10,
+              right: CustomColors.kPadding + 10,
+              bottom: CustomColors.kPadding,
             ),
             height: this.maxExtent - 100,
             decoration: BoxDecoration(
-              color: kPrimaryColor,
+              color: CustomColors.kPrimaryColor,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black26,
@@ -105,7 +106,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               right: 0,
               child: Container(
                 alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(horizontal: kPadding),
+                margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
                 height: 46,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -125,7 +126,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                         decoration: InputDecoration(
                           hintText: 'home_searchText'.tr,
                           hintStyle: TextStyle(
-                            color: kPrimaryColor.withOpacity(0.5),
+                            color: CustomColors.kPrimaryColor.withOpacity(0.5),
                           ),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -138,7 +139,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 10.0),
-                      child: Icon(Icons.search_outlined, color: kPrimaryColor),
+                      child: Icon(Icons.search_outlined, color: CustomColors.kPrimaryColor),
                     ),
                   ],
                 ),
