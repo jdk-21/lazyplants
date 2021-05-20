@@ -86,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'last sync: ' + DateFormat("yy-MM-dd hh:mm").format(DateTime.parse(plant.plantDate.toString())),
+                          'last sync: ' +
+                              DateFormat("yy-MM-dd hh:mm").format(
+                                  DateTime.parse(plant.plantDate.toString())),
                           style: TextStyle(color: Colors.black45),
                         ),
                       ]),
@@ -122,13 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<Null> loadDataInList() async {
     var data = await api.getPlant();
     if (data.runtimeType is List<Widget>) {
-      print(data.runtimeType);
+      setState(() {
+        plantList = _buildList(data);
+      });
       return null;
     }
-    setState(() {
-      plantList = _buildList(data);
-    });
-    return null;
+        return null;
   }
 
   @override
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: RefreshIndicator(
           // adds pull to refresh functionality
           onRefresh: loadDataInList,
-                  child: CustomScrollView(
+          child: CustomScrollView(
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
@@ -164,7 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SliverPadding(
                 padding: const EdgeInsets.only(top: 40),
-                sliver: SliverList(delegate: SliverChildListDelegate(plantList)),
+                sliver:
+                    SliverList(delegate: SliverChildListDelegate(plantList)),
               ),
             ],
           ),
