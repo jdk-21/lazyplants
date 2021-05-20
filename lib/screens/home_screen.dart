@@ -36,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
           case 'plantName':
             plant.plantName = value;
             break;
-          case 'soilMoisture':
-            plant.soilMoisture = value;
+          case 'espId':
+            plant.espId = value;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       CustomPaint(
-                        painter: WaterIndicator(percentage: double.parse(api.getExactPlantData(1, plant.espId)[0]["soilMoisture"])),
+                        painter: WaterIndicator(percentage: 0.6),
                         child: Container(height: 80),
                       ),
                     ],

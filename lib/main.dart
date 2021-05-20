@@ -10,7 +10,7 @@ import 'components/api_connector.dart';
 import 'package:http/http.dart' as http;
 import 'components/db_models.dart';
 
-http.Client client;
+http.Client client = http.Client();
 var api = ApiConnector(client);
 
 const Color kPrimaryColor = Color(0xff0C8C5E);

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lazyplants/components/db_models.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
+import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen4.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
@@ -133,8 +135,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                 ),
               ),
               const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
+              LP_CustomButton(onPressed: () {
                   // set default value if nothing has changed
                   if (widget.plant.soilMoisture == null) {
                     widget.plant.soilMoisture = _currentHumiditySliderValue;
@@ -146,53 +147,10 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                             AddPlantScreen4(plant: widget.plant)),
                   );
                 },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                ),
-                //   textColor: Colors.white,
-                //   highlightColor: Colors.transparent,
-                //   hoverColor: Colors.transparent,
-                //  splashColor: Colors.transparent,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    gradient: LinearGradient(
-                      colors: <Color>[
-                        // TODO: Better gradient
-                        Color(0xFF00897B),
-                        Color(0xFF00897B),
-                        Color(0xFF00897B),
-                      ],
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(
-                      left: 45.0, right: 45.0, top: 12, bottom: 12),
-                  child: Text(
-                    'next'.tr,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
+                btnText: 'next'.tr),
+                LP_CustomTextButton(onPressed: () {
                   Navigator.of(context).pop();
-                },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                ),
-                //   textColor: Colors.white,
-                //   highlightColor: Colors.transparent,
-                //   hoverColor: Colors.transparent,
-                //  splashColor: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 10, bottom: 10),
-                  child: Text(
-                    'back'.tr,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
+                }, btnText: "back" .tr),
             ],
           ),
         ),

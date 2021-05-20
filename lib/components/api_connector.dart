@@ -23,7 +23,7 @@ class ApiConnector {
   getExactPlantData(int limit, String espId) async {
     try {
       var response = await client.get(Uri.parse(baseUrl +
-          "Plants?access_token=" +
+          "PlantData?access_token=" +
           settingsBox.get('token') +
           "&filter[order]=date%20DESC&filter[limit]=" +
           limit.toString() +
@@ -38,6 +38,7 @@ class ApiConnector {
       } else
         return "error";
     } catch (socketException) {
+      print(socketException);
       print('No internet connection');
     }
   }

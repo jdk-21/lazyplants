@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lazyplants/components/db_models.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
+import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen3.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
@@ -25,12 +27,12 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
     var list = <String>["addPlant2_dropDown".tr];
     var data = api.readPlant();
     if (data != null) {
-    data.forEach((key, value) {
-      if (!value.containsKey('plantName')) {
-        list.add(value['espId']);
-      }
-    });
-    print(list.toString());
+      data.forEach((key, value) {
+        if (!value.containsKey('plantName')) {
+          list.add(value['espId']);
+        }
+      });
+      print(list.toString());
     }
     dropdownValue = list[0];
     return list;
@@ -120,19 +122,21 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
-                child: TextButton(
+                child: LP_CustomButton(
+                  btnText: 'next'.tr,
                   onPressed: () {
                     if (plantName == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('addPlant2_noName' .tr),
+                          content: Text('addPlant2_noName'.tr),
                         ),
                       );
-                    } else if (dropdownHelper == "addPlant2_dropDown" .tr || dropdownHelper == null) {
+                    } else if (dropdownHelper == "addPlant2_dropDown".tr ||
+                        dropdownHelper == null) {
                       print(dropdownHelper);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('addPlant2_noESP' .tr),
+                          content: Text('addPlant2_noESP'.tr),
                         ),
                       );
                     } else {
@@ -142,7 +146,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                       print(widget.plant.espId);
                       // get plantId from espId
                       api.readPlant().forEach((key, value) {
-                        if(value['espId'] == dropdownHelper) {
+                        if (value['espId'] == dropdownHelper) {
                           widget.plant.plantId = value['id'];
                           widget.plant.memberId = value['memberId'];
                         }
@@ -156,53 +160,13 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                       );
                     }
                   },
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  //   textColor: Colors.white,
-                  //   highlightColor: Colors.transparent,
-                  //   hoverColor: Colors.transparent,
-                  //  splashColor: Colors.transparent,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      gradient: LinearGradient(
-                        colors: <Color>[
-                          // TODO: Better gradient
-                          Color(0xFF00897B),
-                          Color(0xFF00897B),
-                          Color(0xFF00897B),
-                        ],
-                      ),
-                    ),
-                    padding: const EdgeInsets.only(
-                        left: 45.0, right: 45.0, top: 12, bottom: 12),
-                    child: Text(
-                      'next'.tr,
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
                 ),
               ),
-              TextButton(
+              LP_CustomTextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                ),
-                //   textColor: Colors.white,
-                //   highlightColor: Colors.transparent,
-                //   hoverColor: Colors.transparent,
-                //  splashColor: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 10, bottom: 10),
-                  child: Text(
-                    'back'.tr,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
+                btnText: 'back'.tr,
               ),
             ],
           ),

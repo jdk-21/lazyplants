@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
+import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 import 'package:lazyplants/screens/home_screen.dart';
@@ -189,11 +191,15 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: TextButton(
+                child: LP_CustomButton(
                   onPressed: () async {
                     if (mail != null && password != null && username != null) {
                       var success = await api.postCreateAccount(
-                          widget.firstName, widget.lastName, username, mail, password);
+                          widget.firstName,
+                          widget.lastName,
+                          username,
+                          mail,
+                          password);
                       if (success == 0) {
                         // if login was successfull push to HomeScreen()
                         Navigator.push(
@@ -231,46 +237,15 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                       );
                     }
                   },
-                  style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      return Colors
-                          .transparent; // Defer to the widget's default.
-                    }),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: kPrimaryColor,
-                    ),
-                    padding: const EdgeInsets.only(
-                        left: 45.0, right: 45.0, top: 12, bottom: 12),
-                    child: Text(
-                      'login'.tr,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  ),
+                  btnText: 'createAccount'.tr,
                 ),
               ),
-              TextButton(
-                onPressed: () {
+              LP_CustomTextButton(onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
-                },
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    return Colors.transparent; // Defer to the widget's default.
-                  }),
-                ),
-                child: Text(
-                  'loginInstead'.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+                }, btnText: 'loginInstead' .tr),
             ],
           ),
         ));

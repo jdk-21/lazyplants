@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
+import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 import 'package:lazyplants/screens/login/login_screen.dart';
@@ -130,12 +132,14 @@ class CreateAccountScreen1 extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: TextButton(
+                child: LP_CustomButton(
                   onPressed: () async {
                     if (firstName != null && lastName != null) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateAccountScreen2(firstName, lastName)),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CreateAccountScreen2(firstName, lastName)),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -145,45 +149,17 @@ class CreateAccountScreen1 extends StatelessWidget {
                       );
                     }
                   },
-                  style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      return Colors
-                          .transparent; // Defer to the widget's default.
-                    }),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: kPrimaryColor,
-                    ),
-                    padding: const EdgeInsets.only(
-                        left: 45.0, right: 45.0, top: 12, bottom: 12),
-                    child: Text(
-                      'next'.tr,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  ),
+                  btnText: 'next'.tr,
                 ),
               ),
-              TextButton(
+              LP_CustomTextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
                 },
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    return Colors.transparent; // Defer to the widget's default.
-                  }),
-                ),
-                child: Text(
-                  'loginInstead'.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
+                btnText: 'loginInstead'.tr,
               ),
             ],
           ),

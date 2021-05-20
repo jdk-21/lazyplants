@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazyplants/components/lp_custom_button.dart';
 import 'package:lazyplants/main.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'package:lazyplants/screens/login/create_account_screen1.dart';
@@ -16,23 +17,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Color(0xFFA2BEC2),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/images/login_flower.jpg'),
-                fit: BoxFit.cover),
-          ),
-          child: NotificationListener<OverscrollIndicatorNotification>(
-            onNotification: (overScroll) {
-              overScroll.disallowGlow();
-              return;
-            },
-            child: ListView(
-              children: [
+    var children2 = [
                 Padding(
-                  padding: const EdgeInsets.only(top: 200, left: 25, bottom: 100),
+                  padding:
+                      const EdgeInsets.only(top: 200, left: 25, bottom: 100),
                   child: Text(
                     'helloThere'.tr,
                     textAlign: TextAlign.left,
@@ -59,8 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                          child: Icon(Icons.email_outlined, color: kPrimaryColor),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 0.0),
+                          child:
+                              Icon(Icons.email_outlined, color: kPrimaryColor),
                         ),
                         Expanded(
                           child: TextField(
@@ -107,7 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 0.0),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 0.0),
                           child: Icon(Icons.lock_outline, color: kPrimaryColor),
                         ),
                         Expanded(
@@ -138,8 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: TextButton(
-                    key: Key('login'),
+                  child: LP_CustomButton(
                     onPressed: () async {
                       if (mail != null && password != null) {
                         print("found credentials");
@@ -148,7 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           print("successful login");
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -157,48 +148,32 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         }
-                      }
-                      else {
+                      } else {
                         print("no credentials");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('credentialsMissing'.tr),
-                            ),
-                          );
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('credentialsMissing'.tr),
+                          ),
+                        );
+                      }
                     },
-                    style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        return Colors
-                            .transparent; // Defer to the widget's default.
-                      }),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: kPrimaryColor,
-                      ),
-                      padding: const EdgeInsets.only(
-                          left: 45.0, right: 45.0, top: 12, bottom: 12),
-                      child: Text(
-                        'login'.tr,
-                        style: TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
+                    btnText: 'login'.tr,
+                    key: Key('login'),
                   ),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CreateAccountScreen1()),
-                          );
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreateAccountScreen1()),
+                    );
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith<Color>(
                         (Set<MaterialState> states) {
-                      return Colors.transparent; // Defer to the widget's default.
+                      return Colors
+                          .transparent; // Defer to the widget's default.
                     }),
                   ),
                   child: Text(
@@ -207,7 +182,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ],
+              ];
+    return Scaffold(
+        backgroundColor: Color(0xFFA2BEC2),
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/login_flower.jpg'),
+                fit: BoxFit.cover),
+          ),
+          child: NotificationListener<OverscrollIndicatorNotification>(
+            onNotification: (overScroll) {
+              overScroll.disallowGlow();
+              return;
+            },
+            child: ListView(
+              children: children2,
             ),
           ),
         ));
