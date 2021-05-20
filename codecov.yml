@@ -1,0 +1,3 @@
+ignore:
+  - "lib/translation.dart"
+  - "lib/components/db_models.g.dart"
