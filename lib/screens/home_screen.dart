@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> loadDataInList() async {
     var data = await api.getPlant();
-    if (data.runtimeType != "List<Widget>") {
+    if (data.runtimeType is List<Widget>) {
       print(data.runtimeType);
       return null;
     }
