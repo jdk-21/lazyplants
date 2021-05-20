@@ -18,6 +18,12 @@ void main() {
       expect(nextFinder, findsOneWidget);
       expect(backFinder, findsOneWidget);
     });
-    
+    testWidgets('tap next test, wihtout input data', (WidgetTester tester) async {
+      Plant plant;
+      await tester.pumpWidget(MaterialApp(home: AddPlantScreen2(plant: plant)));
+      await tester.tap(nextFinder);
+      await tester.pumpAndSettle();
+      expect(titleFinder, findsOneWidget);
+    });
   });
 }
