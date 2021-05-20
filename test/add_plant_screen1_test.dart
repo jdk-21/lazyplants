@@ -28,5 +28,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(helpFinder, findsOneWidget);
     });
+    testWidgets('tap cancel',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: AddPlantScreen1()));
+      await tester.tap(cancelFinder);
+      await tester.pumpAndSettle();
+      expect(messageFinder, findsNothing);
+    });
   });
 }

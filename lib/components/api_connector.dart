@@ -242,6 +242,7 @@ class ApiConnector {
 
   readPlant() {
     Map plantMap;
+    //print(plantBox.toMap());
     if (plantBox != null) {
       plantMap = plantBox.toMap();
       print(plantMap);

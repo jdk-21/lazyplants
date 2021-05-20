@@ -26,7 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
   _buildList(List<dynamic> data) {
     List<Widget> listItems = [];
     //Map data;
-
+    if (data == null) {
+      return listItems;
+    }
     data.forEach((element) {
       Plant plant = Plant();
       element.forEach((key, value) {
@@ -118,7 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Null> loadDataInList() async {
-    List<dynamic> data = await api.getPlant();
+    var data = await api.getPlant();
+    if (data.runtimeType != "List<Widget>") {
+      print(data.runtimeType);
+      return null;
+    }
     setState(() {
       plantList = _buildList(data);
     });
