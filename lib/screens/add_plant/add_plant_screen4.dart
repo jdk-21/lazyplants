@@ -83,7 +83,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
             ),
           ),
           const SizedBox(height: 10),
-          LP_CustomButton(
+          LPCustomButton(
               onPressed: () {
                 getImage("camera");
                 Navigator.push(
@@ -96,7 +96,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
           const SizedBox(
             height: 5,
           ),
-          LP_CustomButton(
+          LPCustomButton(
               onPressed: () {
                 getImage("gallery");
                 Navigator.push(

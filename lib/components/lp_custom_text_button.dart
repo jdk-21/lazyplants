@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LP_CustomTextButton extends StatelessWidget {
-  const LP_CustomTextButton({
+class LPCustomTextButton extends StatelessWidget {
+  const LPCustomTextButton({
     Key key,
     @required this.onPressed,
     @required this.btnText,

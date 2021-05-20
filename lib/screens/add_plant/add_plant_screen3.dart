@@ -124,7 +124,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
             ),
           ),
           const SizedBox(height: 10),
-          LP_CustomButton(
+          LPCustomButton(
               onPressed: () {
                 // set default value if nothing has changed
                 if (widget.plant.soilMoisture == null) {
@@ -138,7 +138,7 @@ class _AddPlantScreen3State extends State<AddPlantScreen3> {
                 );
               },
               btnText: 'next'.tr),
-          LP_CustomTextButton(
+          LPCustomTextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },

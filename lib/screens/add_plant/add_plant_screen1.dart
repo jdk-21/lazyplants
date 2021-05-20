@@ -59,7 +59,7 @@ class AddPlantScreen1 extends StatelessWidget {
             },
           ),
           const SizedBox(height: 30),
-          LP_CustomButton(
+          LPCustomButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -73,7 +73,7 @@ class AddPlantScreen1 extends StatelessWidget {
             btnText: 'next'.tr,
             textKey: Key('nextButton'),
           ),
-          LP_CustomTextButton(
+          LPCustomTextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -132,7 +132,7 @@ class CreateAccountScreen1 extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: LP_CustomButton(
+                child: LPCustomButton(
                   onPressed: () async {
                     if (firstName != null && lastName != null) {
                       Navigator.push(
@@ -152,7 +152,7 @@ class CreateAccountScreen1 extends StatelessWidget {
                   btnText: 'next'.tr,
                 ),
               ),
-              LP_CustomTextButton(
+              LPCustomTextButton(
                 onPressed: () {
                   Navigator.push(
                     context,

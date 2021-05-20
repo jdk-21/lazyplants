@@ -192,7 +192,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: LP_CustomButton(
+                child: LPCustomButton(
                   onPressed: () async {
                     if (mail != null && password != null && username != null) {
                       var success = await api.postCreateAccount(
@@ -241,7 +241,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                   btnText: 'createAccount'.tr,
                 ),
               ),
-              LP_CustomTextButton(onPressed: () {
+              LPCustomTextButton(onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),

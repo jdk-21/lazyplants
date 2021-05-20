@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: LP_CustomButton(
+                  child: LPCustomButton(
                     onPressed: () async {
                       if (mail != null && password != null) {
                         print("found credentials");

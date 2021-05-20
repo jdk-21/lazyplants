@@ -113,7 +113,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: LP_CustomButton(
+            child: LPCustomButton(
               btnText: 'next'.tr,
               onPressed: () {
                 if (plantName == null) {
@@ -153,7 +153,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
               },
             ),
           ),
-          LP_CustomTextButton(
+          LPCustomTextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
