@@ -28,11 +28,3 @@ class MonitoringScreen1 extends StatelessWidget {
         ));
   }
 }
-
-/*Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MonitoringScreen1(
-                              plant: widget.plant,
-                            )),
-                  );*/
