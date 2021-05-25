@@ -28,7 +28,7 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
   espList() {
     var list = <String>["addPlant2_dropDown".tr];
     var data = api.readPlant();
-    if (data != null) {
+    if (data !=  null && data != "error") {
       data.forEach((key, value) {
         if (!value.containsKey('plantName')) {
           list.add(value['espId']);
