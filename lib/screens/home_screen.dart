@@ -135,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> loadDataInList() async {
     var data = await api.getPlant();
-    if (data.runtimeType is List<Widget>) {
+    print(data.runtimeType);
+    if (data != "error") {
       setState(() {
         plantList = _buildList(data);
       });
@@ -202,7 +203,7 @@ class CircleIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class WaterIndicator extends CustomPainter {
@@ -227,5 +228,5 @@ class WaterIndicator extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

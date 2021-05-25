@@ -49,6 +49,7 @@ class ApiConnector {
           baseUrl + "Plants?access_token=" + settingsBox.get('token')));
       if (response.statusCode == 200) {
         print("got plants");
+        print(response.body);
         return await jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         // show login screen
@@ -160,7 +161,7 @@ class ApiConnector {
       } else {
         print(response.statusCode.toString());
         print('error');
-        return 1;
+        return 2;
       }
     } catch (socketException) {
       print(socketException.toString());
