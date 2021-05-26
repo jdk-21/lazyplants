@@ -20,6 +20,7 @@ import {
   response,
 } from '@loopback/rest';
 import _ from 'lodash';
+import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
 import {JWTService} from '../services/jwt-service';
@@ -31,11 +32,11 @@ export class UserController {
   constructor(
     @repository(UserRepository)
     public userRepository : UserRepository,
-    @inject('service.hasher')
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
-    @inject('services.user.service')
+    @inject(UserServiceBindings.USER_SERVICE)
     public userService: MyUserService,
-    @inject('services.jwt.service')
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: JWTService,
   ) {}
 

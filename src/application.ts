@@ -13,6 +13,7 @@ import {BcryptHasher} from './services/password-hash-service';
 import {MyUserService} from './services/user-service';
 import {JWTService} from './services/jwt-service';
 import {SECURITY_SCHEME_SPEC, SECURITY_SPEC} from './utils/security-spec';
+import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
 
 export {ApplicationConfig};
 
@@ -59,11 +60,11 @@ export class LazyplantsApplication extends BootMixin(
     };
   }
   setupBinding(): void {
-    this.bind('service.hasher').toClass(BcryptHasher);
-    this.bind('rounds').to(10);
-    this.bind('services.user.service').toClass(MyUserService);
-    this.bind('services.jwt.service').toClass(JWTService);
-    this.bind('authentication.jwt.secret').to('1234567890abcdef');
-    this.bind('authentication.jwt.expiresIn').to('7h');
+    this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+    this.bind(PasswordHasherBindings.ROUNDS).to(10);
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to(TokenServiceConstants.TOKEN_SECRET_VALUE);
+    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE);
   }
 }
