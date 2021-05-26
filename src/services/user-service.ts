@@ -17,13 +17,12 @@ export class MyUserService implements UserService<User, Credentials> {
     public hasher: BcryptHasher,
     ){}
     async verifyCredentials(credentials: Credentials): Promise<User> {
-        const invalidCredentialsError = 'Invalid email or password.';
 
         const foundUser = await this.userRepository.findOne({
           where: {email: credentials.email},
         });
         if (!foundUser) {
-          throw new HttpErrors.Unauthorized(invalidCredentialsError);
+          throw new HttpErrors.Unauthorized(`invalid email: ${credentials.email}`);
         }
 
         const passwordMatched = await this.hasher.comparePassword(
@@ -32,7 +31,7 @@ export class MyUserService implements UserService<User, Credentials> {
         );
 
         if (!passwordMatched) {
-          throw new HttpErrors.Unauthorized(invalidCredentialsError);
+          throw new HttpErrors.Unauthorized('invalid password');
         }
 
         return foundUser;

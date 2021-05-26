@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -31,6 +32,7 @@ export class DataController {
     description: 'Data model instance',
     content: {'application/json': {schema: getModelSchemaRef(Data)}},
   })
+  @authenticate('jwt')
   async create(
     @requestBody({
       content: {
@@ -52,6 +54,7 @@ export class DataController {
     description: 'Data model count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async count(
     @param.where(Data) where?: Where<Data>,
   ): Promise<Count> {
@@ -70,6 +73,7 @@ export class DataController {
       },
     },
   })
+  @authenticate('jwt')
   async find(
     @param.filter(Data) filter?: Filter<Data>,
   ): Promise<Data[]> {
@@ -81,6 +85,7 @@ export class DataController {
     description: 'Data PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async updateAll(
     @requestBody({
       content: {
@@ -104,6 +109,7 @@ export class DataController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(
     @param.path.string('id') id: string,
     @param.filter(Data, {exclude: 'where'}) filter?: FilterExcludingWhere<Data>
@@ -115,6 +121,7 @@ export class DataController {
   @response(204, {
     description: 'Data PATCH success',
   })
+  @authenticate('jwt')
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -133,6 +140,7 @@ export class DataController {
   @response(204, {
     description: 'Data PUT success',
   })
+  @authenticate('jwt')
   async replaceById(
     @param.path.string('id') id: string,
     @requestBody() data: Data,
@@ -144,6 +152,7 @@ export class DataController {
   @response(204, {
     description: 'Data DELETE success',
   })
+  @authenticate('jwt')
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.dataRepository.deleteById(id);
   }

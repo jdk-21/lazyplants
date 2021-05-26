@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -31,6 +32,7 @@ export class PlantController {
     description: 'Plant model instance',
     content: {'application/json': {schema: getModelSchemaRef(Plant)}},
   })
+  @authenticate('jwt')
   async create(
     @requestBody({
       content: {
@@ -52,6 +54,7 @@ export class PlantController {
     description: 'Plant model count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async count(
     @param.where(Plant) where?: Where<Plant>,
   ): Promise<Count> {
@@ -70,6 +73,7 @@ export class PlantController {
       },
     },
   })
+  @authenticate('jwt')
   async find(
     @param.filter(Plant) filter?: Filter<Plant>,
   ): Promise<Plant[]> {
@@ -81,6 +85,7 @@ export class PlantController {
     description: 'Plant PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async updateAll(
     @requestBody({
       content: {
@@ -104,6 +109,7 @@ export class PlantController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(
     @param.path.string('id') id: string,
     @param.filter(Plant, {exclude: 'where'}) filter?: FilterExcludingWhere<Plant>
@@ -115,6 +121,7 @@ export class PlantController {
   @response(204, {
     description: 'Plant PATCH success',
   })
+  @authenticate('jwt')
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -133,6 +140,7 @@ export class PlantController {
   @response(204, {
     description: 'Plant PUT success',
   })
+  @authenticate('jwt')
   async replaceById(
     @param.path.string('id') id: string,
     @requestBody() plant: Plant,
@@ -144,6 +152,7 @@ export class PlantController {
   @response(204, {
     description: 'Plant DELETE success',
   })
+  @authenticate('jwt')
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.plantRepository.deleteById(id);
   }

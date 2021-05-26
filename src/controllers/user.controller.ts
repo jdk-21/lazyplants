@@ -1,3 +1,4 @@
+import { authenticate, TokenService } from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {
   Count,
@@ -21,6 +22,7 @@ import {
 import _ from 'lodash';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
+import {JWTService} from '../services/jwt-service';
 import {BcryptHasher} from '../services/password-hash-service';
 import {MyUserService} from '../services/user-service';
 import {validateCredentials} from '../services/validator-service';
@@ -33,6 +35,8 @@ export class UserController {
     public hasher: BcryptHasher,
     @inject('services.user.service')
     public userService: MyUserService,
+    @inject('services.jwt.service')
+    public jwtService: JWTService,
   ) {}
 
   @post('/user/signup')
@@ -101,12 +105,15 @@ export class UserController {
       },
     }) credentials: Credentials,
   ): Promise<{token: string}> {
-     // ensure the user exists, and the password is correct
-     const user = await this.userService.verifyCredentials(credentials);
+    // ensure the user exists, and the password is correct
+    const user = await this.userService.verifyCredentials(credentials);
 
-     // convert a User object into a UserProfile object (reduced set of properties)
-     const userProfile = this.userService.convertToUserProfile(user);
-    return Promise.resolve({token: '1234567890abcdef'});
+    // convert a User object into a UserProfile object (reduced set of properties)
+    const userProfile = this.userService.convertToUserProfile(user);
+
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
+    return Promise.resolve({token});
   }
 
   @get('/user/count')
@@ -114,6 +121,7 @@ export class UserController {
     description: 'User model count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async count(
     @param.where(User) where?: Where<User>,
   ): Promise<Count> {
@@ -132,6 +140,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async find(
     @param.filter(User) filter?: Filter<User>,
   ): Promise<User[]> {
@@ -143,6 +152,7 @@ export class UserController {
     description: 'User PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
+  @authenticate('jwt')
   async updateAll(
     @requestBody({
       content: {
@@ -166,6 +176,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(
     @param.path.string('id') id: string,
     @param.filter(User, {exclude: 'where'}) filter?: FilterExcludingWhere<User>
@@ -177,6 +188,7 @@ export class UserController {
   @response(204, {
     description: 'User PATCH success',
   })
+  @authenticate('jwt')
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -195,6 +207,7 @@ export class UserController {
   @response(204, {
     description: 'User PUT success',
   })
+  @authenticate('jwt')
   async replaceById(
     @param.path.string('id') id: string,
     @requestBody() user: User,
@@ -206,6 +219,7 @@ export class UserController {
   @response(204, {
     description: 'User DELETE success',
   })
+  @authenticate('jwt')
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.userRepository.deleteById(id);
   }
