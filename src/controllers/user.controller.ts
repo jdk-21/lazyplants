@@ -1,10 +1,13 @@
 import { authenticate, TokenService } from '@loopback/authentication';
 import {inject} from '@loopback/core';
+import {authorize} from '@loopback/authorization';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
+  model,
+  property,
   repository,
   Where,
 } from '@loopback/repository';
@@ -29,6 +32,16 @@ import {MyUserService} from '../services/user-service';
 import {validateCredentials} from '../services/validator-service';
 import {UserProfileSchema} from './specs/user-controller.spec';
 import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+import {basicAuthorization} from '../middlewares/auth.midd';
+
+@model()
+export class NewUserRequest extends User {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+}
 
 export class UserController {
   constructor(
@@ -39,7 +52,7 @@ export class UserController {
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: MyUserService,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: JWTService,
+    public jwtService: TokenService,
   ) {}
 
   @post('/user/signup')
@@ -53,16 +66,18 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(User, {
             title: 'NewUser',
-            exclude: ['userId'],
+            exclude: ['userId', 'role'],
           }),
         },
       },
     })
-    user: Omit<User, 'userId'>,
+    //user: Omit<User, 'userId'>,
+    newUserRequest: Credentials,
   ): Promise<User> {
-    validateCredentials(_.pick(user, ['email', 'password']));
-    user.password = await this.hasher.hashPassword(user.password);
-    return this.userRepository.create(user);
+    newUserRequest.role = 'user';
+    validateCredentials(_.pick(newUserRequest, ['email', 'password']));
+    newUserRequest.password = await this.hasher.hashPassword(newUserRequest.password);
+    return await this.userRepository.create(newUserRequest)
   }
 
   @post('/user/login', {
@@ -245,7 +260,39 @@ export class UserController {
     description: 'User DELETE success',
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.userRepository.deleteById(id);
   }
+
+  @post('/user/signup/admin')
+  @response(200, {
+    description: 'User',
+    content: {'application/json': {schema: getModelSchemaRef(User, {exclude: ['password'],})}},
+  })
+  async createAdmin(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {
+            title: 'NewAdmin',
+            exclude: ['userId', 'role'],
+          }),
+        },
+      },
+    })
+    admin: Credentials,
+    //user: Omit<User, 'id'>,
+  ): Promise<User> {
+    admin.role = 'admin';
+    //validate user credentials
+    validateCredentials(_.pick(admin, ['email', 'password']));
+    //encrypt user password
+    admin.password = await this.hasher.hashPassword(admin.password);
+    return this.userRepository.create(admin);
+  }
+
 }

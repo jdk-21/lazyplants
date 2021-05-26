@@ -39,6 +39,12 @@ export class User extends Entity {
   })
   lastName: string;
 
+  @property({
+    type: 'string',
+    nullable: false,
+  })
+  role: string;
+
   @hasMany(() => Plant)
   plant: Plant[];
 

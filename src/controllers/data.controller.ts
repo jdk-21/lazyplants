@@ -19,9 +19,11 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Data} from '../models';
-import {DataRepository} from '../repositories';
+import {Data, User} from '../models';
+import {Credentials, DataRepository} from '../repositories';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {MyUserService} from '../services/user-service';
+import {UserServiceBindings} from '../keys';
 
 export class DataController {
   constructor(
@@ -81,13 +83,17 @@ export class DataController {
   })
   @authenticate('jwt')
   async find(
-    //@param.filter(Data) filter?: Filter<Data>,
+    @inject(UserServiceBindings.USER_SERVICE)
+    user: User,
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
   ): Promise<Data[]> {
     //return this.dataRepository.find(filter);
     const userId = currentUserProfile[securityId];
-    return this.dataRepository.find({where: {userId: userId}});
+    if(user.role == 'user'){
+      return this.dataRepository.find({where: {userId: userId}});
+    }
+    return this.dataRepository.find({where: {userId: {neq: ''}}});
   }
 
   @patch('/data')
