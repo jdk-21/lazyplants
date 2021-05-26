@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -20,6 +21,7 @@ import {
 } from '@loopback/rest';
 import {Plant} from '../models';
 import {PlantRepository} from '../repositories';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 
 export class PlantController {
   constructor(
@@ -30,7 +32,7 @@ export class PlantController {
   @post('/plant')
   @response(200, {
     description: 'Plant model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Plant)}},
+    content: {'application/json': {schema: getModelSchemaRef(Plant, {exclude: ['userId']})}},
   })
   @authenticate('jwt')
   async create(
@@ -39,13 +41,17 @@ export class PlantController {
         'application/json': {
           schema: getModelSchemaRef(Plant, {
             title: 'NewPlant',
-            exclude: ['plantId'],
+            exclude: ['plantId', 'userId'],
           }),
         },
       },
     })
     plant: Omit<Plant, 'plantId'>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<Plant> {
+    const userId = currentUserProfile[securityId];
+    plant.userId = userId;
     return this.plantRepository.create(plant);
   }
 
@@ -75,9 +81,13 @@ export class PlantController {
   })
   @authenticate('jwt')
   async find(
-    @param.filter(Plant) filter?: Filter<Plant>,
+    //@param.filter(Plant) filter?: Filter<Plant>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<Plant[]> {
-    return this.plantRepository.find(filter);
+    //return this.plantRepository.find(filter);
+    const userId = currentUserProfile[securityId];
+    return this.plantRepository.find({where: {userId: userId}});
   }
 
   @patch('/plant')

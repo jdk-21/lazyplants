@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -20,6 +21,7 @@ import {
 } from '@loopback/rest';
 import {Data} from '../models';
 import {DataRepository} from '../repositories';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 
 export class DataController {
   constructor(
@@ -30,7 +32,7 @@ export class DataController {
   @post('/data')
   @response(200, {
     description: 'Data model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Data)}},
+    content: {'application/json': {schema: getModelSchemaRef(Data, {exclude: ['userId']})}},
   })
   @authenticate('jwt')
   async create(
@@ -39,13 +41,17 @@ export class DataController {
         'application/json': {
           schema: getModelSchemaRef(Data, {
             title: 'NewData',
-            exclude: ['dataId'],
+            exclude: ['dataId', 'userId'],
           }),
         },
       },
     })
     data: Omit<Data, 'dataId'>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<Data> {
+    const userId = currentUserProfile[securityId];
+    data.userId = userId;
     return this.dataRepository.create(data);
   }
 
@@ -75,9 +81,13 @@ export class DataController {
   })
   @authenticate('jwt')
   async find(
-    @param.filter(Data) filter?: Filter<Data>,
+    //@param.filter(Data) filter?: Filter<Data>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<Data[]> {
-    return this.dataRepository.find(filter);
+    //return this.dataRepository.find(filter);
+    const userId = currentUserProfile[securityId];
+    return this.dataRepository.find({where: {userId: userId}});
   }
 
   @patch('/data')
