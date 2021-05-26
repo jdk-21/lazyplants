@@ -27,6 +27,8 @@ import {JWTService} from '../services/jwt-service';
 import {BcryptHasher} from '../services/password-hash-service';
 import {MyUserService} from '../services/user-service';
 import {validateCredentials} from '../services/validator-service';
+import {UserProfileSchema} from './specs/user-controller.spec';
+import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
 
 export class UserController {
   constructor(
@@ -115,6 +117,28 @@ export class UserController {
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({token});
+  }
+
+  @get('/users/me', {
+    responses: {
+      '200': {
+        description: 'The current user profile',
+        content: {
+          'application/json': {
+            schema: UserProfileSchema,
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  async printCurrentUser(
+    @inject(SecurityBindings.USER)
+      currentUserProfile: UserProfile,
+  ): Promise<User> {
+
+    const userId = currentUserProfile[securityId];
+    return this.userRepository.findById(userId);
   }
 
   @get('/user/count')

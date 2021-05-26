@@ -14,6 +14,8 @@ import {MyUserService} from './services/user-service';
 import {JWTService} from './services/jwt-service';
 import {SECURITY_SCHEME_SPEC, SECURITY_SPEC} from './utils/security-spec';
 import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
+import {JWTAuthenticationStrategy} from './authentication-strategies/jwt-strategy';
+import { AuthenticationComponent, registerAuthenticationStrategy } from '@loopback/authentication';
 
 export {ApplicationConfig};
 
@@ -32,6 +34,9 @@ export class LazyplantsApplication extends BootMixin(
       security: SECURITY_SPEC,
     };
     this.api(spec);
+
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
 
     // Set up Bindings
     this.setupBinding();
