@@ -9,7 +9,6 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
-import {BcryptHasher} from './services/password-hash-service';
 
 export {ApplicationConfig};
 
@@ -18,9 +17,6 @@ export class LazyplantsApplication extends BootMixin(
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
-
-    // Set up Bindings
-    this.setupBinding();
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -44,8 +40,5 @@ export class LazyplantsApplication extends BootMixin(
         nested: true,
       },
     };
-  }
-  setupBinding(): void {
-    this.bind('service.hasher').toClass(BcryptHasher);
   }
 }
