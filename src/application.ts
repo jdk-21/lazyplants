@@ -10,6 +10,7 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
 import {BcryptHasher} from './services/password-hash-service';
+import {MyUserService} from './services/user-service';
 
 export {ApplicationConfig};
 
@@ -47,5 +48,7 @@ export class LazyplantsApplication extends BootMixin(
   }
   setupBinding(): void {
     this.bind('service.hasher').toClass(BcryptHasher);
+    this.bind('rounds').to(10);
+    this.bind('services.user.service').toClass(MyUserService);
   }
 }
