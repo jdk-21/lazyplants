@@ -1,6 +1,28 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Plant} from './plant.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_Data_userId: {
+        name: 'fk_Data_userId',
+        entity: 'User',
+        entityKey: 'userId',
+        foreignKey: 'userId',
+        onUpdate: 'restrict',
+        onDelete: 'cascade',
+      },
+      fk_Data_plantId: {
+        name: 'fk_Data_plantId',
+        entity: 'Plant',
+        entityKey: 'plantId',
+        foreignKey: 'plantId',
+        onUpdate: 'restrict',
+        onDelete: 'cascade',
+      },
+    },
+  },
+})
 export class Data extends Entity {
   @property({
     type: 'string',
@@ -9,6 +31,14 @@ export class Data extends Entity {
     defaultFn: 'uuidv4',
   })
   dataId?: string;
+
+  @belongsTo(() => Plant)
+  plantId: string;
+
+  @property({
+    type: 'string',
+  })
+  userId?: string;
 
   @property({
     type: 'number',
@@ -41,7 +71,6 @@ export class Data extends Entity {
     required: true,
   })
   water: boolean;
-
 
   constructor(data?: Partial<Data>) {
     super(data);

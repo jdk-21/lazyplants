@@ -1,6 +1,19 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_Plant_userId: {
+        name: 'fk_Plant_userId',
+        entity: 'User',
+        entityKey: 'userId',
+        foreignKey: 'userId',
+        onUpdate: 'restrict',
+        onDelete: 'cascade',
+      },
+    },
+  },
+})
 export class Plant extends Entity {
   @property({
     type: 'string',
@@ -9,6 +22,11 @@ export class Plant extends Entity {
     defaultFn: 'uuidv4',
   })
   plantId?: string;
+
+  @property({
+    type: 'string',
+  })
+  userId?: string;
 
   @property({
     type: 'string',
@@ -36,7 +54,6 @@ export class Plant extends Entity {
     type: 'number',
   })
   humidity?: number;
-
 
   constructor(data?: Partial<Plant>) {
     super(data);
