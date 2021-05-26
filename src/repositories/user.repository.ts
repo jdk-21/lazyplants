@@ -5,6 +5,11 @@ import {User, UserRelations, Plant, Data} from '../models';
 import {PlantRepository} from './plant.repository';
 import {DataRepository} from './data.repository';
 
+export type Credentials = {
+  email: string;
+  password: string;
+}
+
 export class UserRepository extends DefaultCrudRepository<
   User,
   typeof User.prototype.userId,
