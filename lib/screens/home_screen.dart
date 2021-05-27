@@ -42,6 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
             break;
           case 'espId':
             plant.espId = value;
+            break;
+          case 'plantDate':
+            plant.plantDate = DateTime.parse(value);
+            break;
+          case 'temperature':
+            plant.temprature = value;
+            break;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {

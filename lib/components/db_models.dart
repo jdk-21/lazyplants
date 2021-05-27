@@ -5,7 +5,6 @@ part 'db_models.g.dart';
 
 @HiveType(typeId: 0)
 class Plant {
-
   @HiveField(0)
   String memberId;
 
@@ -33,11 +32,11 @@ class Plant {
   @HiveField(8)
   String espId;
 
+  var temprature;
 }
 
 @HiveType(typeId: 1)
 class PlantData {
-
   @HiveField(0)
   String espId;
 
@@ -64,5 +63,4 @@ class PlantData {
 
   @HiveField(8)
   bool water;
-
 }
