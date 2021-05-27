@@ -1,5 +1,6 @@
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
+import {authorize} from '@loopback/authorization';
 import {
   Count,
   CountSchema,
@@ -22,8 +23,8 @@ import {
 import {Data, User} from '../models';
 import {Credentials, DataRepository} from '../repositories';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {MyUserService} from '../services/user-service';
 import {UserServiceBindings} from '../keys';
+import {basicAuthorization} from '../middlewares/auth.midd';
 
 export class DataController {
   constructor(
@@ -82,6 +83,10 @@ export class DataController {
     },
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async find(
     @inject(UserServiceBindings.USER_SERVICE)
     user: User,
@@ -102,6 +107,10 @@ export class DataController {
     content: {'application/json': {schema: CountSchema}},
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async updateAll(
     @requestBody({
       content: {
@@ -126,6 +135,10 @@ export class DataController {
     },
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async findById(
     @param.path.string('id') id: string,
     @param.filter(Data, {exclude: 'where'}) filter?: FilterExcludingWhere<Data>
@@ -138,6 +151,10 @@ export class DataController {
     description: 'Data PATCH success',
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -153,6 +170,10 @@ export class DataController {
   }
 
   @put('/data/{id}')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   @response(204, {
     description: 'Data PUT success',
   })
@@ -165,6 +186,10 @@ export class DataController {
   }
 
   @del('/data/{id}')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   @response(204, {
     description: 'Data DELETE success',
   })

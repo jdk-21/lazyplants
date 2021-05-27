@@ -162,6 +162,10 @@ export class UserController {
     content: {'application/json': {schema: CountSchema}},
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async count(
     @param.where(User) where?: Where<User>,
   ): Promise<Count> {
@@ -181,6 +185,10 @@ export class UserController {
     },
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async find(
     @param.filter(User) filter?: Filter<User>,
   ): Promise<User[]> {
@@ -193,6 +201,10 @@ export class UserController {
     content: {'application/json': {schema: CountSchema}},
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async updateAll(
     @requestBody({
       content: {
@@ -217,6 +229,10 @@ export class UserController {
     },
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async findById(
     @param.path.string('id') id: string,
     @param.filter(User, {exclude: 'where'}) filter?: FilterExcludingWhere<User>
@@ -224,6 +240,7 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
+  //ToDo
   @patch('/user/{id}')
   @response(204, {
     description: 'User PATCH success',
@@ -248,6 +265,10 @@ export class UserController {
     description: 'User PUT success',
   })
   @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
   async replaceById(
     @param.path.string('id') id: string,
     @requestBody() user: User,
@@ -268,6 +289,8 @@ export class UserController {
     await this.userRepository.deleteById(id);
   }
 
+  //Delete This
+  /*
   @post('/user/signup/admin')
   @response(200, {
     description: 'User',
@@ -293,6 +316,6 @@ export class UserController {
     //encrypt user password
     admin.password = await this.hasher.hashPassword(admin.password);
     return this.userRepository.create(admin);
-  }
+  }*/
 
 }
