@@ -144,7 +144,7 @@ export class PlantController {
     if (userId == userIdOfPlantId[0]['userId']) {
       return this.plantRepository.findById(id, filter);
     } else {
-      throw new HttpErrors.Unauthorized('Access Denied');
+      throw new HttpErrors.Forbidden('Access Denied');
     }
   }
 
@@ -177,7 +177,7 @@ export class PlantController {
       plant.plantId = id;
       await this.plantRepository.updateById(id, plant);
     } else {
-      throw new HttpErrors.Unauthorized('Access Denied');
+      throw new HttpErrors.Forbidden('Access Denied');
     }
   }
 
@@ -211,7 +211,7 @@ export class PlantController {
     if (userId == userIdOfPlantId[0]['userId']) {
       await this.plantRepository.deleteById(id);
     } else {
-      throw new HttpErrors.Unauthorized('Access Denied');
+      throw new HttpErrors.Forbidden('Access Denied');
     }
     await this.plantRepository.deleteById(id);
   }

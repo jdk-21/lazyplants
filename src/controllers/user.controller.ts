@@ -241,7 +241,7 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  
+
   @patch('/user/{id}')
   @response(204, {
     description: 'User PATCH success',
@@ -265,7 +265,7 @@ export class UserController {
     if (userId == myId[0]['userId']) {
       await this.userRepository.updateById(id, user);
     } else {
-      throw new HttpErrors.Unauthorized('Access Denied');
+      throw new HttpErrors.Forbidden('Access Denied');
     }
   }
 
