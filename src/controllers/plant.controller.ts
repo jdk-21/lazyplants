@@ -123,7 +123,6 @@ export class PlantController {
     return this.plantRepository.updateAll(plant, where);
   }
 
-  //ToDo
   @get('/plant/{id}')
   @response(200, {
     description: 'Plant model instance',
@@ -135,10 +134,18 @@ export class PlantController {
   })
   @authenticate('jwt')
   async findById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
-    @param.filter(Plant, {exclude: 'where'}) filter?: FilterExcludingWhere<Plant>
+    @param.filter(Plant, {exclude: 'where'}) filter?: FilterExcludingWhere<Plant>,
   ): Promise<Plant> {
-    return this.plantRepository.findById(id, filter);
+    const userId = currentUserProfile[securityId];
+    const userIdOfPlantId = await this.plantRepository.find({where: {plantId: id}});
+    if (userId == userIdOfPlantId[0]['userId']) {
+      return this.plantRepository.findById(id, filter);
+    } else {
+      throw new HttpErrors.Unauthorized('Access Denied');
+    }
   }
 
   @patch('/plant/{id}')

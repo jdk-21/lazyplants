@@ -21,6 +21,7 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import _ from 'lodash';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
@@ -240,13 +241,15 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  //ToDo
+  
   @patch('/user/{id}')
   @response(204, {
     description: 'User PATCH success',
   })
   @authenticate('jwt')
   async updateById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @requestBody({
       content: {
@@ -257,7 +260,13 @@ export class UserController {
     })
     user: User,
   ): Promise<void> {
-    await this.userRepository.updateById(id, user);
+    const userId = currentUserProfile[securityId];
+    const myId = await this.userRepository.find({where: {userId: id}});
+    if (userId == myId[0]['userId']) {
+      await this.userRepository.updateById(id, user);
+    } else {
+      throw new HttpErrors.Unauthorized('Access Denied');
+    }
   }
 
   @put('/user/{id}')
