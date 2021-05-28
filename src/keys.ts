@@ -7,7 +7,7 @@ import {PasswordHasher} from './services/password-hash-service';
 
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = '123asdf5';
-  export const TOKEN_EXPIRES_IN_VALUE = '36000';
+  export const TOKEN_EXPIRES_IN_VALUE = '1209600'; //seconds two weeks
 }
 
 export namespace TokenServiceBindings {

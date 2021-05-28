@@ -135,7 +135,7 @@ export class UserController {
     return Promise.resolve({token});
   }
 
-  @get('/users/me', {
+  @get('/user/me', {
     responses: {
       '200': {
         description: 'The current user profile',

@@ -32,6 +32,11 @@ export class Plant extends Entity {
     type: 'string',
     required: true,
   })
+  espName: string;
+
+  @property({
+    type: 'string',
+  })
   plantName: string;
 
   @property({

@@ -24,6 +24,7 @@ export class User extends Entity {
   @property({
     type: 'string',
     required: true,
+    hidden: true,
   })
   password: string;
 
@@ -42,6 +43,7 @@ export class User extends Entity {
   @property({
     type: 'string',
     nullable: false,
+    hidden: true,
   })
   role: string;
 

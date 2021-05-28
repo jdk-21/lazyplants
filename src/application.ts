@@ -28,7 +28,7 @@ export class LazyplantsApplication extends BootMixin(
 
     const spec: OpenApiSpec = {
       openapi: '3.0.0',
-      info: {title: 'LazyPlants', version: '0.0.1'},
+      info: {title: 'LazyPlants', version: '2.0.1'},
       paths: {},
       components: {securitySchemes: SECURITY_SCHEME_SPEC},
       servers: [{url: '/api'}],
