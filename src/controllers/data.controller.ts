@@ -83,10 +83,6 @@ export class DataController {
     },
   })
   @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['admin'],
-    voters: [basicAuthorization],
-  })
   async find(
     @inject(UserServiceBindings.USER_SERVICE)
     user: User,
@@ -95,10 +91,10 @@ export class DataController {
   ): Promise<Data[]> {
     //return this.dataRepository.find(filter);
     const userId = currentUserProfile[securityId];
-    if(user.role == 'user'){
-      return this.dataRepository.find({where: {userId: userId}});
+    if(user.role == 'admin'){
+      return this.dataRepository.find({where: {userId: {neq: ''}}});
     }
-    return this.dataRepository.find({where: {userId: {neq: ''}}});
+    return this.dataRepository.find({where: {userId: userId}});
   }
 
   @patch('/data')
