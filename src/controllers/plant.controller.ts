@@ -90,14 +90,37 @@ export class PlantController {
   })
   @authenticate('jwt')
   async find(
-    //@param.filter(Plant) filter?: Filter<Plant>,
+
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
+    @param.filter(Plant) filter?: Filter<Plant>,
   ): Promise<Plant[]> {
     //return this.plantRepository.find(filter);
     const userId = currentUserProfile[securityId];
     return this.plantRepository.find({where: {userId: userId}});
   }
+
+  @get('/plant/{name}')
+  @response(204, {
+    description: 'Plant PATCH success',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  @authenticate('jwt')
+  async findName(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @param.path.string('name') name: string,
+    @param.filter(Plant, {exclude: 'where'}) filter?: FilterExcludingWhere<Plant>,
+  ): Promise<Plant[]> {
+    const userId = currentUserProfile[securityId];
+    const check = await this.plantRepository.find({where: {espName: name}});
+    if (userId == check[0]['userId']) {
+      return this.plantRepository.find({where: {espName: name}});
+    } else {
+      throw new HttpErrors.Forbidden('Access Denied');
+    }
+  }
+
 
   @patch('/plant')
   @response(200, {
