@@ -1,8 +1,8 @@
 /* Name: Steuerung ESP
    Projekt: LazyPlants
    Erstelldatum:  01.11.2020 18:00
-   Änderungsdatum: 26.11.2020 10:00
-   Version: 0.1.3
+   * Änderungsdatum: 28.05.2021 13:00
+ * Version: 0.2.0
    History:
 */
 
@@ -14,15 +14,10 @@
 
 // Declarationen
 // Connections
-const String espID = "ESP_Blume_Test";
-String tableLogin = "Member"; // stelle an der sich der ESP bei der API einloggen muss
-String tableGet = "Plants"; // Pflanze
-String tableDB = "PlantData"; // Pflanzen Datensätze
-String email = "patrick@gmail.com";
-String pw_API = "test";
-String ServerPath = ("http://" + ipadresse + "/api/" + tableLogin + "?");
-//String ServerPath = ("http://"+ipadresse+"/api/"+ table + id + "?access_token=" + token + filter); // http://178.238.227.46:3000/api/waterplants/5fb3804d76949e054eeae501?access_token=cwapZ8RI3Y8HtK09S5P8RpAaVGUwLgjrlBuKj308rZgt8K0bGkMEizTjeGhuE3eZ
-//String filter = "&filter[where][MemberID]=1&filter[where][PlantID]=1"; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
+const String espName = "ESP_Blume_1";
+String email = "johnhanley@gmail.com";
+String pw_API = "password";
+
 
 // WLAN
 const char* ssid = "TrojaNet";
@@ -36,17 +31,15 @@ JSONVar Plant;
 int soll_soilMoisture;
 int soll_humidity;
 String plantID;
-String id;
-String token;
-String MemberID;
-String filter; //z.B. &filter[where][MemberID]=1&filter[where][PlantID]=1
 String msg;
+String ServerPath;
 String Messages[9];
 int ResponseCode;
 int counter;
 String  Time;
 char buffer [80];
 #define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
+//#define IntervallTime 30000 //Milliseconds hier 30s
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
 
 //Zeit
@@ -63,6 +56,11 @@ bool gegossen = false;
 const int toleranz = 20; // Angabe der Toleranz in %
 
 //Preferences preferences; // Permanentes Speichern von Variablen
+
+
+//ServerPath abändern
+
+
 
 void firstStart() {
   delay(500);
@@ -97,15 +95,18 @@ void setup() {
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
 
-  Data = login(email, pw_API); // Login bei API und Token erhalten
+  if (token == ""){
+    //new token
+    Serial.print("Get new token: ");
+    login(email, pw_API); // Login bei API und Token erhalten    
+  }else{
+    //TODO: token prüfen (POST 401 --> Fehler)
+    Serial.print("Old token: ");
+    ServerPath = baseUrl +"user/me"    
+    Data = get_json(ServerPath);
+    ResponseCode = Data[
+  }
 
-  token = Data["id"];
-  Serial.print("Token: ");
-  Serial.println(token);
-
-  MemberID = Data["userId"];
-  Serial.print("MemberID: ");
-  Serial.println(MemberID);
   if (token == "null") {
     Serial.println("Login nicht möglich!");
     ESP.restart();
@@ -122,20 +123,17 @@ void loop() {
   Serial.println("Time: " + String(Time));
 
   // prüfen ob Plant existiert
-  filter = "&filter[where][memberId]=" + MemberID + "&filter[where][espId]=" + espID ;
-  ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token + filter);
+  ServerPath = baseUrl + tablePlant + "/" + espName;
+  Serial.println(ServerPath);
   Plant = get_json(ServerPath);
   Serial.print("Plant: ");
   Serial.println(Plant);
 
   // Plant existiert nicht, POST default Plant
-  if (JSON.stringify(Plant) == "{}") {
+  if (Plant["plantDate"] == null) {
     Serial.println("GET Plant failed");
     //Default Plant zusammenstellen
-    ServerPath = ("http://" + ipadresse + "/api/" + tableGet + "?access_token=" + token);
-    Serial.print("New ServerPath: "); Serial.println(ServerPath);
-    msg = ("{\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"soilMoisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
-    //msg = ("{\"plantname\":\"NEW\",\"plantdate\":\"" + Time + "\", \"espId\": \"" + espID + "\", \"soilMoisture\":30, \"humidity\":30, \"memberId\":\"" + MemberID + "\"}");
+    msg = ("{\"plantDate\":\"" + Time + "\", \"espName\": \"" + espName + "\", \"soilMoisture\":20, \"humidity\":20}");
     Serial.print("New Plant: "); Serial.println(msg);
     Data = JSON.parse(msg);
     counter = 0;
@@ -147,7 +145,7 @@ void loop() {
         Serial.println("ERROR: POST new Plant failed");
       }
     } while (JSON.stringify(Plant) == "{}" && counter <= max_Retry);
-
+    Serial.print("GET Plant with Name: ");
   } else {
     Serial.print("GET Plant with Name: ");
     Serial.println(Plant["plantname"]);
@@ -159,7 +157,7 @@ void loop() {
   Serial.print("Soll soilMoisture: "); Serial.print(soll_soilMoisture); Serial.println("%");
   soll_humidity = Plant["humidity"];
   Serial.print("Soll humidity: "); Serial.print(soll_humidity);  Serial.println("%");
-  plantID = Plant["plantsId"];
+  plantID = Plant["plantId"];
   Serial.print("PlantID: "); Serial.println(plantID);
 
   // Messwerte erfassen
@@ -186,29 +184,46 @@ void loop() {
     gegossen = true;
   }
 
-  // Datensatz bauen und übertragen
-  Messages[0] = "{\"espId\":\"" + espID + "\",";
-  Messages[1] = "\"soilMoisture\":\"" + String(soilMoisture) + "\",";
-  Messages[2] = "\"humidity\":\"" + String(humidity) + "\",";
-  Messages[3] = "\"temperature\":\"" + String(temp) + "\",";
-  Messages[4] = "\"watertank\":\"" + String(Tanklevel) + "\",";
-  Messages[5] = "\"water\":\"" + String(gegossen) + "\",";
-  Messages[6] = "\"measuring_time\":\"" + Time + "\",";
-  Messages[7] = "\"plantsId\":\"" + plantID + "\",";
-  Messages[8] = "\"memberId\":\"" + MemberID + "\"}"; //letzter ohne , da dass } folgt
-
-  for(int i=0;i<= 8 ;i++){
-    msg = msg + Messages[i];
-    Serial.print(i);
+  // Datensatz bauen und übertragen inkl. Ergebnis prüfen
+  Messages[0] = "{\"plantId\":\"" + plantID + "\", ";
+  if(soilMoisture >= 0){
+    Messages[1] = "\"soilMoisture\":" + String(soilMoisture) + ", ";
+  }else{
+    Messages[1] = "\"soilMoisture\":\"\", "; // if nan
   }
-  Serial.println();
-  Serial.println(msg);
+  if(String(humidity) != "nan"){
+    Messages[2] = "\"humidity\":" + String(humidity) + ", ";
+  }else{
+    Messages[2] = ""; // if nan
+  }
+  if(String(temp) != "nan"){
+    Messages[3] = "\"temperature\":" + String(temp) + ", ";
+  }else{
+     Messages[3] = "";// if nan
+  }
+  if(Tanklevel >= 0){
+    Messages[4] = "\"watertank\":" + String(Tanklevel) + ", "; 
+  }else{
+    Messages[4] = ""; 
+  }
+  Messages[5] = "\"measuringTime\":\"" + Time + "\", ";
+  
+  if (gegossen){
+    Messages[6] = "\"water\": true }";
+  }else{
+    Messages[6] = "\"water\": false }";
+  }
+
+
+  for(int i=0; i <= 6 ;i++){
+    msg = msg + Messages[i];
+  }
 
   Serial.println();
-  ServerPath = ("http://" + ipadresse + "/api/" + tableDB + "?access_token=" + token);
+  ServerPath = (baseUrl + tableDB);
   Serial.println(ServerPath);
+  Serial.println(msg);
   Data = JSON.parse(msg);
-  Serial.println(JSON.stringify(Data));
   counter = 0;
   do {
     ResponseCode = post_json_int(ServerPath, Data);
@@ -217,8 +232,11 @@ void loop() {
       Serial.println("ERROR: POST Messdaten nicht möglich!");
     }
   } while (ResponseCode != 200 && counter <= max_Retry);
+  
   // Deep Sleep
-  Serial.println("Deep Sleep");
+  Serial.println("Sleep");
+  Serial.println();
+  //delay(IntervallTime);
   esp_sleep_enable_timer_wakeup(IntervallTime);    // Deep Sleep Zeit einstellen
   esp_deep_sleep_start();
 }

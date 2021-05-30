@@ -1,13 +1,14 @@
 /* Name: Module ESP
  * Projekt: LazyPlants
  * Erstelldatum:  15.11.2020 18:00
- * Änderungsdatum: 25.11.2020 16:00
- * Version: 0.0.5
+ * Änderungsdatum: 28.05.2021 13:00
+ * Version: 0.1.0
  * History:
  */
 
-#include <WiFi.h> // Verbinden mit dem WLAN (Bibliothek: Arduino Uno WiFi Dev Ed Library)
+#include "WiFi.h" // Verbinden mit dem WLAN (Bibliothek: Arduino Uno WiFi Dev Ed Library)
 #include "DHT.h" //DHT Bibliothek laden
+#include <Arduino.h>
 #include <Arduino_JSON.h> // Erstellen von JSON Objekten (Bibliothek: Arduino_JSON )
 #include <HTTPClient.h> // HTTP Requests (Bibliothek: ArduinoHttpClient )
 #include <NTPClient.h> // Zeit abfrage (Bibliothek: NTPClient)
@@ -29,9 +30,12 @@ DHT dht(dhtPIN, dhtType);
 // Connection
 const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
 const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zeit
-String login_table = "Members"; // zum Anmelden an der API
-const String ipadresse = "178.238.227.46:3000"; // IP ADresse des Servers
+const String baseUrl = "https://api.kie.one/";
+String login_table = "user/login"; // zum Anmelden an der API
+String tablePlant = "plant"; // Pflanze
+String tableDB = "data"; // Pflanzen Datensätze
 #define max_Retry 5
+RTC_DATA_ATTR String token = "";
 
 
 // Constanten
@@ -108,107 +112,123 @@ bool connect(const char* ssid,const char* password){
 
 }
 
-String translate(int ResponseCode){
-  String f_msg ;
-  switch (ResponseCode)
+String translate(int rCode, String msg){
+  JSONVar body = JSON.parse(msg);  
+  String f_msg = "";
+  f_msg += rCode;
+  if (f_msg == ""){
+    rCode =0;
+    f_msg += rCode;
+  }
+  switch (rCode)
   {
   case 100:
-    f_msg = "100: Continue";
+    f_msg += " Continue";
     break;
   case 101:
-    f_msg = "101: Switching Protocols";
+    f_msg += " Switching Protocols";
     break;
   case 102:
-    f_msg = "102: Processing ";
+    f_msg += " Processing ";
     break;
   case 103:
-    f_msg = "103: Early Hints ";
+    f_msg += " Early Hints ";
     break;
   case 200:
-    f_msg = "200: OK ";
+    f_msg += " OK ";
     break;
   case 201:
-    f_msg = "201: Created";
+    f_msg += " Created";
     break;
   case 202:
-    f_msg = "202: Accepted";
+    f_msg += " Accepted";
     break;
   // Fehlend 203 bis 226 
   case 300:
-    f_msg = "300: Multiple Choices";
+    f_msg += " Multiple Choices";
     break;
   // Fehlend 301 bis 308
   case 400:
-    f_msg = "400: Bad Request";
+    f_msg += " Bad Request";
     break;
   case 401:
-    f_msg = "401: Unauthorized";
+    f_msg += " Unauthorized";
     break;
   case 403:
-    f_msg = "403: Forbidden";
+    f_msg += " Forbidden";
     break;
   case 404:
-    f_msg = "404: Not Found";
+    f_msg += " Not Found";
     break;
   // Fehlend ab 405
   default:
-    f_msg = ResponseCode +": unknown"; 
+    f_msg += " " + msg; 
     break;
   }
-  Serial.println(f_msg);
   return f_msg;
 }
 
-JSONVar login(String email, String pw){
+void login(String email, String pw){
+  //Bereit für Loobback4
   JSONVar answer;
-  String msg;
+  String body;
   String Ans;
   int ResponseCode;
   int counter = 0;
 
-  String ServerPath_login = ("http://"+ ipadresse +"/api/"+ login_table +"/login?");
-  msg = "{\"email\":\""+ email +"\",\"password\":\""+ pw +"\"}";
+  String ServerPath_login = baseUrl+ login_table;
+  body = "{\"email\":\""+ email +"\", \"password\":\""+ pw +"\"}";
 
   HTTPClient http;
+  //Serial.println(ServerPath_login);
   http.begin(ServerPath_login);
+  http.addHeader("accept", "application/json");
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-
+  Serial.println(body);
   do{
-    ResponseCode = http.POST(msg);
+    ResponseCode = http.POST(body);
     counter++;
     Serial.print("HTTP Response code: ");
-    translate(ResponseCode);
+    Ans = http.getString();
+    Serial.println(translate(ResponseCode, Ans));
     if (ResponseCode != 200){ // Auswertung ob Verbindung ustande kam
-    Serial.print("Login failed! ");
-    Serial.println(counter);
-    delay(1000);
-    }
-  }while (ResponseCode != 200 && counter <= max_Retry); // retry bis Verbndung Zustande kommt oder 5 Versucher erreicht sind
+      Serial.print("Login failed! ");
+      Serial.println(counter);
+      Serial.println(Ans);
+      delay(1000);
+    }    
+  }while(ResponseCode != 200 && counter <= max_Retry); // retry bis Verbndung Zustande kommt oder 5 Versucher erreicht sind
   
-  Ans = http.getString();
   answer = JSON.parse(Ans);
+  Ans = answer["token"];
+  Serial.print("Token: ");
+  Serial.println(Ans);
+  token = "Bearer " + Ans;
   http.end();
-  return answer;
 }
 
 int patch_json(String ServerPath, JSONVar Message){
+    // noch nicht auf Loobback4
     // HTTP-PATCH
     // Überschreibt den Inhalt eines Datensatzes. 
     // Wichtig! Der Datensatz muss komplett im JSON Objekt hinterlegt sein nicht nur der zu ändernde Teil und es dürfen keine Undefinierten Inhalte enthalten sein (Errorcode: 402).
     
     HTTPClient http;
     http.begin(ServerPath);
-    http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
+    http.addHeader("accept", "application/json");
+    http.addHeader("Authorization", token);
+    http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
     String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PATCH(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);   
+    //translate(httpResponseCode);   
     
     http.end();
     return httpResponseCode;
   }
 
 int put_json(String ServerPath, JSONVar Message){
+  // noch nicht auf Loobback4
     // HTTP-PUT
     // Ändern eines Datensatzes (Server Path). Der Inhalt ist im JSON Objekt enthalten.
     // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
@@ -216,54 +236,62 @@ int put_json(String ServerPath, JSONVar Message){
 
     HTTPClient http;
     http.begin(ServerPath);
-    http.addHeader("Content-Type", "application/json"); //Typ des Body auf json Format festlegen
+    http.addHeader("accept", "application/json");
+    http.addHeader("Authorization", token);
+    http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.PUT(msg); // Übertragung
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);     
+    //translate(httpResponseCode);     
     
     http.end();
     return httpResponseCode;
   }
 
 int post_json_int(String ServerPath, JSONVar Message){
+    // noch nicht auf Loobback4
     // HTTP-POST
     // Anlegen eines neuen Datensatzes in der Datenbank (ServerPath). Der Inhalt ist im JSON Objekt enthalten.
     // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
 
     HTTPClient http;
     http.begin(ServerPath);
+    http.addHeader("accept", "application/json");
+    http.addHeader("Authorization", token);
     http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.POST(msg); // Übertragung
 
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);     
+    String Ans = http.getString();
+    Serial.println(translate(httpResponseCode, Ans));     
     
     http.end();
     return httpResponseCode;
 }
 
 JSONVar post_json_json(String ServerPath, JSONVar Message){
+  // bereit für Loobback4
   // HTTP-POST
   // Anlegen eines neuen Datensatzes in der Datenbank (ServerPath). Der Inhalt ist im JSON Objekt enthalten.
   // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
 
   JSONVar Data;
   HTTPClient http;
+  String Ans;
   http.begin(ServerPath);
+  http.addHeader("accept", "application/json");
+  http.addHeader("Authorization", token);
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
   String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
   int httpResponseCode = http.POST(msg); // Übertragung
-
+  msg = http.getString();
   Serial.print("HTTP Response code: ");
-  translate(httpResponseCode);    
+  Serial.println(translate(httpResponseCode, msg));    
 
-  if (httpResponseCode == 200){
-    msg = http.getString();
-  } else{
+  if (httpResponseCode != 200){
     msg = "{}";
   }
   
@@ -274,6 +302,7 @@ JSONVar post_json_json(String ServerPath, JSONVar Message){
 }
 
 JSONVar get_json(String ServerPath){
+  // bereit für Loobback4
   // HTTP GET
   // Abrufen eines Datensatzes (id muss in URL hinterlegt sein) im JSON Format
   // zum Debugging wird der Datensatz und das JSON objekt auf dne Seriellen Monitor übertragen
@@ -281,6 +310,9 @@ JSONVar get_json(String ServerPath){
 
   HTTPClient http;
   http.begin(ServerPath); //Startet Verbindung zu Server
+  http.addHeader("accept", "application/json");
+  http.addHeader("Authorization", token);
+  http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
   int httpResponseCode = http.GET();
   Serial.println();
   Serial.println("GET:");
@@ -288,9 +320,10 @@ JSONVar get_json(String ServerPath){
   
   if (httpResponseCode > 0) {
     Serial.print("HTTP Response code: ");
-    translate(httpResponseCode);
+    String Ans = http.getString();
+    translate(httpResponseCode, Ans);
     if (httpResponseCode == 200){
-      payload = http.getString();
+      payload = Ans;
       if (payload[0] == '[') {
         payload.remove(0,1);
       }
