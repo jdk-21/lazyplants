@@ -65,8 +65,7 @@ void firstStart() {
   delay(500); // Warten bis Serial gestartet ist
   Serial.println("");
   Serial.println("Reset Start");
-  digitalWrite(PumpePIN, HIGH);
-  connect(ssid, pw); //WLAN Verbindung einrichten
+  digitalWrite(PumpePIN, HIGH);  
 
   Serial.println("Hole NTP Zeit");
   configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
@@ -88,14 +87,13 @@ void setup() {
   } else {
     Serial.println("Start Nr.: " + String(bootZaeler));
   }
-
+  connect(ssid, pw); //WLAN Verbindung einrichten
+  
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
 
   if (token == ""){
     //new token
-    Serial.println(token);
-    Serial.print("Get new token: ");
     login(email, pw_API); // Login bei API und Token erhalten    
   }
 
@@ -115,11 +113,15 @@ void loop() {
   Serial.println("Time: " + String(Time));
 
   //Token testen
+  Serial.print("Test Token: ");
   ServerPath = baseUrl +"user/me";
   Data = get_json(ServerPath);
-  if (JSON.stringify(Data["statusCode"]) == "401"){
+  Serial.println(Data);
+  if (JSON.stringify(Data) == "{}"){
     Serial.print("Get new token: ");
     login(email, pw_API);
+  }else{
+    Serial.println("Token ok");
   }
   
   // prüfen ob Plant existiert
@@ -151,6 +153,7 @@ void loop() {
     Serial.println(Plant["plantname"]);
   }
   Serial.println();
+
   
   // Pflanzen Daten ausgeben
   soll_soilMoisture = Plant["soilMoisture"];
@@ -159,8 +162,10 @@ void loop() {
   Serial.print("Soll humidity: "); Serial.print(soll_humidity);  Serial.println("%");
   plantID = Plant["plantId"];
   Serial.print("PlantID: "); Serial.println(plantID);
-
+  Serial.println();
+  
   // Messwerte erfassen
+  Serial.println("Sensorwerte: ");
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
   delay(1000);
@@ -224,6 +229,7 @@ void loop() {
   Serial.println(ServerPath);
   Serial.println(msg);
   Data = JSON.parse(msg);
+  
   counter = 0;
   do {
     ResponseCode = post_json_int(ServerPath, Data);

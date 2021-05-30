@@ -170,11 +170,12 @@ void login(String email, String pw){
   body = "{\"email\":\""+ email +"\", \"password\":\""+ pw +"\"}";
 
   HTTPClient http;
-  //Serial.println(ServerPath_login);
   http.begin(ServerPath_login);
   http.addHeader("accept", "application/json");
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-  Serial.println(body);
+  Serial.println();
+  Serial.print("Login: ");
+  Serial.println(body);  
   do{
     ResponseCode = http.POST(body);
     counter++;
@@ -209,6 +210,9 @@ int post_json_int(String ServerPath, JSONVar Message){
     http.addHeader("Authorization", token);
     http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
+    Serial.println();
+    Serial.println("POST:");
+  
     String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
     int httpResponseCode = http.POST(msg); // Übertragung
 
@@ -234,6 +238,9 @@ JSONVar post_json_json(String ServerPath, JSONVar Message){
   http.addHeader("Authorization", token);
   http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
 
+  Serial.println();
+  Serial.println("POST:");
+  
   String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
   int httpResponseCode = http.POST(msg); // Übertragung
   msg = http.getString();
@@ -270,7 +277,7 @@ JSONVar get_json(String ServerPath){
   if (httpResponseCode > 0) {
     Serial.print("HTTP Response code: ");
     String Ans = http.getString();
-    translate(httpResponseCode, Ans);
+    Serial.println(translate(httpResponseCode, Ans));
     if (httpResponseCode == 200){
       payload = Ans;
       if (payload[0] == '[') {
@@ -298,9 +305,6 @@ JSONVar get_json(String ServerPath){
     Serial.println("Parsing input failed! Retry..");
     JSONVar myObject = JSON.parse(payload);
   }
-    
-  Serial.print("JSON object = ");
-  Serial.println(myObject);
     
   // myObject.keys() can be used to get an array of all the keys in the object
   JSONVar keys = myObject.keys();
