@@ -105,6 +105,8 @@ void setup() {
 }
 
 void loop() {
+  gegossen = false;
+  
   //Zeit
   tm local;
   getLocalTime(&local); //Abrufen der Zeit
@@ -153,7 +155,8 @@ void loop() {
     Serial.println(Plant["plantname"]);
   }
   Serial.println();
-
+  WiFi.disconnect();
+  Serial.println("WiFi disconnect");
   
   // Pflanzen Daten ausgeben
   soll_soilMoisture = Plant["soilMoisture"];
@@ -229,6 +232,8 @@ void loop() {
   Serial.println(ServerPath);
   Serial.println(msg);
   Data = JSON.parse(msg);
+  
+  connect(ssid, pw); //WLAN Verbindung einrichten
   
   counter = 0;
   do {
