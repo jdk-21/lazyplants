@@ -18,8 +18,8 @@
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 12
-#define PumpePIN 17
+#define BodenfeuchtigkeitPIN 39
+#define PumpePIN 26
 #define dhtPIN 23
 #define dhtType DHT22
 DHT dht(dhtPIN, dhtType);
@@ -31,12 +31,11 @@ DHT dht(dhtPIN, dhtType);
 const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
 const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zeit
 const String baseUrl = "https://api.kie.one/";
+RTC_DATA_ATTR String token = "";
 String login_table = "user/login"; // zum Anmelden an der API
 String tablePlant = "plant"; // Pflanze
 String tableDB = "data"; // Pflanzen Datensätze
 #define max_Retry 5
-RTC_DATA_ATTR String token = "";
-
 
 // Constanten
 const int feuchtemin = 0;
@@ -45,15 +44,6 @@ const int feuchtemax = 4095; //Normierung des Analogwerts
 //weitere Parameter
 #define maxTankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
 #define minTanklevel 10 //Füllgrad in % b dem die Pumpe nicht mehr gießt
-
-/*
-void setup() {
-  pinMode(ultraschalltrigger, OUTPUT);
-  pinMode(ultraschallecho, INPUT);
-  pinMode(PumpePIN, OUTPUT);
-  Serial.begin(115200);
-}
-*/
 
 //Connections
 bool connect(const char* ssid,const char* password){
@@ -113,7 +103,7 @@ bool connect(const char* ssid,const char* password){
 }
 
 String translate(int rCode, String msg){
-  JSONVar body = JSON.parse(msg);  
+  //JSONVar body = JSON.parse(msg);  
   String f_msg = "";
   f_msg += rCode;
   if (f_msg == ""){
@@ -206,47 +196,6 @@ void login(String email, String pw){
   token = "Bearer " + Ans;
   http.end();
 }
-
-int patch_json(String ServerPath, JSONVar Message){
-    // noch nicht auf Loobback4
-    // HTTP-PATCH
-    // Überschreibt den Inhalt eines Datensatzes. 
-    // Wichtig! Der Datensatz muss komplett im JSON Objekt hinterlegt sein nicht nur der zu ändernde Teil und es dürfen keine Undefinierten Inhalte enthalten sein (Errorcode: 402).
-    
-    HTTPClient http;
-    http.begin(ServerPath);
-    http.addHeader("accept", "application/json");
-    http.addHeader("Authorization", token);
-    http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-    String msg = JSON.stringify(Message); //konvertieren des JSON Objekts in einen String
-    int httpResponseCode = http.PATCH(msg); // Übertragung
-    Serial.print("HTTP Response code: ");
-    //translate(httpResponseCode);   
-    
-    http.end();
-    return httpResponseCode;
-  }
-
-int put_json(String ServerPath, JSONVar Message){
-  // noch nicht auf Loobback4
-    // HTTP-PUT
-    // Ändern eines Datensatzes (Server Path). Der Inhalt ist im JSON Objekt enthalten.
-    // Das JSON Objekt wird in einen String umgewandelt und als Body des HTTP Requests übertragen.
-    // Nicht Definierte Inhalte des DAtensatzes werden neu angelegt. Sollte kein Datensatz vorhanden sein der zum ServerPAth passt wird dieser neue angelegt.
-
-    HTTPClient http;
-    http.begin(ServerPath);
-    http.addHeader("accept", "application/json");
-    http.addHeader("Authorization", token);
-    http.addHeader("Content-Type", "application/json"); // Typ des Body auf json Format festlegen
-    String msg = JSON.stringify(Message); // konvertieren des JSON Objekts in einen String
-    int httpResponseCode = http.PUT(msg); // Übertragung
-    Serial.print("HTTP Response code: ");
-    //translate(httpResponseCode);     
-    
-    http.end();
-    return httpResponseCode;
-  }
 
 int post_json_int(String ServerPath, JSONVar Message){
     // noch nicht auf Loobback4
@@ -445,9 +394,6 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
 }
 
 void giesen(int Feuchtigkeitswert){
-  // es wird gegossen bis der Feuchtigkeitswert erreicht wird, bei einem hohen Wasserbedarf sind die Gießintervalle länger als bei einem geringen
-  // Optimierung: Gießintervalle an Luchtfeuchtigkeits soll anpassen
-
   int feuchteAktuell = bodenfeuchte();
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
   const int lange_giesen = 4000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
@@ -467,52 +413,10 @@ void giesen(int Feuchtigkeitswert){
     pumpen(true);
     delay(lange_giesen);
     pumpen(false);
-    delay(wartezeit);
-    feuchteAktuell = bodenfeuchte();
-    giesen(Feuchtigkeitswert);
   } else if (feuchteAktuell < Feuchtigkeitswert && ok){
     Serial.println("Kurz gießen.");
     pumpen(true);
     delay(kurz_giesen);
     pumpen(false);
-    delay(wartezeit);
-    feuchteAktuell = bodenfeuchte();
-    giesen(Feuchtigkeitswert);
   }
-}
-
-void luftfeuchtigkeit_erhoehen(int FeuchtigkeitswertAir, int FeuchtigkeitswertGround){
-
-  //Konstanten
-  const int spruezeit = 2000; // Sprühzeit in ms (Wert sollte recht klein sein)
-  const int wartezeit = 10000; // Wartezeit in ms (Wert sollte recht hoch sein)
-  const int maxLaufzeit = 10; // Anzahl an durchläufen bis davon ausgegangen wird das etwas nicht stimmt (Sicherheit vor Überschwemmung)
-  int counter = 0;
-  bool ok = false;
-
-  int feuchteAktuell = luftfeuchtigkeit();
-  int feuchteAktuellBoden = bodenfeuchte();
-
-  // Optimierung: evtl. Test ob Deckel zu ist
-  while ((feuchteAktuell < FeuchtigkeitswertAir) && (counter < 10) && (feuchteAktuellBoden < FeuchtigkeitswertGround))
-  {
-    counter++;  
-    if (fuellsstand() > minTanklevel){
-      
-      Serial.print("Feuchtigkeit erhöhen. Durchgang: ");
-      Serial.println(counter);
-      pumpen(true);
-      delay(spruezeit);
-      pumpen(false);
-      delay(wartezeit);
-      feuchteAktuell = luftfeuchtigkeit();
-      feuchteAktuellBoden = bodenfeuchte();
-    } else{
-      Serial.println("ERROR: Tank nicht voll genug!");
-      return;
-    }
-    
-  }
-  Serial.println("Luftfeuchtigkeit erreicht.");
-  return;
 }

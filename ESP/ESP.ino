@@ -19,6 +19,7 @@ String email = "johnhanley@gmail.com";
 String pw_API = "password";
 
 
+
 // WLAN
 const char* ssid = "TrojaNet";
 const char* pw = "50023282650157230429";
@@ -38,7 +39,8 @@ int ResponseCode;
 int counter;
 String  Time;
 char buffer [80];
-#define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
+#define IntervallTime 30 //in Sekunden
+//#define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
 //#define IntervallTime 30000 //Milliseconds hier 30s
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
 
@@ -56,11 +58,6 @@ bool gegossen = false;
 const int toleranz = 20; // Angabe der Toleranz in %
 
 //Preferences preferences; // Permanentes Speichern von Variablen
-
-
-//ServerPath abändern
-
-
 
 void firstStart() {
   delay(500);
@@ -97,17 +94,12 @@ void setup() {
 
   if (token == ""){
     //new token
+    Serial.println(token);
     Serial.print("Get new token: ");
     login(email, pw_API); // Login bei API und Token erhalten    
-  }else{
-    //TODO: token prüfen (POST 401 --> Fehler)
-    Serial.print("Old token: ");
-    ServerPath = baseUrl +"user/me"    
-    Data = get_json(ServerPath);
-    ResponseCode = Data[
   }
 
-  if (token == "null") {
+  if (token == "null" || token == "") {
     Serial.println("Login nicht möglich!");
     ESP.restart();
   }
@@ -122,6 +114,14 @@ void loop() {
   Time = buffer;
   Serial.println("Time: " + String(Time));
 
+  //Token testen
+  ServerPath = baseUrl +"user/me";
+  Data = get_json(ServerPath);
+  if (JSON.stringify(Data["statusCode"]) == "401"){
+    Serial.print("Get new token: ");
+    login(email, pw_API);
+  }
+  
   // prüfen ob Plant existiert
   ServerPath = baseUrl + tablePlant + "/" + espName;
   Serial.println(ServerPath);
@@ -163,21 +163,21 @@ void loop() {
   // Messwerte erfassen
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
+  delay(1000);
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
+  delay(1000);
   Tanklevel = fuellsstand();
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
+  delay(1000);
   soilMoisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
+  delay(1000);
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
 
-  // Actions - Luftfeuchteok? Bodenfeuchte ok?
-  if ((humidity < (soll_humidity - (soll_humidity * toleranz / 100 ))) && Tanklevel > minTanklevel ) {
-    Serial.println("Luftfeuchte erhöhen!");
-    luftfeuchtigkeit_erhoehen(soll_humidity, soll_soilMoisture);
-  }
+  // Actions - Bodenfeuchte ok?
   if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * toleranz / 100))) {
     Serial.println("Gießen!");
     giesen(Plant["soilMoisture"]);
@@ -214,7 +214,7 @@ void loop() {
     Messages[6] = "\"water\": false }";
   }
 
-
+  msg = "";
   for(int i=0; i <= 6 ;i++){
     msg = msg + Messages[i];
   }
@@ -236,7 +236,7 @@ void loop() {
   // Deep Sleep
   Serial.println("Sleep");
   Serial.println();
-  //delay(IntervallTime);
-  esp_sleep_enable_timer_wakeup(IntervallTime);    // Deep Sleep Zeit einstellen
-  esp_deep_sleep_start();
+  delay(IntervallTime * 1000);
+  //esp_sleep_enable_timer_wakeup(IntervallTime *1000000);    // Deep Sleep Zeit einstellen
+  //esp_deep_sleep_start();
 }
