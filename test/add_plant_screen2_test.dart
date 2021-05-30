@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lazyplants/components/db_models.dart';
@@ -12,7 +11,12 @@ Future<void> main() async {
 
     testWidgets('create Add plant Screen 2', (WidgetTester tester) async {
       Plant plant;
-      await tester.pumpWidget(MaterialApp(home: AddPlantScreen2(plant: plant)));
+      var espData;
+      await tester.pumpWidget(MaterialApp(
+          home: AddPlantScreen2(
+        plant: plant,
+        espData: espData,
+      )));
 
       expect(titleFinder, findsOneWidget);
       expect(nextFinder, findsOneWidget);
@@ -21,7 +25,12 @@ Future<void> main() async {
     testWidgets('tap next test, without input data',
         (WidgetTester tester) async {
       Plant plant;
-      await tester.pumpWidget(MaterialApp(home: AddPlantScreen2(plant: plant)));
+      var espData;
+      await tester.pumpWidget(MaterialApp(
+          home: AddPlantScreen2(
+        plant: plant,
+        espData: espData,
+      )));
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
       expect(titleFinder, findsOneWidget);

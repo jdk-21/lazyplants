@@ -30,7 +30,8 @@ class Translation extends Translations {
           'firstName': 'First Name',
           'lastName': 'Last Name',
           'emailExists': 'This email is already in use.',
-          'usernameExists': 'This username is already in use.',
+          'passworToShort': 'This password is to short.',
+          'invalidEmail': 'Invalid Email',
 
           // homescreen
           'hi': 'Hi',

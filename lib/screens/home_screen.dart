@@ -39,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
           case 'plantName':
             plant.plantName = value;
             break;
-          case 'espId':
-            plant.espId = value;
+          case 'plantId':
+            plant.plantId = value;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
