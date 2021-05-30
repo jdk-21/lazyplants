@@ -190,7 +190,7 @@ void main() async {
     }); //patchPlant
   }); //PATCH
 
-  group('POST', () {
+  /*group('POST', () {
     group('postLogin', () {
       var mail = "max@max.com";
       var pw = "max123";
@@ -391,5 +391,5 @@ void main() async {
     expect(api.checkLoggedIn(), false);
     api.settingsBox.put('token', "test");
     expect(api.checkLoggedIn(), true);
-  });
+  });*/
 } //main
