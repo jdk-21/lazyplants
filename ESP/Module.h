@@ -18,7 +18,7 @@
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 39
+#define BodenfeuchtigkeitPIN 33
 #define PumpePIN 26
 #define dhtPIN 23
 #define dhtType DHT22
@@ -46,14 +46,18 @@ const int feuchtemax = 4095; //Normierung des Analogwerts
 #define minTanklevel 10 //Füllgrad in % b dem die Pumpe nicht mehr gießt
 
 //Connections
-bool connect(const char* ssid,const char* password){
+bool wifi(const char* ssid,const char* password){
+    bool Stop = false;
+    int counter =0;
+    
+    if(WiFi.status() != WL_CONNECTED){
     WiFi.begin(ssid, password);
     delay(500);
     Serial.println();
-    Serial.print("Connecting to WiFi..");
-    bool Stop = false;
-    int counter =0;
-
+    Serial.print("Connecting to WiFi..");    
+    }else{
+      Stop = true;
+    }
     while ((WiFi.status() != WL_CONNECTED) && !(Stop)) {
       counter ++;
       delay(1000);
@@ -360,9 +364,10 @@ int bodenfeuchte(){
   // Der Normierte Wert wird in % angegeben.
   int value = analogRead(BodenfeuchtigkeitPIN);
   Serial.print("Bodenfeuchte Messwert: ");
-  Serial.println(value);
+  Serial.print(value);
+  Serial.print(" ");
   value = (((value - feuchtemin) *100) /feuchtemax);
-  //Serial.println(value);
+  Serial.println(value);
   return value;
 }
 
@@ -397,8 +402,7 @@ void pumpen(bool pumpe, int PIN = PumpePIN){
   }
 }
 
-void giesen(int Feuchtigkeitswert){
-  int feuchteAktuell = bodenfeuchte();
+bool giesen(int sollWert, int istWert){
   const int kurz_giesen = 3000; // Wert für kurz giesen in ms, bei geringem Wasserbedarf
   const int lange_giesen = 4000; // Wert fürs lange giesen in ms, bei hohem Wasserbedarf
   const int wartezeit = 3000; // Wartezeit, damit das Wasser ein wenig einsickern kann bevor der Sensor erneut misst.
@@ -407,20 +411,22 @@ void giesen(int Feuchtigkeitswert){
   if (fuellsstand() > minTanklevel){
     ok = true;
   }
-  if (feuchteAktuell >= Feuchtigkeitswert && ok){
+  if (istWert == sollWert && ok){
     Serial.print("Boden feucht genug. Wert: ");
-    Serial.print(feuchteAktuell);
+    Serial.print(istWert);
     Serial.println("%");
-    return;
-  } else if (feuchteAktuell <= (Feuchtigkeitswert / 2) && ok) { // Hoher Wasserbedarf
+    return false;
+  } else if (istWert <= (sollWert / 2) && ok) { // Hoher Wasserbedarf
     Serial.println("Lange gießen.");
     pumpen(true);
     delay(lange_giesen);
     pumpen(false);
-  } else if (feuchteAktuell < Feuchtigkeitswert && ok){
+    return true;
+  } else if (istWert < sollWert && ok){
     Serial.println("Kurz gießen.");
     pumpen(true);
     delay(kurz_giesen);
     pumpen(false);
+    return true;
   }
 }

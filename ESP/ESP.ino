@@ -13,7 +13,7 @@
 
 
 // Declarationen
-// Connections
+// wifiions
 const String espName = "ESP_Blume_1";
 String email = "johnhanley@gmail.com";
 String pw_API = "password";
@@ -39,7 +39,7 @@ int ResponseCode;
 int counter;
 String  Time;
 char buffer [80];
-#define IntervallTime 30 //in Sekunden
+#define IntervallTime 5 //in Sekunden
 //#define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
 //#define IntervallTime 30000 //Milliseconds hier 30s
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
@@ -65,8 +65,10 @@ void firstStart() {
   delay(500); // Warten bis Serial gestartet ist
   Serial.println("");
   Serial.println("Reset Start");
-  digitalWrite(PumpePIN, HIGH);  
-
+  digitalWrite(PumpePIN, HIGH);
+    
+  wifi(ssid, pw); //WLAN Verbindung einrichten
+  
   Serial.println("Hole NTP Zeit");
   configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
   getLocalTime(&  local, 5000);        // Versuche 5 s zu Synchronisieren
@@ -74,10 +76,12 @@ void firstStart() {
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
+  analogSetSamples(10); //Messdurchschnitt
+  analogSetCycles(16); //Messdauer
 
 }
 
-void setup() {
+void setup() {  
   esp_sleep_wakeup_cause_t wakeup_cause; // Variable für wakeup Ursache
   // Setup
   bootZaeler++;
@@ -86,8 +90,7 @@ void setup() {
     firstStart(); // Wenn wakeup durch Reset
   } else {
     Serial.println("Start Nr.: " + String(bootZaeler));
-  }
-  connect(ssid, pw); //WLAN Verbindung einrichten
+  }  
   
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
@@ -106,6 +109,7 @@ void setup() {
 
 void loop() {
   gegossen = false;
+  wifi(ssid, pw); //WLAN Verbindung einrichten
   
   //Zeit
   tm local;
@@ -155,8 +159,8 @@ void loop() {
     Serial.println(Plant["plantname"]);
   }
   Serial.println();
-  //Serial.println("WiFi disconnect");
-  //WiFi.disconnect();  
+  Serial.println("WiFi disconnect");
+  WiFi.disconnect();  
   
   // Pflanzen Daten ausgeben
   soll_soilMoisture = Plant["soilMoisture"];
@@ -184,11 +188,12 @@ void loop() {
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
+  delay(1000);
 
   // Actions - Bodenfeuchte ok?
-  if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * toleranz / 100))) {
+  if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * (toleranz / 100)))) {
     Serial.println("Gießen!");
-    giesen(Plant["soilMoisture"]);
+    giesen(Plant["soilMoisture"], soilMoisture);
     gegossen = true;
   }
 
@@ -233,7 +238,7 @@ void loop() {
   Serial.println(msg);
   Data = JSON.parse(msg);
   
-  //connect(ssid, pw); //WLAN Verbindung einrichten
+  wifi(ssid, pw); //WLAN Verbindung einrichten
   
   counter = 0;
   do {
