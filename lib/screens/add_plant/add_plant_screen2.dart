@@ -10,10 +10,12 @@ import 'package:get/get.dart';
 
 class AddPlantScreen2 extends StatefulWidget {
   final Plant plant;
+  final dynamic espData;
 
   AddPlantScreen2({
     Key key,
     @required this.plant,
+    @required this.espData,
   }) : super(key: key);
 
   @override
@@ -27,11 +29,11 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
 
   espList() {
     var list = <String>["addPlant2_dropDown".tr];
-    var data = api.readPlant();
-    if (data !=  null && data != "error") {
-      data.forEach((key, value) {
-        if (!value.containsKey('plantName')) {
-          list.add(value['espId']);
+    var data = widget.espData;
+    if (data != null && data != "error") {
+      data.forEach((element) {
+        if (element['plantName']== null) {
+          list.add(element['espName']);
         }
       });
       print(list.toString());
@@ -91,31 +93,32 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
             ),
           ),
           DropdownButton<String>(
-            value: dropdownValue,
-            iconEnabledColor: Colors.white,
-            elevation: 16,
-            style: TextStyle(color: Colors.white),
-            dropdownColor: CustomColors.kPrimaryColor,
-            underline: Container(height: 0, color: Colors.grey),
-            onChanged: (String newValue) {
-              dropdownHelper = newValue;
-              setState(() {
-                dropdownValue = newValue;
-              });
-            },
-            items: espList().map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
+                    value: dropdownValue,
+                    iconEnabledColor: Colors.white,
+                    elevation: 16,
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: CustomColors.kPrimaryColor,
+                    underline: Container(height: 0, color: Colors.grey),
+                    onChanged: (String newValue) {
+                      dropdownHelper = newValue;
+                      setState(() {
+                        dropdownValue = newValue;
+                      });
+                    },
+                    items: espList()
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(top: 50.0),
             child: LPCustomButton(
               btnText: 'next'.tr,
-              onPressed: () {
+              onPressed: () async {
                 if (plantName == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -133,13 +136,15 @@ class _AddPlantScreen2State extends State<AddPlantScreen2> {
                 } else {
                   // save plant data to plant object
                   widget.plant.plantName = plantName;
-                  widget.plant.espId = dropdownHelper;
-                  print(widget.plant.espId);
-                  // get plantId from espId
-                  api.readPlant().forEach((key, value) {
-                    if (value['espId'] == dropdownHelper) {
-                      widget.plant.plantId = value['id'];
-                      widget.plant.memberId = value['memberId'];
+                  widget.plant.espName = dropdownHelper;
+                  print(widget.plant.plantId);
+                  // get plantId from plantId
+                  widget.espData.forEach((element) {
+                    print(element['espName']);
+                    print(dropdownHelper);
+                    if (element['espName'] == dropdownHelper) {
+                      widget.plant.plantId = element['plantId'];
+                      print(widget.plant.plantId);
                     }
                   });
                   Navigator.push(

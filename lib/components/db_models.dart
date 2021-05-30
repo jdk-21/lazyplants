@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:hive/hive.dart';
 
 part 'db_models.g.dart';
@@ -7,31 +6,25 @@ part 'db_models.g.dart';
 class Plant {
 
   @HiveField(0)
-  String memberId;
-
-  @HiveField(1)
   String plantId;
 
-  @HiveField(2)
+  @HiveField(1)
   String plantName;
 
-  @HiveField(3)
-  Image plantPic;
+  @HiveField(2)
+  String espName;
 
-  @HiveField(4)
+  @HiveField(3)
   DateTime plantDate;
 
-  @HiveField(5)
+  @HiveField(4)
   String room;
 
-  @HiveField(6)
+  @HiveField(5)
   double soilMoisture;
 
-  @HiveField(7)
+  @HiveField(6)
   double humidity;
-
-  @HiveField(8)
-  String espId;
 
 }
 

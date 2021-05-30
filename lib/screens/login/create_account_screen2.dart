@@ -69,53 +69,6 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Icon(Icons.person_outline, color: CustomColors.kPrimaryColor),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          onChanged: (value) {
-                            username = value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: "username".tr,
-                            hintStyle: TextStyle(
-                              color: CustomColors.kPrimaryColor.withOpacity(0.5),
-                            ),
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                              left: 12.0,
-                              right: 12.0,
-                            ),
-                          ),
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, bottom: 10, left: 45, right: 45),
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: CustomColors.kPadding),
-                  height: 46,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, 0),
-                          blurRadius: 50,
-                          color: Colors.black38,
-                        )
-                      ]),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 0.0),
                         child: Icon(Icons.email_outlined, color: CustomColors.kPrimaryColor),
                       ),
                       Expanded(
@@ -194,11 +147,10 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: LPCustomButton(
                   onPressed: () async {
-                    if (mail != null && password != null && username != null) {
+                    if (mail != null && password != null) {
                       var success = await api.postCreateAccount(
                           widget.firstName,
                           widget.lastName,
-                          username,
                           mail,
                           password);
                       if (success == 0) {
@@ -218,7 +170,7 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                       if (success == 1 || success == 3) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('usernameExists'.tr),
+                            content: Text('passwordToShort'.tr),
                           ),
                         );
                       }
@@ -227,6 +179,13 @@ class _CreateAccountScreen2State extends State<CreateAccountScreen2> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('somethingWrong'.tr),
+                          ),
+                        );
+                      }
+                      if (success == 5) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('invalidEmail'.tr),
                           ),
                         );
                       }

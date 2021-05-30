@@ -109,7 +109,7 @@ void main() async {
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 200));
-        var data = await api.getMembersData(userId);
+        var data = await api.getMembersData();
         expect(data, 0);
         expect(api.settingsBox.get('firstName'), "Max");
         expect(api.settingsBox.get('lastName'), "Mustermann");
@@ -120,7 +120,7 @@ void main() async {
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 401));
-        var data = await api.getMembersData(userId);
+        var data = await api.getMembersData();
         expect(data, 1);
       });
 
@@ -130,7 +130,7 @@ void main() async {
         // mock the api request
         when(client.get(uri))
             .thenAnswer((_) async => http.Response(response, 501));
-        var data = await api.getMembersData(userId);
+        var data = await api.getMembersData();
         expect(data, 1);
       });
     });
@@ -141,11 +141,10 @@ void main() async {
       var uri = Uri.parse(
           baseUrl + "Plants?access_token=" + api.settingsBox.get('token'));
       var plantId = "5fc76bf50b487e3b0415f56d";
-      var espId = "espBlume3";
+      var espName = "espBlume3";
       var plantName = "TEST";
       var room = "t";
       var soilMoisture = "25.0";
-      var plantPic = " ";
       var memberId = "5fbd47595421905a1a869a55";
 
       test('patchPlant successful', () async {
@@ -155,13 +154,13 @@ void main() async {
         // mock the api request
         when(client.patch(uri, body: {
           "plantName": plantName,
-          "espId": espId,
+          "espName": espName,
           "id": plantId,
           "soilMoisture": soilMoisture,
           "memberId": memberId
         })).thenAnswer((_) async => http.Response(response, 200));
         var data = await api.patchPlant(
-            plantId, espId, plantName, room, soilMoisture, plantPic, memberId);
+            plantId, plantName, espName, room, soilMoisture, memberId);
         expect(data, jsonDecode(response));
       });
 
@@ -171,13 +170,13 @@ void main() async {
         // mock the api request
         when(client.patch(uri, body: {
           "plantName": plantName,
-          "espId": espId,
+          "espId": espName,
           "id": plantId,
           "soilMoisture": soilMoisture,
           "memberId": memberId
         })).thenAnswer((_) async => http.Response(response, 401));
         var data = await api.patchPlant(
-            plantId, espId, plantName, room, soilMoisture, plantPic, memberId);
+            plantId, plantName, espName, room, soilMoisture, memberId);
         expect(data, 401);
       });
 
@@ -187,13 +186,13 @@ void main() async {
         // mock the api request
         when(client.patch(uri, body: {
           "plantName": plantName,
-          "espId": espId,
+          "espName": espName,
           "id": plantId,
           "soilMoisture": soilMoisture,
           "memberId": memberId
         })).thenAnswer((_) async => http.Response(response, 501));
         var data = await api.patchPlant(
-            plantId, espId, plantName, room, soilMoisture, plantPic, memberId);
+            plantId, plantName, espName, room, soilMoisture, memberId);
         expect(data, "error");
       });
     }); //patchPlant
@@ -235,31 +234,6 @@ void main() async {
         expect(api.settingsBox.get('token'), t);
       });
     }); //postLogin
-
-    group('postLogout', () {
-      var uri = Uri.parse(baseUrl +
-          "Members/logout?access_token=" +
-          api.settingsBox.get('token'));
-
-      test('postLogout successful', () async {
-        print("Test: postLogout, working");
-        // mock the api request
-        when(client.post(uri)).thenAnswer((_) async => http.Response("", 204));
-        expect(await api.postLogout(), 0);
-        expect(api.settingsBox.get('token'), null);
-      });
-
-      test('postLogout with exception', () async {
-        print("Test: postLogout, error");
-        var response = 'error';
-        var token = api.settingsBox.get('token');
-        // mock the api request
-        when(client.post(uri))
-            .thenAnswer((_) async => http.Response(response, 401));
-        expect(await api.postLogout(), 1);
-        expect(api.settingsBox.get('token'), token);
-      });
-    }); //postLogout
 
     group('postCreateAccount', () {
       var uri = Uri.parse(baseUrl + "Members");

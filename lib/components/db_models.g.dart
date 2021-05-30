@@ -17,39 +17,33 @@ class PlantAdapter extends TypeAdapter<Plant> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Plant()
-      ..memberId = fields[0] as String
-      ..plantId = fields[1] as String
-      ..plantName = fields[2] as String
-      ..plantPic = fields[3] as Image
-      ..plantDate = fields[4] as DateTime
-      ..room = fields[5] as String
-      ..soilMoisture = fields[6] as double
-      ..humidity = fields[7] as double
-      ..espId = fields[8] as String;
+      ..plantId = fields[0] as String
+      ..plantName = fields[1] as String
+      ..espName = fields[2] as String
+      ..plantDate = fields[3] as DateTime
+      ..room = fields[4] as String
+      ..soilMoisture = fields[5] as double
+      ..humidity = fields[6] as double;
   }
 
   @override
   void write(BinaryWriter writer, Plant obj) {
     writer
-      ..writeByte(9)
-      ..writeByte(0)
-      ..write(obj.memberId)
-      ..writeByte(1)
-      ..write(obj.plantId)
-      ..writeByte(2)
-      ..write(obj.plantName)
-      ..writeByte(3)
-      ..write(obj.plantPic)
-      ..writeByte(4)
-      ..write(obj.plantDate)
-      ..writeByte(5)
-      ..write(obj.room)
-      ..writeByte(6)
-      ..write(obj.soilMoisture)
       ..writeByte(7)
-      ..write(obj.humidity)
-      ..writeByte(8)
-      ..write(obj.espId);
+      ..writeByte(0)
+      ..write(obj.plantId)
+      ..writeByte(1)
+      ..write(obj.plantName)
+      ..writeByte(2)
+      ..write(obj.espName)
+      ..writeByte(3)
+      ..write(obj.plantDate)
+      ..writeByte(4)
+      ..write(obj.room)
+      ..writeByte(5)
+      ..write(obj.soilMoisture)
+      ..writeByte(6)
+      ..write(obj.humidity);
   }
 
   @override

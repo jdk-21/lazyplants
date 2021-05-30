@@ -55,7 +55,7 @@ Future<void> main() async {
     testWidgets('tap useCamera', (WidgetTester tester) async {
       Plant plant = Plant();
       plant.plantId = "plantId";
-      plant.espId = "espId";
+      plant.espName = "espName";
       plant.plantName = "plantName";
       plant.room = "roomName";
       plant.soilMoisture = 80.0;

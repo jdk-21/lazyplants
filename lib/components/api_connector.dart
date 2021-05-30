@@ -8,7 +8,7 @@ class ApiConnector {
     this.client = client;
   }
 
-  var baseUrl = 'https://api.kie.one/api/';
+  var baseUrl = 'https://api.kie.one/';
 
   Box dataBox;
   Box plantBox;
@@ -20,15 +20,56 @@ class ApiConnector {
     settingsBox = await Hive.openBox('settings');
   }
 
-  getExactPlantData(int limit, String espId) async {
+  postRequest(String endpoint, String body) async {
+    String bearer = "Bearer ";
+    if (settingsBox.containsKey('token')) {
+      bearer += settingsBox.get('token');
+    }
+
+    return await client.post(Uri.parse(baseUrl + endpoint),
+        headers: {
+          "Accept": "aplication/json",
+          "content-type": "application/json",
+          "Authorization": bearer
+        },
+        body: body);
+  }
+
+  getRequest(String endpoint) async {
+    String bearer = "Bearer ";
+    if (settingsBox.containsKey('token')) {
+      bearer += settingsBox.get('token');
+    }
+
+    return await client.get(Uri.parse(baseUrl + endpoint), headers: {
+      "Accept": "aplication/json",
+      "content-type": "application/json",
+      "Authorization": bearer
+    });
+  }
+
+  patchRequest(String endpoint, String body) async {
+    String bearer = "Bearer ";
+    if (settingsBox.containsKey('token')) {
+      bearer += settingsBox.get('token');
+    }
+
+    return await client.patch(Uri.parse(baseUrl + endpoint),
+        headers: {
+          "Accept": "aplication/json",
+          "content-type": "application/json",
+          "Authorization": bearer
+        },
+        body: body);
+  }
+
+  getExactPlantData(int limit, String plantId) async {
     try {
-      var response = await client.get(Uri.parse(baseUrl +
-          "PlantData?access_token=" +
-          settingsBox.get('token') +
-          "&filter[order]=date%20DESC&filter[limit]=" +
-          limit.toString() +
-          "&filter[espId]=" +
-          espId));
+      var response = await getRequest(
+          "data&filter[order]=measuringTime%20ASC&filter[limit]=" +
+              limit.toString() +
+              "&filter[plantId]=" +
+              plantId);
       if (response.statusCode == 200) {
         print(await jsonDecode(response.body));
         return await jsonDecode(response.body);
@@ -45,8 +86,7 @@ class ApiConnector {
 
   getPlant() async {
     try {
-      var response = await client.get(Uri.parse(
-          baseUrl + "Plants?access_token=" + settingsBox.get('token')));
+      var response = await getRequest("plant");
       if (response.statusCode == 200) {
         print("got plants");
         print(response.body);
@@ -63,22 +103,13 @@ class ApiConnector {
     }
   }
 
-  patchPlant(
-      plantId, espId, plantName, room, soilMoisture, plantPic, memberId) async {
+  patchPlant(plantId, plantName, espName, room, soilMoisture, humidity) async {
     try {
-      var response = await client.patch(
-          Uri.parse(
-              baseUrl + "Plants?access_token=" + settingsBox.get('token')),
-          body: {
-            "plantName": plantName,
-            "espId": espId,
-            "id": plantId,
-            "soilMoisture": soilMoisture,
-            "memberId": memberId
-          });
-      if (response.statusCode == 200) {
+      var response = await patchRequest("plant/" + plantId,
+          '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }');
+      if (response.statusCode == 204) {
         print("ok");
-        return await jsonDecode(response.body);
+        return 204;
       } else if (response.statusCode == 401) {
         // show login screen
         return 401;
@@ -93,17 +124,13 @@ class ApiConnector {
     }
   }
 
-  Future<int> getMembersData(String userId) async {
+  Future<int> getMembersData() async {
     try {
-      var response = await client.get(Uri.parse(baseUrl +
-          "Members/" +
-          userId +
-          "?access_token=" +
-          settingsBox.get('token')));
+      var response = await getRequest("user/me");
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        settingsBox.put('firstName', data['firstname']);
-        settingsBox.put('lastName', data['lastname']);
+        settingsBox.put('firstName', data['firstName']);
+        settingsBox.put('lastName', data['lastName']);
         print("got Members data");
         return 0;
       } else if (response.statusCode == 401) {
@@ -112,8 +139,10 @@ class ApiConnector {
         return 1;
       } else
         print(response.statusCode);
+      print(response.body);
       return 1;
     } catch (socketException) {
+      print(socketException);
       print('No internet connection');
       return 1;
     }
@@ -128,14 +157,14 @@ class ApiConnector {
 
   Future<int> postLogin(mail, password) async {
     try {
-      var response = await client.post(Uri.parse(baseUrl + "Members/login"),
-          body: {"email": mail, "password": password});
+      var response = await postRequest(
+          "user/login", jsonEncode({"email": mail, "password": password}));
       if (response.statusCode == 200) {
         print("ok");
         var data = await jsonDecode(response.body);
-        settingsBox.put("token", data["id"]);
+        settingsBox.put("token", data["token"]);
         settingsBox.put("userId", data['userId']);
-        await getMembersData(data['userId']);
+        await getMembersData();
         return 0;
       } else {
         print(response.statusCode.toString());
@@ -149,37 +178,24 @@ class ApiConnector {
     }
   }
 
-  Future<int> postLogout() async {
-    try {
-      var response = await client.post(Uri.parse(
-          baseUrl + "Members/logout?access_token=" + settingsBox.get('token')));
-      if (response.statusCode == 204) {
-        settingsBox.delete('token');
-        print("logged out");
-
-        return 0;
-      } else {
-        print(response.statusCode.toString());
-        print('error');
-        return 2;
-      }
-    } catch (socketException) {
-      print(socketException.toString());
-      print('No internet connection');
-      return 1;
-    }
+  void logout() {
+    settingsBox.delete('token');
+    plantBox.clear();
+    dataBox.clear();
   }
 
-  Future<int> postCreateAccount(String firstName, String lastName,
-      String username, String mail, String password) async {
+  Future<int> postCreateAccount(
+      String firstName, String lastName, String mail, String password) async {
     try {
-      var response = await client.post(Uri.parse(baseUrl + "Members"), body: {
-        "firstname": firstName,
-        "lastname": lastName,
-        "username": username,
-        "email": mail,
-        "password": password
-      });
+      var response = await postRequest(
+          "user/signup",
+          jsonEncode({
+            "email": mail,
+            "password": password,
+            "firstName": firstName,
+            "lastName": lastName
+          }));
+      //max@max.com
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         settingsBox.put('userId', data['id']);
@@ -190,29 +206,24 @@ class ApiConnector {
         return 0;
       } else if (response.statusCode == 422) {
         var data = jsonDecode(response.body);
-        bool usernameExists;
+        bool passwordRequirements;
         bool emailExists;
-        try {
-          emailExists = data['error']['details']['messages']['email'][0] ==
-              "Email already exists";
-        } catch (e) {
-          emailExists = false;
-        }
-        try {
-          usernameExists = data['error']['details']['messages']['username']
-                  [0] ==
-              "User already exists";
-        } catch (e) {
-          usernameExists = false;
-        }
-        if (emailExists && usernameExists)
+        bool notAnEmail;
+        notAnEmail = data['error']['message'] == "invalid email";
+        emailExists = data['error']['message'].contains("ER_DUP_ENTRY");
+        passwordRequirements =
+            data['error']['message'] == "password must be minimum 8 characters";
+        if (emailExists && passwordRequirements)
           return 1;
         else if (emailExists)
           return 2;
-        else if (usernameExists) return 3;
-        return 0;
+        else if (passwordRequirements)
+          return 3;
+        else if (notAnEmail) return 5;
+        return 4;
       } else {
         print(response.statusCode.toString());
+        print(response.body);
         print('error');
         return 4;
       }
@@ -239,15 +250,13 @@ class ApiConnector {
     });
   }
 
-  cachePlantData() {}
-
   readPlant() {
     Map plantMap;
     //print(plantBox.toMap());
     if (plantBox != null) {
       if (plantBox.isNotEmpty) {
-      plantMap = plantBox.toMap();
-      print(plantMap);
+        plantMap = plantBox.toMap();
+        print(plantMap);
       }
     }
     return plantMap;
