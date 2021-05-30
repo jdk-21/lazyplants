@@ -38,24 +38,30 @@ void main() async {
   api.settingsBox = await Hive.openBox('settings');
   api.settingsBox.put('token', "testToken");
 
-  var baseUrl = 'https://api.kie.one/api/';
+  var header = {
+    "Accept": "application/json",
+    "content-type": "application/json",
+    "Authorization": "Bearer testToken"
+  };
+
   group('GET', () {
     group('getExactPlantData', () {
       const int limit = 1;
-      const String espId = "espBlume3";
-      var uri = Uri.parse(baseUrl +
-          "PlantData?access_token=" +
-          api.settingsBox.get('token') +
-          "&filter[order]=date%20DESC&filter[limit]=" + limit.toString() + "&filter[espId]=" + espId);
+      const String plantId = "espBlume3";
+      var uri = Uri.parse(api.baseUrl +
+          "data&filter[order]=measuringTime%20ASC&filter[limit]=" +
+          limit.toString() +
+          "&filter[plantId]=" +
+          plantId);
       test('getexactPlantData successful', () async {
         print("Test: getData, working");
         print(uri);
         var response =
-            '{"espId": "espBlume3","soilMoisture": 26,"humidity": 41,"temperature": 24.4,"watertank": 36,"water": false,"measuringTime": "2021-03-05T13:43:46.000Z","id": "6042278d701e762c3a840970","plantsId": "5fcf98e9f106a01bbacc5a79","memberId": "5fbd47595421905a1a869a55"}';
+            '{"plantId": "espBlume3","soilMoisture": 26,"humidity": 41,"temperature": 24.4,"watertank": 36,"water": false,"measuringTime": "2021-03-05T13:43:46.000Z","id": "6042278d701e762c3a840970","plantsId": "5fcf98e9f106a01bbacc5a79","memberId": "5fbd47595421905a1a869a55"}';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 200));
-        var data = await api.getExactPlantData(limit, espId);
+        var data = await api.getExactPlantData(limit, plantId);
         expect(data, jsonDecode(response));
         //clear();
       });
@@ -63,23 +69,22 @@ void main() async {
         print("Test: getExactPlantData, error");
         var response = 'error';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 401));
-        var data = await api.getExactPlantData(limit, espId);
+        var data = await api.getExactPlantData(limit, plantId);
         expect(data, "error");
         //clear();
       });
     });
 
     group('getPlant', () {
-      var uri = Uri.parse(
-          baseUrl + "Plants?access_token=" + api.settingsBox.get('token'));
+      var uri = Uri.parse(api.baseUrl + "plant");
       test('getPlant successful', () async {
         print("Test: getPlant, working");
         var response =
             '{"plantName": "Pflanze 1","plantDate": "2020-12-08T08:02:32.084Z","espId": "espBlume4","soilMoisture": 45,"humidity": 30,"id": "5fcf34c5e4f580d626f63922","memberId": "5fbd47795421905a1a869a56"}';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 200));
         var data = await api.getPlant();
         expect(data, jsonDecode(response));
@@ -88,7 +93,7 @@ void main() async {
         print("Test: getPlant, error");
         var response = 'error';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 401));
         var data = await api.getPlant();
         expect(data, "error");
@@ -96,18 +101,12 @@ void main() async {
     });
 
     group('getMembersData', () {
-      var userId = "1234";
-      var uri = Uri.parse(baseUrl +
-          "Members/" +
-          userId +
-          "?access_token=" +
-          api.settingsBox.get('token'));
+      var uri = Uri.parse(api.baseUrl + "user/me");
       test('getMembersData successful', () async {
         print("Test: getMembersData, working");
-        var response =
-            '{"firstname": "Max","lastname": "Mustermann","memberPic": {},"realm": "string","username": "max123","email": "max@max.com","emailVerified": false,"id": "606600e9701e762c3a8418f0"}';
+        var response = '{"firstName": "Max","lastName": "Mustermann"}';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 200));
         var data = await api.getMembersData();
         expect(data, 0);
@@ -118,7 +117,7 @@ void main() async {
         print("Test: getMembersData, error");
         var response = 'error';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 401));
         var data = await api.getMembersData();
         expect(data, 1);
@@ -128,7 +127,7 @@ void main() async {
         print("Test: getMembersData, other Statuscode");
         var response = 'error';
         // mock the api request
-        when(client.get(uri))
+        when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 501));
         var data = await api.getMembersData();
         expect(data, 1);
@@ -138,9 +137,8 @@ void main() async {
 
   group('PATCH', () {
     group('patchPlant', () {
-      var uri = Uri.parse(
-          baseUrl + "Plants?access_token=" + api.settingsBox.get('token'));
       var plantId = "5fc76bf50b487e3b0415f56d";
+      var uri = Uri.parse(api.baseUrl + "plant/" + plantId);
       var espName = "espBlume3";
       var plantName = "TEST";
       var room = "t";
@@ -152,29 +150,25 @@ void main() async {
         var response =
             '{"plantName": "TEST","plantDate": "2020-12-02T09:29:16.519Z","espId": "espBlume3","soilMoisture": 25,"humidity": 30,"id": "5fc76bf50b487e3b0415f56d","memberId": "5fbd47595421905a1a869a55"}';
         // mock the api request
-        when(client.patch(uri, body: {
-          "plantName": plantName,
-          "espName": espName,
-          "id": plantId,
-          "soilMoisture": soilMoisture,
-          "memberId": memberId
-        })).thenAnswer((_) async => http.Response(response, 200));
+        when(client.patch(uri,
+                body:
+                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                headers: header))
+            .thenAnswer((_) async => http.Response(response, 204));
         var data = await api.patchPlant(
             plantId, plantName, espName, room, soilMoisture, memberId);
-        expect(data, jsonDecode(response));
+        expect(data, 204);
       });
 
       test('patchPlant with exception', () async {
         print("Test: patchPlant, error");
         var response = 'error';
         // mock the api request
-        when(client.patch(uri, body: {
-          "plantName": plantName,
-          "espId": espName,
-          "id": plantId,
-          "soilMoisture": soilMoisture,
-          "memberId": memberId
-        })).thenAnswer((_) async => http.Response(response, 401));
+        when(client.patch(uri,
+                body:
+                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                headers: header))
+            .thenAnswer((_) async => http.Response(response, 401));
         var data = await api.patchPlant(
             plantId, plantName, espName, room, soilMoisture, memberId);
         expect(data, 401);
@@ -184,13 +178,11 @@ void main() async {
         print("Test: patchPlant, other Statuscode");
         var response = 'error';
         // mock the api request
-        when(client.patch(uri, body: {
-          "plantName": plantName,
-          "espName": espName,
-          "id": plantId,
-          "soilMoisture": soilMoisture,
-          "memberId": memberId
-        })).thenAnswer((_) async => http.Response(response, 501));
+        when(client.patch(uri,
+                body:
+                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                headers: header))
+            .thenAnswer((_) async => http.Response(response, 501));
         var data = await api.patchPlant(
             plantId, plantName, espName, room, soilMoisture, memberId);
         expect(data, "error");
@@ -200,28 +192,34 @@ void main() async {
 
   group('POST', () {
     group('postLogin', () {
-      //TODO: Fehler zugriff auf Hive DB
       var mail = "max@max.com";
       var pw = "max123";
-      var uri = Uri.parse(baseUrl + "Members/login");
+      var uri = Uri.parse(api.baseUrl + "user/login");
       var token = "POST_TOKEN";
       var userId = "userId";
       var t = api.settingsBox.get('token');
 
       test('postLogin successful', () async {
         print("Test: postLogin, working");
-        var response = '{"id": "' +
+        var response = '{"token": "' +
             token +
             '","ttl": 1209600,"created": "2021-05-10T17:35:49.490Z","userId": "' +
             userId +
             '"}';
         // mock the api request
-        when(client.post(uri, body: {"email": mail, "password": pw}))
+        when(client.post(uri, headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          "Authorization": "Bearer testToken"
+        }, body: '''{
+          "email": "$mail",
+          "password": "$pw"
+        }'''))
             .thenAnswer((_) async => http.Response(response, 200));
         expect(await api.postLogin(mail, pw), 0);
         expect(api.settingsBox.get('token'), token);
-        api.settingsBox.put('token', t);
         expect(api.settingsBox.get('userId'), userId);
+        api.settingsBox.put('token', 'testToken');
       });
 
       test('postLogin with exception', () async {
@@ -236,8 +234,8 @@ void main() async {
     }); //postLogin
 
     group('postCreateAccount', () {
-      var uri = Uri.parse(baseUrl + "Members");
-      var uriLogin = Uri.parse(baseUrl + "Members/login");
+      var uri = Uri.parse(api.baseUrl + "user/signup");
+      var uriLogin = Uri.parse(api.baseUrl + "user/login");
       var firstName = "Reiner";
       var lastName = "Zufall";
       var username = "Reinerzufall";
@@ -263,19 +261,22 @@ void main() async {
           '"}';
       test('postCreateAccount successful', () async {
         print("Test: postCreateAccount, working");
+        print(uri);
+        var body = '{"email":"$mail","password":"$password","firstName":"$firstName","lastName":"$lastName"}';
+        print(body);
         // mock the api request
-        when(client.post(uri, body: {
-          "firstname": firstName,
-          "lastname": lastName,
-          "username": username,
-          "email": mail,
-          "password": password
-        })).thenAnswer((_) async => http.Response(responseSuccsess, 200));
-        when(client.post(uriLogin, body: {"email": mail, "password": password}))
+        when(client.post(uri,
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": "Bearer testToken"
+                },
+                body: body))
+            .thenAnswer((_) async => http.Response(responseSuccsess, 200));
+        when(client.post(uriLogin,
+                body: {"email": mail, "password": password}, headers: header))
             .thenAnswer((_) async => http.Response(responseLogin, 200));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             0);
         expect(api.settingsBox.get('userId'), userId);
         expect(api.settingsBox.get('firstName'), firstName);
@@ -290,18 +291,15 @@ void main() async {
         var token = api.settingsBox.get('token');
         // mock the api request
         when(client.post(uri, body: {
-          "firstname": firstName,
-          "lastname": lastName,
-          "username": username,
+          "firstName": firstName,
+          "lastName": lastName,
           "email": mail,
           "password": password
         })).thenAnswer((_) async => http.Response(responseSuccsess, 200));
 
         when(client.post(uriLogin, body: {"email": mail, "password": password}))
             .thenAnswer((_) async => http.Response(response, 401));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             4);
         expect(api.settingsBox.get('token'), token);
         expect(api.settingsBox.get('userId'), userId);
@@ -325,9 +323,7 @@ void main() async {
           "email": mail,
           "password": password
         })).thenAnswer((_) async => http.Response(response, 422));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             2);
       });
 
@@ -345,9 +341,7 @@ void main() async {
           "email": mail,
           "password": password
         })).thenAnswer((_) async => http.Response(response, 422));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             3);
       });
       test('postCreateAccount with exist Username & Email', () async {
@@ -365,9 +359,7 @@ void main() async {
           "email": mail,
           "password": password
         })).thenAnswer((_) async => http.Response(response, 422));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             1);
       });
       test('postCreateAccount with exception', () async {
@@ -384,9 +376,7 @@ void main() async {
           "email": mail,
           "password": password
         })).thenAnswer((_) async => http.Response(response, 501));
-        expect(
-            await api.postCreateAccount(
-                firstName, lastName, username, mail, password),
+        expect(await api.postCreateAccount(firstName, lastName, mail, password),
             4);
         expect(api.settingsBox.get('userId'), null);
         expect(api.settingsBox.get('firstName'), null);

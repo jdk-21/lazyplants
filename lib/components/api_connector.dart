@@ -28,7 +28,7 @@ class ApiConnector {
 
     return await client.post(Uri.parse(baseUrl + endpoint),
         headers: {
-          "Accept": "aplication/json",
+          "Accept": "application/json",
           "content-type": "application/json",
           "Authorization": bearer
         },
@@ -42,7 +42,7 @@ class ApiConnector {
     }
 
     return await client.get(Uri.parse(baseUrl + endpoint), headers: {
-      "Accept": "aplication/json",
+      "Accept": "application/json",
       "content-type": "application/json",
       "Authorization": bearer
     });
@@ -56,7 +56,7 @@ class ApiConnector {
 
     return await client.patch(Uri.parse(baseUrl + endpoint),
         headers: {
-          "Accept": "aplication/json",
+          "Accept": "application/json",
           "content-type": "application/json",
           "Authorization": bearer
         },
@@ -187,6 +187,12 @@ class ApiConnector {
   Future<int> postCreateAccount(
       String firstName, String lastName, String mail, String password) async {
     try {
+      print(jsonEncode({
+            "email": mail,
+            "password": password,
+            "firstName": firstName,
+            "lastName": lastName
+          }));
       var response = await postRequest(
           "user/signup",
           jsonEncode({
@@ -195,12 +201,11 @@ class ApiConnector {
             "firstName": firstName,
             "lastName": lastName
           }));
-      //max@max.com
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        settingsBox.put('userId', data['id']);
-        settingsBox.put('firstName', data['firstname']);
-        settingsBox.put('lastName', data['lastname']);
+        settingsBox.put('userId', data['userId']);
+        settingsBox.put('firstName', data['firstName']);
+        settingsBox.put('lastName', data['lastName']);
         print("created Account");
         if (await postLogin(mail, password) != 0) return 4;
         return 0;
@@ -233,38 +238,4 @@ class ApiConnector {
       return 4;
     }
   }
-
-  cachePlant() {
-    getPlant().then((data) {
-      if (data == "error") {
-        // TODO: display error message and retry
-        print("error");
-      } else {
-        plantBox.clear().then((value) {
-          for (var d in data) {
-            plantBox.add(d);
-          }
-          print('cached');
-        });
-      }
-    });
-  }
-
-  readPlant() {
-    Map plantMap;
-    //print(plantBox.toMap());
-    if (plantBox != null) {
-      if (plantBox.isNotEmpty) {
-        plantMap = plantBox.toMap();
-        print(plantMap);
-      }
-    }
-    return plantMap;
-  }
-
-  plantCount() {
-    return plantBox.length;
-  }
-
-  readPlantData() {}
 }

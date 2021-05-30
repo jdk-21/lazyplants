@@ -5,7 +5,6 @@ import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/components/lp_custom_button.dart';
 import 'package:lazyplants/components/lp_custom_text_button.dart';
 import 'package:lazyplants/screens/add_plant/add_plant_screen3.dart';
-import 'package:lazyplants/main.dart';
 import 'package:get/get.dart';
 
 class AddPlantScreen2 extends StatefulWidget {
