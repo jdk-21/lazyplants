@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lazyplants/components/custom_gradient_background.dart';
 import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/components/lp_custom_text_button.dart';
+import 'package:lazyplants/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_plant_screen2.dart';
 import 'package:get/get.dart';
@@ -60,12 +61,14 @@ class AddPlantScreen1 extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           LPCustomButton(
-            onPressed: () {
+            onPressed: () async {
+              var espData = await api.getPlant();
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddPlantScreen2(
                     plant: plant,
+                    espData: espData
                   ),
                 ),
               );

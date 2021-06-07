@@ -50,19 +50,17 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
     });
   }
 
-  saveChanges() {
+  saveChanges() async{
     print(widget.plant.plantName.toString());
     print(widget.plant.plantId.toString());
     print(widget.plant.soilMoisture.toString());
-    api.patchPlant(
+    await api.patchPlant(
         widget.plant.plantId,
-        widget.plant.espId,
         widget.plant.plantName,
+        widget.plant.espName,
         widget.plant.room,
         widget.plant.soilMoisture.toString(),
-        widget.plant.plantPic,
-        widget.plant.memberId);
-    api.cachePlant();
+        widget.plant.humidity.toString());
   }
 
   @override
