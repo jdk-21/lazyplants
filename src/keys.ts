@@ -1,5 +1,5 @@
+import {TokenService, UserService} from '@loopback/authentication';
 import {BindingKey} from '@loopback/core';
-import {TokenService, UserService} from '@loopback/authentication'
 import {User} from './models';
 import {Credentials} from './repositories';
 import {PasswordHasher} from './services/password-hash-service';
@@ -7,6 +7,7 @@ import {PasswordHasher} from './services/password-hash-service';
 
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = '123asdf5';
+  //export const TOKEN_EXPIRES_IN_VALUE = '45'; //test
   export const TOKEN_EXPIRES_IN_VALUE = '1209600'; //seconds two weeks
 }
 

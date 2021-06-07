@@ -19,6 +19,7 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {Data, User} from '../models';
 import {Credentials, DataRepository} from '../repositories';
@@ -95,6 +96,34 @@ export class DataController {
       return this.dataRepository.find({where: {userId: {neq: ''}}});
     }
     return this.dataRepository.find({where: {userId: userId}});
+  }
+
+  @get('/data/{id}')
+  @response(200, {
+    description: 'Array of Data model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Data, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  async findmyplant(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @param.path.string('id') id: string,
+    @param.filter(Data, {exclude: 'where'}) filter?: FilterExcludingWhere<Data>,
+  ): Promise<Data> {
+    const userId = currentUserProfile[securityId];
+    const userIdOfPlantId = await this.dataRepository.find({where: {plantId: id}});
+    if (userId == userIdOfPlantId[0]['userId']) {
+      return this.dataRepository.findById(id, filter);
+    } else {
+      throw new HttpErrors.Forbidden('Access Denied');
+    }
   }
 
   @patch('/data')

@@ -1,0 +1,22 @@
+
+> lazyplants@0.0.1 prestart
+> npm run rebuild
+
+
+> lazyplants@0.0.1 rebuild
+> npm run clean && npm run build
+
+
+> lazyplants@0.0.1 clean
+> lb-clean dist *.tsbuildinfo .eslintcache
+
+
+> lazyplants@0.0.1 build
+> lb-tsc
+
+
+> lazyplants@0.0.1 start
+> node -r source-map-support/register .
+
+Server is running at http://[::1]:3002
+Try http://[::1]:3002/ping
