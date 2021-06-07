@@ -66,7 +66,7 @@ class ApiConnector {
   getExactPlantData(int limit, String plantId) async {
     try {
       var response =
-          await getRequest("dataPlant/" + plantId + "/" + limit.toString());
+          await getRequest("dataplant/" + plantId + "/" + limit.toString());
       if (response.statusCode == 200) {
         print(await jsonDecode(response.body));
         return await jsonDecode(response.body);

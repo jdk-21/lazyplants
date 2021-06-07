@@ -122,8 +122,8 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                                     child: Text("Luftfeuchtigkeit"), value: 2),
                                 DropdownMenuItem(
                                     child: Text("Bodenfeuchtigkeit"), value: 3),
-                                DropdownMenuItem(
-                                    child: Text("Tank Level"), value: 4),
+                                //DropdownMenuItem(
+                                //  child: Text("Tank Level"), value: 4),
                               ],
                               onChanged: (value) {
                                 setState(() {
