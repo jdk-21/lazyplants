@@ -5,7 +5,6 @@ import 'package:lazyplants/components/db_models.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; // für primaryYAxis
 import 'package:intl/date_symbol_data_file.dart';
-initializeDateFormatting('de_DE');
 
 class MonitoringScreen1 extends StatelessWidget {
   final Plant plant;
@@ -16,9 +15,18 @@ class MonitoringScreen1 extends StatelessWidget {
   TooltipBehavior _tooltipBehavior =
       TooltipBehavior(enable: true); // Anzeige der Datenpunkte beim Anklicken
   int limit = 5;
+  int selectedValue = 1;
   String wert = "temperature";
+
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('de_DE', null);
+    if (selectedValue == 1) {
+      wert = "temperature";
+    }
+    if (selectedValue == 2) {
+      wert = "huminity";
+    }
     return FutureBuilder(
         future: api.getExactPlantData(limit, plant.espId),
         builder: (BuildContext context, AsyncSnapshot<dynamic> plantData) {
@@ -50,7 +58,7 @@ class MonitoringScreen1 extends StatelessWidget {
                         wert: wert,
                         tooltipBehavior: _tooltipBehavior),
                     SizedBox(height: 5), // Abstand von 5zwischen Containern
-                    // Auswahlmöglichkeit Verschiedene "werte"
+                    DropDownExample(),
                     Container(
                         //color: Colors.blue,
                         height: 200,
@@ -128,5 +136,47 @@ class CustomDiagram extends StatelessWidget {
             )
       ],
     ));
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+class DropDownExample extends StatefulWidget {
+  DropDownExample({Key key}) : super(key: key);
+
+  @override
+  _DropDownExampleState createState() => _DropDownExampleState();
+}
+
+class _DropDownExampleState extends State<DropDownExample> {
+  int selectedValue = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
+              child: DropdownButton(
+                  value: selectedValue,
+                  items: [
+                    DropdownMenuItem(
+                      child: Text("Male"),
+                      value: 1,
+                    ),
+                    DropdownMenuItem(
+                      child: Text("Female"),
+                      value: 2,
+                    ),
+                    DropdownMenuItem(child: Text("Others"), value: 3),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedValue = value;
+                    });
+                  }),
+            )),
+      ),
+    );
   }
 }
