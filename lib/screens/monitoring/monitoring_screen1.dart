@@ -61,7 +61,9 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                         style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black))));
+                            color: Colors.black))
+                    //TODO: zurück button
+                    ));
           }
 
           var mittelwert = 0.0;
