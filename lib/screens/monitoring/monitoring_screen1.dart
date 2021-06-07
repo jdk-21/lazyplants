@@ -28,7 +28,7 @@ class MonitoringScreen1 extends StatelessWidget {
       wert = "huminity";
     }
     return FutureBuilder(
-        future: api.getExactPlantData(limit, plant.espId),
+        future: api.getExactPlantData(limit, plant.plantId),
         builder: (BuildContext context, AsyncSnapshot<dynamic> plantData) {
           if (!plantData.hasData) {
             return CircularProgressIndicator();
