@@ -101,7 +101,7 @@ export class DataController {
     return this.dataRepository.find({where: {userId: userId}});
   }
 
-  @get('/dataplant/{id}/{bla}')
+  @get('/dataplant/{id}/{limit}')
   @response(200, {
     description: 'Array of Data model instances',
     content: {
@@ -118,16 +118,11 @@ export class DataController {
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
-    @param.path.string('bla') bla: number,
+    @param.path.string('limit') limit: number,
     @param.filter(Data, {exclude: 'where'}) filter?: FilterExcludingWhere<Data>,
   ): Promise<Data[]> {
     const userId = currentUserProfile[securityId];
-    //const userIdOfPlantId = await this.dataRepository.find({where: {plantId: id}});
-    //if (userId == userIdOfPlantId[0]['userId']) {
-    return this.dataRepository.find({limit: bla}, {where: {and: [{plantId: id}, {userId: userId}]}});
-    //} else {
-    // throw new HttpErrors.Forbidden('Access Denied');
-    //}
+    return this.dataRepository.find({limit: limit}, {where: {and: [{plantId: id}, {userId: userId}]}});
   }
 
   @patch('/data')
