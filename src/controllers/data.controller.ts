@@ -119,10 +119,9 @@ export class DataController {
     currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.path.string('limit') limit: number,
-    @param.filter(Data, {exclude: 'where'}) filter?: FilterExcludingWhere<Data>,
   ): Promise<Data[]> {
-    const userId = currentUserProfile[securityId];
-    return this.dataRepository.find({limit: limit}, {where: {and: [{plantId: id}, {userId: userId}]}});
+    const myUserId = currentUserProfile[securityId];
+    return this.dataRepository.find({where: {and: [{userId: myUserId}, {plantId: id}]}, limit: limit});
   }
 
   @patch('/data')
