@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:lazyplants/components/navigation_drawer.dart';
 import 'package:lazyplants/components/sliver_appbar.dart';
 import 'package:lazyplants/main.dart';
+import 'package:lazyplants/screens/monitoring/monitoring_screen1.dart';
 import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -41,67 +42,85 @@ class _HomeScreenState extends State<HomeScreen> {
             break;
           case 'plantId':
             plant.plantId = value;
+            break;
+          case 'plantDate':
+            plant.plantDate = DateTime.parse(value);
+            break;
+          case 'temperature':
+            plant.temprature = value;
+            break;
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
         listItems.add(Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          child: Card(
-            elevation: 15,
-            child: Row(
-              children: [
-                Container(
-                  width: 50,
-                  child: Column(
-                    children: [
-                      CustomPaint(
-                        painter: CircleIndicator(),
-                        child: Container(
-                          height: 30,
-                        ),
-                      ),
-                      CustomPaint(
-                        painter: WaterIndicator(percentage: 0.6),
-                        child: Container(height: 80),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MonitoringScreen1(
+                          plant: plant,
+                        )),
+              );
+            },
+            child: Card(
+              elevation: 15,
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    child: Column(
                       children: [
-                        Text(
-                          plant.plantName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black87,
+                        CustomPaint(
+                          painter: CircleIndicator(),
+                          child: Container(
+                            height: 30,
                           ),
                         ),
-                        Text(
-                          "15 days alive",
-                          style: TextStyle(
-                            color: Colors.black87,
+                        CustomPaint(
+                          painter: WaterIndicator(percentage: 0.6),
+                          child: Container(height: 80),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            plant.plantName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'last sync: ' +
-                              DateFormat("yy-MM-dd hh:mm").format(
-                                  DateTime.parse(plant.plantDate.toString())),
-                          style: TextStyle(color: Colors.black45),
-                        ),
-                      ]),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(
-                        "https://images.unsplash.com/photo-1467043198406-dc953a3defa0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=670&q=80",
-                      )),
-                )
-              ],
+                          Text(
+                            "15 days alive",
+                            style: TextStyle(
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            'last sync: ' +
+                                DateFormat("yy-MM-dd hh:mm").format(
+                                    DateTime.parse(plant.plantDate.toString())),
+                            style: TextStyle(color: Colors.black45),
+                          ),
+                        ]),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(
+                          "https://images.unsplash.com/photo-1467043198406-dc953a3defa0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=670&q=80",
+                        )),
+                  )
+                ],
+              ),
             ),
           ),
         ));
@@ -130,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       return null;
     }
-        return null;
+    return null;
   }
 
   @override
