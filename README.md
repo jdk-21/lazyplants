@@ -29,6 +29,10 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
   ```
   String espID = "yourEspId";
   ```
+ - Enter a **mesuring intervall**
+   ```
+   #define IntervallTime 5
+   ```
 At the Module.h you have to cange the following thinks:
 - the **timezone**, if you don't live at the UTC+2 _timezone
   ```
