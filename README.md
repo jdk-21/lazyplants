@@ -14,7 +14,7 @@ The pin assignment can be adapted according to the ESP. However, the pin for the
 
 ## Installation and adjustments of the ESP script
 If everything has been wired exactly as shown in the wiring diagram, only the following changes need to be made in ESP.ino:
-  -  Enter the **WiFi-SSID and password**
+-   Enter the **WiFi-SSID and password**
   ```cpp
   // WLAN
   const char* ssid = "yourSSID";
