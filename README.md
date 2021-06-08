@@ -8,11 +8,11 @@ Our vision is to create an automatic plant watering system for all those that ca
 Documenatation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
 Blog: [here](https://lazysmartplants.wordpress.com/)
 
-## Connecting the sensors:
+## Connecting the sensors
 ![](https://github.com/Kokoloris19097/LazyPlants.dokumentation/blob/c4ca5e9a913b361307ece8c8a2346931e1663eb6/assets/Schaltplan.jpg) \
 The pin assignment can be adapted according to the ESP. However, the pin for the soil moisture sensor must be able to read an analogue signal. The pins for HC-SR04, DHT22 and the relay must be digitally controllable.
 
-## Installation and adjustments of the ESP script:
+## Installation and adjustments of the ESP script
 If everything has been wired exactly as shown in the wiring diagram, only the following changes need to be made in ESP.ino:
 - enter the **WiFi-SSID and password**
   ```
