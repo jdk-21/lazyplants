@@ -58,7 +58,7 @@ String tableDB = "data"; // Stelle an der ESP die Pflanzen Datensätze posten so
 ```
 
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment at the Module.h.
-```
+```cpp
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
@@ -68,7 +68,6 @@ If you have not wired the sensors and the relay as shown in the plan, you must a
 #define dhtType DHT22
 DHT dht(dhtPIN, dhtType);
 ```
-
 
 Once you have made the specified changes, you can load the ESP.ino and Module.h onto your ESP. The debugging information is displayed via the serial monitor.
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment.
