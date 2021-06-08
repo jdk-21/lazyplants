@@ -34,7 +34,8 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
    #define IntervallTime 5
    ```
 At the Module.h you have to cange the following thinks:
-- the **timezone**, if you don't live at the UTC+2 _timezone
+
+-   the **timezone**, if you don't live at the UTC+2 _timezone
   ```cpp
   const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
   const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zei
