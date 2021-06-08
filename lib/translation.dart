@@ -21,7 +21,8 @@ class Translation extends Translations {
           'urlLaunchError': 'Could not launch URL:',
           'useCamera': 'Use Camera',
           'pickGallery': 'Pick from gallery',
-          'credentialsIncorrect': 'Your credentials are incorrect. Try correcting your e-mail or password.',
+          'credentialsIncorrect':
+              'Your credentials are incorrect. Try correcting your e-mail or password.',
           'credentialsMissing': 'Empty credentials',
           'somethingWrong': 'Something went wrong.',
           'successfulLogout': 'You successfully logged out.',
@@ -56,7 +57,8 @@ class Translation extends Translations {
           'addPlant1_body':
               'Please ensure your microcontroller is already up and running before you continue!',
           'addPlant1_helpText': 'How do I add my microcontroller?',
-          'addPlant1_helpUrl': 'https://github.com/jdk-21/lazyplants/tree/esp',
+          'addPlant1_helpUrl':
+              'https://github.com/jdk-21/lazyplants/blob/master/README.md',
           'addPlant2_title': 'What\'s your name?',
           'addPlant2_helpText': 'Name, please',
           'addPlant2_dropDown': 'Select ESP',

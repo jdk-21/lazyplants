@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lazyplants/components/custom_colors.dart';
 import 'package:lazyplants/main.dart';
 import 'package:lazyplants/components/db_models.dart';
+import 'package:lazyplants/screens/home_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; // für primaryYAxis
 import 'package:intl/date_symbol_data_file.dart';
@@ -20,7 +21,7 @@ class MonitoringScreen1 extends StatefulWidget {
 
 class _MonitoringScreen1State extends State<MonitoringScreen1> {
   TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
-  int limit = 5;
+  int limit = 10;
 
   int selectedValue = 1;
 
@@ -42,7 +43,7 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
         wert = "soilMoisture";
         break;
       case 4:
-        wert = "tanklevel";
+        wert = "watertank";
         break;
       default:
         wert = "temperature";
@@ -52,18 +53,22 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> plantData) {
           if (!plantData.hasData) {
             return Scaffold(
-                body: Container(child: CircularProgressIndicator()));
+              body:
+                  Center(child: Container(child: CircularProgressIndicator())),
+              floatingActionButton: HomeButton(),
+            );
           } else if (plantData.data is String) {
             return Scaffold(
-                backgroundColor: Colors.red[800],
-                body: Center(
-                    child: Text(plantData.data.toString(),
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black))
-                    //TODO: zurück button
-                    ));
+              backgroundColor: Colors.red[800],
+              body: Center(
+                child: Text(plantData.data.toString(),
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+              ),
+              floatingActionButton: HomeButton(),
+            );
           }
 
           var mittelwert = 0.0;
@@ -101,29 +106,45 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                         tooltipBehavior: _tooltipBehavior),
                   ),
                   SizedBox(height: 5), // Abstand von 5zwischen Containern
+                  Text("letzter Messzeitpunkt: ${measuringTime.toString()}",
+                      style: TextStyle(color: Colors.black)),
+                  Text("Mittelwert: $mittelwert",
+                      style: TextStyle(color: Colors.black)),
                   Container(
-                    height: 100,
                     child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(1),
                         child: Center(
                           child: DropdownButton(
                               underline: Container(
                                   height: 0, color: CustomColors.kPrimaryColor),
                               iconDisabledColor: CustomColors.kPrimaryColor,
-                              style: TextStyle(
-                                  color: CustomColors.kPrimaryColor,
-                                  fontWeight: FontWeight.bold),
-                              dropdownColor: Colors.green[200],
+                              dropdownColor: Colors.green[100],
                               value: selectedValue,
                               items: [
                                 DropdownMenuItem(
-                                    child: Text("Temperatur"), value: 1),
+                                    child: IconText(
+                                        icon: Icons.thermostat,
+                                        text: "Temperatur",
+                                        fontSize: 15),
+                                    value: 1),
                                 DropdownMenuItem(
-                                    child: Text("Luftfeuchtigkeit"), value: 2),
+                                    child: IconText(
+                                        icon: Icons.air,
+                                        text: "Luftfeuchtigkeit",
+                                        fontSize: 15),
+                                    value: 2),
                                 DropdownMenuItem(
-                                    child: Text("Bodenfeuchtigkeit"), value: 3),
-                                //DropdownMenuItem(
-                                //  child: Text("Tank Level"), value: 4),
+                                    child: IconText(
+                                        icon: Icons.water_damage_outlined,
+                                        text: "Bodenfeuchtigkeit",
+                                        fontSize: 15),
+                                    value: 3),
+                                DropdownMenuItem(
+                                    child: IconText(
+                                        icon: Icons.water,
+                                        text: "Tanklevel",
+                                        fontSize: 15),
+                                    value: 4),
                               ],
                               onChanged: (value) {
                                 setState(() {
@@ -132,21 +153,89 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                               }),
                         )),
                   ),
-                  Container(
-                      //color: Colors.blue,
-                      height: 200,
+                  Center(
                       child: Column(
-                        //mainAxisAlignment: MainAxisAlignment.center,
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                              "letzter Messzeitpunkt: ${measuringTime.toString()} \n",
-                              style: textStyle),
-                          Text("Mittelwert: $mittelwert", style: textStyle),
+                          Text("Aktuelle Werte:\n", style: textStyle),
                         ],
-                      )),
+                      ),
+                      IconText(
+                          icon: Icons.thermostat,
+                          text:
+                              "Temperatur: ${plantData.data[0]['temperature']}"),
+                      IconText(
+                          icon: Icons.air,
+                          text:
+                              "Luftfeuchtigkeit: ${plantData.data[0]['humidity']}"),
+                      IconText(
+                          icon: Icons.water_damage_outlined,
+                          text:
+                              "Bodenfeuchtigkeit: ${plantData.data[0]['soilMoisture']}"),
+                      IconText(
+                          icon: Icons.water,
+                          text: "Tanklevel: ${plantData.data[0]['watertank']}"),
+                    ],
+                  )),
                 ],
               ));
         });
+  }
+}
+
+class IconText extends StatelessWidget {
+  const IconText(
+      {Key key, @required this.icon, @required this.text, this.fontSize})
+      : super(key: key);
+
+  final IconData icon;
+  final String text;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    var textStyle = TextStyle(
+        fontSize: fontSize == null ? 20 : fontSize,
+        fontWeight: FontWeight.bold,
+        color: Colors.black);
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Icon(
+            icon,
+            color: Colors.black,
+          ),
+        ),
+        Text(text, style: textStyle)
+      ],
+    );
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+class HomeButton extends StatelessWidget {
+  const HomeButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      key: Key('home'),
+      child: Icon(
+        Icons.home,
+      ),
+      backgroundColor: CustomColors.kPrimaryColor,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      },
+    );
   }
 }
 
