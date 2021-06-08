@@ -20,7 +20,7 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
   const char* ssid = "yourSSID";
   const char* pw = "yourPW";
   ```
-  -  enter the **User-Name and the password**
+  -enter the **User-Name and the password**
   ```
   String email = "your@email.com";
   String pw_API = "yourPassword";
