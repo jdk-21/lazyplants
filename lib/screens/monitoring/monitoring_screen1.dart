@@ -21,11 +21,13 @@ class MonitoringScreen1 extends StatefulWidget {
 
 class _MonitoringScreen1State extends State<MonitoringScreen1> {
   TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
-  int limit = 10;
+  int selectLimit = 10;
 
   int selectedValue = 1;
 
   String wert;
+  String name;
+  Iterable<String> limitList = {"5", "10", "20", "30", "50", "100"};
 
   var textStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
@@ -35,21 +37,26 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
     switch (selectedValue) {
       case 1:
         wert = "temperature";
+        name = "Temperatur";
         break;
       case 2:
         wert = "humidity";
+        name = "Luftfeuchtigkeit";
         break;
       case 3:
         wert = "soilMoisture";
+        name = "Bodenfeuchtigkeit";
         break;
       case 4:
         wert = "watertank";
+        name = "Tanklevel";
         break;
       default:
         wert = "temperature";
+        name = "Temperatur";
     }
     return FutureBuilder(
-        future: api.getExactPlantData(limit, widget.plant.plantId),
+        future: api.getExactPlantData(selectLimit, widget.plant.plantId),
         builder: (BuildContext context, AsyncSnapshot<dynamic> plantData) {
           if (!plantData.hasData) {
             return Scaffold(
@@ -62,6 +69,18 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
               backgroundColor: Colors.red[800],
               body: Center(
                 child: Text(plantData.data.toString(),
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+              ),
+              floatingActionButton: HomeButton(),
+            );
+          } else if (plantData.data[0] == null) {
+            return Scaffold(
+              backgroundColor: Colors.orange[800],
+              body: Center(
+                child: Text("Pflanze besitzt keine Daten",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -100,7 +119,7 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                     height: 300,
                     child: CustomDiagram(
                         plant: widget.plant,
-                        limit: limit,
+                        limit: selectLimit,
                         plantData: plantData.data,
                         wert: wert,
                         tooltipBehavior: _tooltipBehavior),
@@ -112,46 +131,79 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                       style: TextStyle(color: Colors.black)),
                   Container(
                     child: Padding(
-                        padding: const EdgeInsets.all(1),
-                        child: Center(
-                          child: DropdownButton(
-                              underline: Container(
-                                  height: 0, color: CustomColors.kPrimaryColor),
-                              iconDisabledColor: CustomColors.kPrimaryColor,
-                              dropdownColor: Colors.green[100],
-                              value: selectedValue,
-                              items: [
-                                DropdownMenuItem(
-                                    child: IconText(
-                                        icon: Icons.thermostat,
-                                        text: "Temperatur",
-                                        fontSize: 15),
-                                    value: 1),
-                                DropdownMenuItem(
-                                    child: IconText(
-                                        icon: Icons.air,
-                                        text: "Luftfeuchtigkeit",
-                                        fontSize: 15),
-                                    value: 2),
-                                DropdownMenuItem(
-                                    child: IconText(
-                                        icon: Icons.water_damage_outlined,
-                                        text: "Bodenfeuchtigkeit",
-                                        fontSize: 15),
-                                    value: 3),
-                                DropdownMenuItem(
-                                    child: IconText(
-                                        icon: Icons.water,
-                                        text: "Tanklevel",
-                                        fontSize: 15),
-                                    value: 4),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedValue = value;
-                                });
-                              }),
-                        )),
+                      padding: const EdgeInsets.all(1),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            DropdownButton(
+                                underline: Container(
+                                    height: 0,
+                                    color: CustomColors.kPrimaryColor),
+                                iconDisabledColor: CustomColors.kPrimaryColor,
+                                dropdownColor: Colors.green[100],
+                                value: selectedValue,
+                                items: [
+                                  DropdownMenuItem(
+                                      child: IconText(
+                                          icon: Icons.thermostat,
+                                          text: "Temperatur",
+                                          fontSize: 15),
+                                      value: 1),
+                                  DropdownMenuItem(
+                                      child: IconText(
+                                          icon: Icons.air,
+                                          text: "Luftfeuchtigkeit",
+                                          fontSize: 15),
+                                      value: 2),
+                                  DropdownMenuItem(
+                                      child: IconText(
+                                          icon: Icons.water_damage_outlined,
+                                          text: "Bodenfeuchtigkeit",
+                                          fontSize: 15),
+                                      value: 3),
+                                  DropdownMenuItem(
+                                      child: IconText(
+                                          icon: Icons.water,
+                                          text: "Tanklevel",
+                                          fontSize: 15),
+                                      value: 4),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedValue = value;
+                                  });
+                                }),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 100),
+                                child: TextField(
+                                  key: Key('limit'),
+                                  onSubmitted: (value) {
+                                    setState(() {
+                                      if (int.parse(value, radix: 10) >= 0) {
+                                        selectLimit =
+                                            int.parse(value, radix: 10);
+                                      } else {
+                                        value = selectLimit.toString();
+                                      }
+                                    });
+                                  },
+                                  autofillHints: limitList,
+                                  autofocus: false,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: selectLimit.toString(),
+                                    helperText: "Datensätze",
+                                  ),
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   Center(
                       child: Column(
@@ -215,7 +267,6 @@ class IconText extends StatelessWidget {
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 class HomeButton extends StatelessWidget {
   const HomeButton({
     Key key,
@@ -239,7 +290,6 @@ class HomeButton extends StatelessWidget {
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 class CustomDiagram extends StatelessWidget {
   final Plant plant;
   final String wert;
@@ -260,14 +310,32 @@ class CustomDiagram extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var label;
-    if (wert == "temperatur") {
-      label = '{value}°C';
+    String name;
+    switch (wert) {
+      case "temperature":
+        name = "Temperatur";
+        label = '{value}°C';
+        break;
+      case "humidity":
+        name = "Luftfeuchtigkeit";
+        label = '{value}%';
+        break;
+      case "soilMoisture":
+        name = "Bodenfeuchtigkeit";
+        label = '{value}%';
+        break;
+      case "watertank":
+        name = "Tanklevel";
+        label = '{value}%';
+        break;
+      default:
+        label = '{value}°C';
+        name = "Temperatur";
     }
     return Container(
         child: SfCartesianChart(
-      // Diagramm "Container"
-      title: ChartTitle(text: wert),
-      //legend: Legend(isVisible: true),
+      // Diagramm
+      title: ChartTitle(text: name),
       tooltipBehavior: _tooltipBehavior,
       borderColor: CustomColors.kPrimaryColor,
       borderWidth: 2,
@@ -280,7 +348,7 @@ class CustomDiagram extends StatelessWidget {
                           0)) // Einfügen des $ Symbols an der Y-Achse*/
       series: <ChartSeries>[
         LineSeries<dynamic, DateTime>(
-            name: wert,
+            name: name,
             dataSource: plantData,
             color: CustomColors.kPrimaryColor,
             yValueMapper: (dynamic p, _) => p[wert], //Initalisierung X-Achse
