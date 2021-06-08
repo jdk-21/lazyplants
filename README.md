@@ -20,16 +20,16 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
   const char* ssid = "yourSSID";
   const char* pw = "yourPW";
   ```
-  -  Enter the **User-Name and the password**
+-   Enter the **User-Name and the password**
   ```cpp
   String email = "your@email.com";
   String pw_API = "yourPassword";
   ```
-  -  Enter a **unique espID** 
+-   Enter a **unique espID** 
   ```cpp
   String espID = "yourEspId";
   ```
-   -  Enter a **mesuring intervall**
+-   Enter a **mesuring intervall**
    ```cpp
    #define IntervallTime 5
    ```
