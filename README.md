@@ -35,10 +35,10 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
    ```
 At the Module.h you have to cange the following thinks:
 - the **timezone**, if you don't live at the UTC+2 _timezone
-  ```
+  ```cpp
   const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
   const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zei
-  ```
+  ```cpp
 - Indication of the minimum and maximum **tank level**. It is important to remember that the sensor measures the distance to the water surface. The first parameter is given in cm, the second is given as the fill level in percent.
   ```
   //weitere Parameter
@@ -48,7 +48,7 @@ At the Module.h you have to cange the following thinks:
 
 If you use **your own Backend** you have to cange the ServerPath and the Endpoint Names:
 
-```
+```cpp
 String baseUrl = "yourServerPath"; // Pfad zum Backend
 String login_table = "user/login"; // Stelle an der sich der ESP bei der API einloggen muss
 String tablePlant = "plant"; // Stelle an der sich der ESP die Pflanze holen kann
