@@ -39,9 +39,10 @@ At the Module.h you have to cange the following thinks:
   ```cpp
   const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
   const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zei
-  ```cpp
-- Indication of the minimum and maximum **tank level**. It is important to remember that the sensor measures the distance to the water surface. The first parameter is given in cm, the second is given as the fill level in percent.
   ```
+  
+-   Indication of the minimum and maximum **tank level**. It is important to remember that the sensor measures the distance to the water surface. The first parameter is given in cm, the second is given as the fill level in percent.
+  ```cpp
   //weitere Parameter
   #define maxTankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
   #define minTanklevel 10 //Füllgrad in % b dem die Pumpe nicht mehr gießt
