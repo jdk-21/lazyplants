@@ -33,7 +33,7 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
    ```cpp
    #define IntervallTime 5
    ```
-## At the Module.h you have to cange the following thinks:
+## At the Module.h you have to cange the following thinks
 
 -   the **timezone**, if you don't live at the UTC+2 _timezone
   ```cpp
