@@ -215,18 +215,18 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
                       IconText(
                           icon: Icons.thermostat,
                           text:
-                              "Temperatur: ${plantData.data[0]['temperature']}"),
+                              "Temperatur: ${plantData.data[0]['temperature']}°C"),
                       IconText(
                           icon: Icons.air,
                           text:
-                              "Luftfeuchtigkeit: ${plantData.data[0]['humidity']}"),
+                              "Luftfeuchtigkeit: ${plantData.data[0]['humidity']}%"),
                       IconText(
                           icon: Icons.water_damage_outlined,
                           text:
-                              "Bodenfeuchtigkeit: ${plantData.data[0]['soilMoisture']}"),
+                              "Bodenfeuchtigkeit: ${plantData.data[0]['soilMoisture']}%"),
                       IconText(
                           icon: Icons.water,
-                          text: "Tanklevel: ${plantData.data[0]['watertank']}"),
+                          text: "Tanklevel: ${plantData.data[0]['watertank']}%"),
                     ],
                   )),
                 ],
