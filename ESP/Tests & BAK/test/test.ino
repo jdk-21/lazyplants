@@ -18,7 +18,7 @@ void setup() {
     Serial.begin(115200);//Test
     delay(1000);
     dht.begin();
-    //wifi(ssid, pw);
+    wifi(ssid, pw);
     //WiFi.begin(ssid, pw);
 }
 
