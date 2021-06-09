@@ -23,13 +23,14 @@ class PlantAdapter extends TypeAdapter<Plant> {
       ..plantDate = fields[3] as DateTime
       ..room = fields[4] as String
       ..soilMoisture = fields[5] as double
-      ..humidity = fields[6] as double;
+      ..humidity = fields[6] as double
+      ..temperature = fields[7] as double;
   }
 
   @override
   void write(BinaryWriter writer, Plant obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.plantId)
       ..writeByte(1)
@@ -43,7 +44,9 @@ class PlantAdapter extends TypeAdapter<Plant> {
       ..writeByte(5)
       ..write(obj.soilMoisture)
       ..writeByte(6)
-      ..write(obj.humidity);
+      ..write(obj.humidity)
+      ..writeByte(7)
+      ..write(obj.temperature);
   }
 
   @override

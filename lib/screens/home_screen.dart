@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             plant.plantDate = DateTime.parse(value);
             break;
           case 'temperature':
-            plant.temprature = value;
+            plant.temperature = value;
             break;
         }
       });

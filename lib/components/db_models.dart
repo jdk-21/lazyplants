@@ -26,7 +26,7 @@ class Plant {
   double humidity;
 
   @HiveField(7)
-  double temprature;
+  double temperature;
 }
 
 @HiveType(typeId: 1)

@@ -5,8 +5,6 @@ import 'package:lazyplants/components/db_models.dart';
 import 'package:lazyplants/screens/home_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; // für primaryYAxis
-import 'package:intl/date_symbol_data_file.dart';
-//initializeDateFormatting('de_DE', null);
 
 class MonitoringScreen1 extends StatefulWidget {
   final Plant plant;
@@ -98,7 +96,7 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
             count++;
           });
           mittelwert = mittelwert / count;
-          var measuringTime = DateFormat('dd.MM.yy hh:mm a')
+          var measuringTime = DateFormat('dd.MM.yy HH:mm')
               .format(DateTime.parse(plantData.data[0]['measuringTime']));
           return Scaffold(
               appBar: AppBar(
