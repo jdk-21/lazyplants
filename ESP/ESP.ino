@@ -181,19 +181,19 @@ void loop() {
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
   delay(1000);
-  int level = entfernung();
-  Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  delay(1000);
-  Tanklevel = fuellsstand();
-  Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
+  humidity = luftfeuchtigkeit();
+  Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");  
   delay(1000);
   soilMoisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
   delay(1000);
-  humidity = luftfeuchtigkeit();
-  Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
-  Serial.println();
-  delay(1000);/*
+  int level = entfernung();
+  Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
+  Tanklevel = fuellsstand();
+  Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
+  //Serial.println();
+  delay(1000);  
+  /*
 
   // Actions - Bodenfeuchte ok?
   if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * (toleranz / 100)))) {

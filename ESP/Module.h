@@ -20,7 +20,7 @@
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
 #define BodenfeuchtigkeitPIN 36
 #define PumpePIN 33
-#define dhtPIN 23
+#define dhtPIN 14
 #define dhtType DHT22
 DHT dht(dhtPIN, dhtType);
 
