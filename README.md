@@ -8,35 +8,42 @@ Our vision is to create an automatic plant watering system for all those that ca
 Documentation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
 Blog: [here](https://lazysmartplants.wordpress.com/)
 
-## Connecting the sensors:
+
+## Connecting the sensors
 ![](https://github.com/Kokoloris19097/LazyPlants.dokumentation/blob/c4ca5e9a913b361307ece8c8a2346931e1663eb6/assets/Schaltplan.jpg) \
 The pin assignment can be adapted according to the ESP. However, the pin for the soil moisture sensor must be able to read an analogue signal. The pins for HC-SR04, DHT22 and the relay must be digitally controllable.
 
-## Installation and adjustments of the ESP script:
+## Installation and adjustments of the ESP script
 If everything has been wired exactly as shown in the wiring diagram, only the following changes need to be made in ESP.ino:
-- enter the **WiFi-SSID and password**
-  ```
+-   Enter the **WiFi-SSID and password**
+  ```cpp
   // WLAN
   const char* ssid = "yourSSID";
   const char* pw = "yourPW";
   ```
-- enter the **User-Name and the password**
-  ```
+-   Enter the **User-Name and the password**
+  ```cpp
   String email = "your@email.com";
   String pw_API = "yourPassword";
   ```
-- Enter a **unique espID** 
-  ```
+-   Enter a **unique espID** 
+  ```cpp
   String espID = "yourEspId";
   ```
-At the Module.h you have to cange the following thinks:
-- the **timezone**, if you don't live at the UTC+2 _timezone
-  ```
+-   Enter a **mesuring intervall**
+   ```cpp
+   #define IntervallTime 5
+   ```
+## At the Module.h you have to cange the following thinks
+
+-   the **timezone**, if you don't live at the UTC+2 _timezone
+  ```cpp
   const long utcOffsetInSeconds_winter = 3600; // Winterzeit in sek zur UTC Zeit
   const long utcOffsetInSeconds_summer = 7200; // Winterzeit in sek zur UTC Zei
   ```
-- Indication of the minimum and maximum **tank level**. It is important to remember that the sensor measures the distance to the water surface. The first parameter is given in cm, the second is given as the fill level in percent.
-  ```
+  
+-   Indication of the minimum and maximum **tank level**. It is important to remember that the sensor measures the distance to the water surface. The first parameter is given in cm, the second is given as the fill level in percent.
+  ```cpp
   //weitere Parameter
   #define maxTankhoehe 30 //Angabe in cm bei denen der Sensor den Tank als leer erkennt
   #define minTanklevel 10 //Füllgrad in % b dem die Pumpe nicht mehr gießt
@@ -44,7 +51,8 @@ At the Module.h you have to cange the following thinks:
 
 If you use **your own Backend** you have to cange the ServerPath and the Endpoint Names:
 
-```
+
+```cpp
 String baseUrl = "yourServerPath"; // Pfad zum Backend
 String login_table = "user/login"; // Stelle an der sich der ESP bei der API einloggen muss
 String tablePlant = "plant"; // Stelle an der sich der ESP die Pflanze holen kann
@@ -52,7 +60,7 @@ String tableDB = "data"; // Stelle an der ESP die Pflanzen Datensätze posten so
 ```
 
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment at the Module.h.
-```
+```cpp
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
@@ -63,10 +71,6 @@ If you have not wired the sensors and the relay as shown in the plan, you must a
 DHT dht(dhtPIN, dhtType);
 ```
 
-
 Once you have made the specified changes, you can load the ESP.ino and Module.h onto your ESP. The debugging information is displayed via the serial monitor.
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment.
-
-
-
 
