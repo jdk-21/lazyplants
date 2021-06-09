@@ -18,8 +18,8 @@
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 33
-#define PumpePIN 26
+#define BodenfeuchtigkeitPIN 26
+#define PumpePIN 33
 #define dhtPIN 23
 #define dhtType DHT22
 DHT dht(dhtPIN, dhtType);
@@ -360,20 +360,28 @@ int fuellsstand(){
 }
 
 int bodenfeuchte(){
-  // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
-  // Der Normierte Wert wird in % angegeben.
-  int value = analogRead(BodenfeuchtigkeitPIN);
-  Serial.print("Bodenfeuchte Messwert: ");
-  Serial.print(value);
-  Serial.print(" ");
-  value = (((value - feuchtemin) *100) /feuchtemax);
-  Serial.println(value);
-  return value;
+    // Berechnung der Bodenfeuchtigkeit in %, der Wert wird aus der Max. Feuchtigkeit und dem kapazitiven Bodenfeuchtigkeitssensor berechnet.
+    // Der Normierte Wert wird in % angegeben.
+    //Serial.print("Pin:");
+    //Serial.println(BodenfeuchtigkeitPIN);
+    int value = analogRead(BodenfeuchtigkeitPIN);
+    Serial.print("Messwert: ");
+    Serial.println(value);
+    value = map(value, feuchtemax, feuchtemin, 0, 100); //Normierung
+    //Serial.print("Normwert: ");
+    //Serial.println(value);
+    return value;
 }
 
 float luftfeuchtigkeit(){
   dht.begin();
-  float Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+  float Luftfeuchtigkeit;
+  int counter = 0;
+  do{ 
+    counter++;
+    Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+    delay(500);
+  }while(!(Luftfeuchtigkeit >= 0) && counter < 50);
   return Luftfeuchtigkeit;  
 }
 

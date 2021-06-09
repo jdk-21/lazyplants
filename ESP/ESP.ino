@@ -66,13 +66,14 @@ void firstStart() {
   Serial.println("");
   Serial.println("Reset Start");
   digitalWrite(PumpePIN, HIGH);
-    
+  /*
   wifi(ssid, pw); //WLAN Verbindung einrichten
-  
+  WiFi.setAutoConnect(false); //Autoconnection aus
+  *//*
   Serial.println("Hole NTP Zeit");
   configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
   getLocalTime(&  local, 5000);        // Versuche 5 s zu Synchronisieren
-
+*/
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
@@ -91,7 +92,7 @@ void setup() {
   } else {
     Serial.println("Start Nr.: " + String(bootZaeler));
   }  
-  
+  /*
   setenv("TZ", TZ_INFO, 1); // Zeitzone  muss nach dem reset neu eingestellt werden
   tzset();
 
@@ -105,19 +106,21 @@ void setup() {
     ESP.restart();
   }
   gegossen = false;
+  */
 }
 
 void loop() {
   gegossen = false;
+  /*
   wifi(ssid, pw); //WLAN Verbindung einrichten
-  
+  *//*
   //Zeit
   tm local;
   getLocalTime(&local); //Abrufen der Zeit
   strftime (buffer, 80, "20%y-%m-%dT%H:%M:%S.000Z", &local); //Formatieren der Zeit
   Time = buffer;
   Serial.println("Time: " + String(Time));
-
+*//*
   //Token testen
   Serial.print("Test Token: ");
   ServerPath = baseUrl +"user/me";
@@ -129,14 +132,14 @@ void loop() {
   }else{
     Serial.println("Token ok");
   }
-  
+  *//*
   // prüfen ob Plant existiert
   ServerPath = baseUrl + tablePlant + "/" + espName;
   Serial.println(ServerPath);
   Plant = get_json(ServerPath);
   Serial.print("Plant: ");
   Serial.println(Plant);
-
+*//*
   // Plant existiert nicht, POST default Plant
   if (Plant["plantDate"] == null) {
     Serial.println("GET Plant failed");
@@ -158,10 +161,11 @@ void loop() {
     Serial.print("GET Plant with Name: ");
     Serial.println(Plant["plantname"]);
   }
-  Serial.println();
+  *//*
+  //Serial.println();
   Serial.println("WiFi disconnect");
   WiFi.disconnect();  
-  
+  *//*  
   // Pflanzen Daten ausgeben
   soll_soilMoisture = Plant["soilMoisture"];
   Serial.print("Soll soilMoisture: "); Serial.print(soll_soilMoisture); Serial.println("%");
@@ -170,25 +174,26 @@ void loop() {
   plantID = Plant["plantId"];
   Serial.print("PlantID: "); Serial.println(plantID);
   Serial.println();
-  
+  */
   // Messwerte erfassen
   Serial.println("Sensorwerte: ");
+  /*
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
-  delay(1000);
+  delay(1000);*//*
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  delay(1000);
+  delay(1000);*//*
   Tanklevel = fuellsstand();
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
-  delay(1000);
+  delay(1000);*/
   soilMoisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
-  delay(1000);
+  delay(1000);/*
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
-  delay(1000);
+  delay(1000);*//*
 
   // Actions - Bodenfeuchte ok?
   if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * (toleranz / 100)))) {
@@ -196,7 +201,7 @@ void loop() {
     giesen(Plant["soilMoisture"], soilMoisture);
     gegossen = true;
   }
-
+*//*
   // Datensatz bauen und übertragen inkl. Ergebnis prüfen
   Messages[0] = "{\"plantId\":\"" + plantID + "\", ";
   if(soilMoisture >= 0){
@@ -220,7 +225,7 @@ void loop() {
     Messages[4] = ""; 
   }
   Messages[5] = "\"measuringTime\":\"" + Time + "\", ";
-  
+
   if (gegossen){
     Messages[6] = "\"water\": true }";
   }else{
@@ -231,7 +236,7 @@ void loop() {
   for(int i=0; i <= 6 ;i++){
     msg = msg + Messages[i];
   }
-
+*//*
   Serial.println();
   ServerPath = (baseUrl + tableDB);
   Serial.println(ServerPath);
@@ -248,7 +253,7 @@ void loop() {
       Serial.println("ERROR: POST Messdaten nicht möglich!");
     }
   } while (ResponseCode != 200 && counter <= max_Retry);
-  
+  */
   // Deep Sleep
   Serial.println("Sleep");
   Serial.println();
