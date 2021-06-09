@@ -49,10 +49,8 @@ void main() async {
       const int limit = 1;
       const String plantId = "espBlume3";
       var uri = Uri.parse(api.baseUrl +
-          "data&filter[order]=measuringTime%20ASC&filter[limit]=" +
-          limit.toString() +
-          "&filter[plantId]=" +
-          plantId);
+          "dataplant/" + plantId + "/" +
+          limit.toString());
       test('getexactPlantData successful', () async {
         print("Test: getData, working");
         print(uri);
@@ -72,7 +70,7 @@ void main() async {
         when(client.get(uri, headers: header))
             .thenAnswer((_) async => http.Response(response, 401));
         var data = await api.getExactPlantData(limit, plantId);
-        expect(data, "error");
+        expect(data, "401 error");
         //clear();
       });
     });

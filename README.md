@@ -5,8 +5,9 @@
 Our vision is to create an automatic plant watering system for all those that cant keep their plants alive because they’re too lazy to water them. With ‚LazyPlants‘ we want to save those sad, dried out plants. To give them back the joy of life, we want to develop a cost-effective solution.
 
 ## Documentation
-Documenatation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
+Documentation: [here](https://github.com/Kokoloris19097/LazyPlants.dokumentation) \
 Blog: [here](https://lazysmartplants.wordpress.com/)
+
 
 ## Connecting the sensors
 ![](https://github.com/Kokoloris19097/LazyPlants.dokumentation/blob/c4ca5e9a913b361307ece8c8a2346931e1663eb6/assets/Schaltplan.jpg) \
@@ -50,6 +51,7 @@ If everything has been wired exactly as shown in the wiring diagram, only the fo
 
 If you use **your own Backend** you have to cange the ServerPath and the Endpoint Names:
 
+
 ```cpp
 String baseUrl = "yourServerPath"; // Pfad zum Backend
 String login_table = "user/login"; // Stelle an der sich der ESP bei der API einloggen muss
@@ -71,3 +73,4 @@ DHT dht(dhtPIN, dhtType);
 
 Once you have made the specified changes, you can load the ESP.ino and Module.h onto your ESP. The debugging information is displayed via the serial monitor.
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment.
+

@@ -65,19 +65,16 @@ class ApiConnector {
 
   getExactPlantData(int limit, String plantId) async {
     try {
-      var response = await getRequest(
-          "data&filter[order]=measuringTime%20ASC&filter[limit]=" +
-              limit.toString() +
-              "&filter[plantId]=" +
-              plantId);
+      var response =
+          await getRequest("dataplant/" + plantId + "/" + limit.toString());
       if (response.statusCode == 200) {
         print(await jsonDecode(response.body));
         return await jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         // show login screen
-        return "error";
+        return "${response.statusCode} error";
       } else
-        return "error";
+        return "${response.statusCode} error";
     } catch (socketException) {
       print(socketException);
       print('No internet connection');
@@ -188,11 +185,11 @@ class ApiConnector {
       String firstName, String lastName, String mail, String password) async {
     try {
       print(jsonEncode({
-            "email": mail,
-            "password": password,
-            "firstName": firstName,
-            "lastName": lastName
-          }));
+        "email": mail,
+        "password": password,
+        "firstName": firstName,
+        "lastName": lastName
+      }));
       var response = await postRequest(
           "user/signup",
           jsonEncode({
