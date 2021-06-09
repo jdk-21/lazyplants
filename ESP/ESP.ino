@@ -66,10 +66,10 @@ void firstStart() {
   Serial.println("");
   Serial.println("Reset Start");
   digitalWrite(PumpePIN, HIGH);
-  /*
+  
   wifi(ssid, pw); //WLAN Verbindung einrichten
-  WiFi.setAutoConnect(false); //Autoconnection aus
-  *//*
+  //WiFi.setAutoConnect(false); //Autoconnection aus
+  /*
   Serial.println("Hole NTP Zeit");
   configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
   getLocalTime(&  local, 5000);        // Versuche 5 s zu Synchronisieren
@@ -177,23 +177,23 @@ void loop() {
   */
   // Messwerte erfassen
   Serial.println("Sensorwerte: ");
-  /*
+  
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
-  delay(1000);*//*
+  delay(1000);
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
-  delay(1000);*//*
+  delay(1000);
   Tanklevel = fuellsstand();
   Serial.print("Tankfüllung: "); Serial.print(Tanklevel); Serial.println("%");
-  delay(1000);*/
+  delay(1000);
   soilMoisture = bodenfeuchte();
   Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
-  delay(1000);/*
+  delay(1000);
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");
   Serial.println();
-  delay(1000);*//*
+  delay(1000);/*
 
   // Actions - Bodenfeuchte ok?
   if (soilMoisture < (soll_soilMoisture-(soll_soilMoisture * (toleranz / 100)))) {

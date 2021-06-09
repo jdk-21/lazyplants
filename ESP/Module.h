@@ -18,7 +18,7 @@
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 26
+#define BodenfeuchtigkeitPIN 36
 #define PumpePIN 33
 #define dhtPIN 23
 #define dhtType DHT22
