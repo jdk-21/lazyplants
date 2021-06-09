@@ -2,7 +2,10 @@
 #include <Arduino.h>
 #include "WiFi.h"
 #include "DHT.h" //DHT Bibliothek laden
+//#include "wire.h"
 
+#define ultraschalltrigger 2 // Pin an HC-SR04 Trig
+#define ultraschallecho 5    // Pin an HC-SR04 Echo
 #define BodenfeuchtigkeitPIN 36
 #define feuchtemin 0
 #define feuchtemax 4095 // Erfahrungswert Arduino Reference sagt max. 4095  //TODO: kallibrieren
@@ -10,7 +13,7 @@ const char* ssid = "TrojaNet";
 const char* pw = "50023282650157230429";
 #define max_Retry 5
 #define PumpePIN 33
-#define dhtPIN 4
+#define dhtPIN 13
 DHT dht(dhtPIN, DHT22);
 
 
@@ -18,7 +21,7 @@ void setup() {
     Serial.begin(115200);//Test
     delay(1000);
     dht.begin();
-    wifi(ssid, pw);
+    //wifi(ssid, pw);
     //WiFi.begin(ssid, pw);
 }
 
@@ -116,11 +119,38 @@ float temperatur(){
   return Temperatur;  
 }
 
-void loop() {    
+int entfernung(){
+    // Ermittlung der Entfernung zwischen Ultraschallsensor und Objekt.
+    // Berechnung erfolgt auf Basis der Schallgeschwindigkeit bei einer Lufttemperatur von 20°C (daher der Wert 29,1)
+    long entfernung=0;
+    long zeit=0;
+    int counter=0;
+    do{
+      counter++;
+      digitalWrite(ultraschalltrigger, LOW);
+      delayMicroseconds(3);
+      noInterrupts();
+      digitalWrite(ultraschalltrigger, HIGH); //Trigger Impuls 10 us
+      delayMicroseconds(10);
+      digitalWrite(ultraschalltrigger, LOW);
+      zeit = pulseIn(ultraschallecho, HIGH); // Echo-Zeit messen
+      interrupts();
+      zeit = (zeit/2); // Zeit halbieren, da der Schall den Weg hin und zurück überwindet
+      entfernung = zeit / 29.1; // Zeit in Zentimeter umrechnen
+      delay(100);
+    }while(entfernung  == 0 && counter < max_Retry);
+    return(entfernung);
+  }
+  
+void loop() {
+  /*
     bodenfeuchte(BodenfeuchtigkeitPIN);
     Serial.print("Luft: ");
     Serial.println(luftfeuchtigkeit());
     Serial.print("Temperatur: ");
-    Serial.println(temperatur());
-    delay(2000);
+    Serial.println(temperatur());*/
+    Serial.print("Entfernung: ");
+    Serial.println(entfernung());
+    delay(1000);
+    Serial.println();
 }
