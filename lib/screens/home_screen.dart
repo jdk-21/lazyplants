@@ -9,6 +9,7 @@ import 'add_plant/add_plant_screen1.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lazyplants/components/custom_colors.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -25,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> plantList = [];
 
   _buildList(List<dynamic> data) {
+    final timeNow = DateTime.now();
+    var random = new Random();
     List<Widget> listItems = [];
     //Map data;
     if (data == null) {
@@ -52,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
       if (plant.plantName != null && plant.plantDate != null) {
+        final difference = timeNow.difference(DateTime.parse(plant.plantDate.toString())).inDays;
         listItems.add(Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
           child: GestureDetector(
@@ -79,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         CustomPaint(
-                          painter: WaterIndicator(percentage: 0.6),
+                          painter: WaterIndicator(percentage: random.nextDouble()),
                           child: Container(height: 80),
                         ),
                       ],
@@ -98,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Text(
-                            "15 days alive",
+                            difference.toString() + " days alive",
                             style: TextStyle(
                               color: Colors.black87,
                             ),

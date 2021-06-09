@@ -74,7 +74,7 @@ class _MonitoringScreen1State extends State<MonitoringScreen1> {
               ),
               floatingActionButton: HomeButton(),
             );
-          } else if (plantData.data[0] == null) {
+          } else if (plantData.data.length == 0 || plantData.data[0] == null) {
             return Scaffold(
               backgroundColor: Colors.orange[800],
               body: Center(
