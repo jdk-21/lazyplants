@@ -18,9 +18,9 @@
 // PINs
 #define ultraschalltrigger 34 // Pin an HC-SR04 Trig
 #define ultraschallecho 35    // Pin an HC-SR04 Echo
-#define BodenfeuchtigkeitPIN 36
+#define BodenfeuchtigkeitPIN 39
 #define PumpePIN 33
-#define dhtPIN 14
+#define dhtPIN 4
 #define dhtType DHT22
 DHT dht(dhtPIN, dhtType);
 
@@ -374,20 +374,26 @@ int bodenfeuchte(){
 }
 
 float luftfeuchtigkeit(){
-  dht.begin();
+  //dht.begin();
   float Luftfeuchtigkeit;
   int counter = 0;
   do{ 
     counter++;
     Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
     delay(500);
-  }while(!(Luftfeuchtigkeit >= 0) && counter < 50);
+  }while(!(Luftfeuchtigkeit >= 0) && counter < 20);
   return Luftfeuchtigkeit;  
 }
 
-float temperatur(){
-  dht.begin();
-  float Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
+float temperatur(){  
+  //dht.begin();
+  float Temperatur;
+  int counter = 0;
+  do{ 
+    counter++;
+    Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
+    delay(500);
+  }while(!(Temperatur >= 0) && counter < 20);
   return Temperatur;  
 }
 

@@ -1,18 +1,23 @@
 #include <Esp.h>
 #include <Arduino.h>
 #include "WiFi.h"
+#include "DHT.h" //DHT Bibliothek laden
 
-#define BodenfeuchtigkeitPIN 39
+#define BodenfeuchtigkeitPIN 36
 #define feuchtemin 0
 #define feuchtemax 4095 // Erfahrungswert Arduino Reference sagt max. 4095  //TODO: kallibrieren
 const char* ssid = "TrojaNet";
 const char* pw = "50023282650157230429";
 #define max_Retry 5
-int ret = 0;
+#define PumpePIN 33
+#define dhtPIN 4
+DHT dht(dhtPIN, DHT22);
+
 
 void setup() {
     Serial.begin(115200);//Test
     delay(1000);
+    dht.begin();
     //wifi(ssid, pw);
     //WiFi.begin(ssid, pw);
 }
@@ -78,16 +83,44 @@ bool wifi(const char* ssid,const char* password){
 }
 
 int bodenfeuchte(int PIN){
-    int value = analogRead(PIN);    
+    int value = analogRead(PIN);
     Serial.print("Messwert: ");
     Serial.println(value);
-    ret = map(value, feuchtemax, feuchtemin, 0, 100); //Normierung
+    value = map(value, feuchtemax, feuchtemin, 0, 100); //Normierung
     Serial.print("Normwert: ");
-    Serial.println(ret);
-    return ret;
+    Serial.println(value);
+    return value;
+}
+
+float luftfeuchtigkeit(){
+  //dht.begin();
+  float Luftfeuchtigkeit;
+  int counter = 0;
+  do{ 
+    counter++;
+    Luftfeuchtigkeit = dht.readHumidity(); // die Luftfeuchtigkeit auslesen und unter „Luftfeutchtigkeit“ speichern
+    delay(500);
+  }while(!(Luftfeuchtigkeit >= 0) && counter < 20);
+  return Luftfeuchtigkeit;  
+}
+
+float temperatur(){  
+  //dht.begin();
+  float Temperatur;
+  int counter = 0;
+  do{ 
+    counter++;
+    Temperatur = dht.readTemperature(); // die Temperatur auslesen und unter „Temperatur“ speichern
+    delay(500);
+  }while(!(Temperatur >= 0) && counter < 20);
+  return Temperatur;  
 }
 
 void loop() {    
     bodenfeuchte(BodenfeuchtigkeitPIN);
-    delay(3000);
+    Serial.print("Luft: ");
+    Serial.println(luftfeuchtigkeit());
+    Serial.print("Temperatur: ");
+    Serial.println(temperatur());
+    delay(2000);
 }

@@ -39,7 +39,7 @@ int ResponseCode;
 int counter;
 String  Time;
 char buffer [80];
-#define IntervallTime 5 //in Sekunden
+#define IntervallTime 0 //in Sekunden
 //#define IntervallTime 3E7 // Mikrosekunden hier 30s (DeepSleep)
 //#define IntervallTime 30000 //Milliseconds hier 30s
 RTC_DATA_ATTR int bootZaeler = 0;   // Variable in RTC Speicher bleibt erhalten nach Reset
@@ -67,7 +67,7 @@ void firstStart() {
   Serial.println("Reset Start");
   digitalWrite(PumpePIN, HIGH);
   
-  wifi(ssid, pw); //WLAN Verbindung einrichten
+  //wifi(ssid, pw); //WLAN Verbindung einrichten
   //WiFi.setAutoConnect(false); //Autoconnection aus
   /*
   Serial.println("Hole NTP Zeit");
@@ -77,6 +77,7 @@ void firstStart() {
   pinMode(ultraschalltrigger, OUTPUT);
   pinMode(ultraschallecho, INPUT);
   pinMode(PumpePIN, OUTPUT);
+  dht.begin();
   analogSetSamples(10); //Messdurchschnitt
   analogSetCycles(16); //Messdauer
 
@@ -177,15 +178,21 @@ void loop() {
   */
   // Messwerte erfassen
   Serial.println("Sensorwerte: ");
-  
+
+  soilMoisture = bodenfeuchte();
+  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
+  delay(1000);
+  soilMoisture = bodenfeuchte();
+  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
+  delay(1000);
+  soilMoisture = bodenfeuchte();
+  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
+  delay(1000);
   temp = temperatur();
   Serial.print("Temperatur: "); Serial.print(temp); Serial.println("°C");
   delay(1000);
   humidity = luftfeuchtigkeit();
   Serial.print("Luftfeuchte: "); Serial.print(humidity); Serial.println("%");  
-  delay(1000);
-  soilMoisture = bodenfeuchte();
-  Serial.print("Bodenfeuchte: "); Serial.print(soilMoisture); Serial.println("%");
   delay(1000);
   int level = entfernung();
   Serial.print("Entfernung: "); Serial.print(level); Serial.println("cm");
