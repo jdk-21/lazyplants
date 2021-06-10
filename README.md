@@ -74,3 +74,6 @@ DHT dht(dhtPIN, dhtType);
 Once you have made the specified changes, you can load the ESP.ino and Module.h onto your ESP. The debugging information is displayed via the serial monitor.
 If you have not wired the sensors and the relay as shown in the plan, you must adjust the pin assignment.
 
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
