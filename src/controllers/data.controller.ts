@@ -121,7 +121,7 @@ export class DataController {
     @param.path.string('limit') limit: number,
   ): Promise<Data[]> {
     const myUserId = currentUserProfile[securityId];
-    return this.dataRepository.find({where: {and: [{userId: myUserId}, {plantId: id}]}, limit: limit});
+    return this.dataRepository.find({where: {and: [{userId: myUserId}, {plantId: id}]}, limit: limit, order: ['measuringTime DESC']});
   }
 
   @patch('/data')
