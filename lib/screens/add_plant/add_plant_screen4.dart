@@ -50,7 +50,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
     });
   }
 
-  saveChanges() async{
+  saveChanges() async {
     print(widget.plant.plantName.toString());
     print(widget.plant.plantId.toString());
     print(widget.plant.soilMoisture.toString());
@@ -116,7 +116,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         const EdgeInsets.only(left: 15.0, top: 10, bottom: 10),
                     child: Text(
                       'back'.tr,
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   ),
                 ),
@@ -138,7 +138,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
                         const EdgeInsets.only(right: 15.0, top: 10, bottom: 10),
                     child: Text(
                       'finish'.tr,
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   ),
                 ),
