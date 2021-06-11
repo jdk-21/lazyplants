@@ -103,7 +103,7 @@ class ApiConnector {
   patchPlant(plant) async {
     try {
       var response = await patchRequest("plant/" + plant.plantId,
-          '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }');
+          '{ "plantName": "${plant.plantName}", "soilMoisture": ${plant.soilMoisture}}');
       if (response.statusCode == 204) {
         print("ok");
         return 204;
