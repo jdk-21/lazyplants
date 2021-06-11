@@ -100,10 +100,10 @@ class ApiConnector {
     }
   }
 
-  patchPlant(plantId, plantName, espName, room, soilMoisture, humidity) async {
+  patchPlant(plant) async {
     try {
-      var response = await patchRequest("plant/" + plantId,
-          '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }');
+      var response = await patchRequest("plant/" + plant.plantId,
+          '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }');
       if (response.statusCode == 204) {
         print("ok");
         return 204;

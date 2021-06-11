@@ -135,13 +135,13 @@ void main() async {
 
   group('PATCH', () {
     group('patchPlant', () {
-      var plantId = "5fc76bf50b487e3b0415f56d";
-      var uri = Uri.parse(api.baseUrl + "plant/" + plantId);
-      var espName = "espBlume3";
-      var plantName = "TEST";
-      var room = "t";
-      var soilMoisture = "25.0";
-      var memberId = "5fbd47595421905a1a869a55";
+      Plant plant;
+      plant.plantId = "5fc76bf50b487e3b0415f56d";
+      var uri = Uri.parse(api.baseUrl + "plant/" + plant.plantId);
+      plant.espName = "espBlume3";
+      plant.plantName = "TEST";
+      plant.room = "t";
+      plant.soilMoisture = 25.0;
 
       test('patchPlant successful', () async {
         print("Test: patchPlant, working");
@@ -150,11 +150,11 @@ void main() async {
         // mock the api request
         when(client.patch(uri,
                 body:
-                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
                 headers: header))
             .thenAnswer((_) async => http.Response(response, 204));
         var data = await api.patchPlant(
-            plantId, plantName, espName, room, soilMoisture, memberId);
+            plant);
         expect(data, 204);
       });
 
@@ -164,11 +164,11 @@ void main() async {
         // mock the api request
         when(client.patch(uri,
                 body:
-                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
                 headers: header))
             .thenAnswer((_) async => http.Response(response, 401));
         var data = await api.patchPlant(
-            plantId, plantName, espName, room, soilMoisture, memberId);
+            plant);
         expect(data, 401);
       });
 
@@ -178,11 +178,11 @@ void main() async {
         // mock the api request
         when(client.patch(uri,
                 body:
-                    '{ "plantName": "$plantName", "soilMoisture": $soilMoisture }',
+                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
                 headers: header))
             .thenAnswer((_) async => http.Response(response, 501));
         var data = await api.patchPlant(
-            plantId, plantName, espName, room, soilMoisture, memberId);
+            plant);
         expect(data, "error");
       });
     }); //patchPlant

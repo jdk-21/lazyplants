@@ -54,13 +54,7 @@ class _AddPlantScreen4State extends State<AddPlantScreen4> {
     print(widget.plant.plantName.toString());
     print(widget.plant.plantId.toString());
     print(widget.plant.soilMoisture.toString());
-    await api.patchPlant(
-        widget.plant.plantId,
-        widget.plant.plantName,
-        widget.plant.espName,
-        widget.plant.room,
-        widget.plant.soilMoisture.toString(),
-        widget.plant.humidity.toString());
+    await api.patchPlant(widget.plant);
   }
 
   @override
