@@ -49,6 +49,7 @@ class ApiConnector {
     });
   }
 
+/*
   patchRequest(String endpoint, String body) async {
     String bearer = "Bearer ";
     if (settingsBox.containsKey('token')) {
@@ -63,7 +64,7 @@ class ApiConnector {
         },
         body: body);
   }
-
+*/
   getExactPlantData(int limit, String plantId) async {
     try {
       var response =
@@ -102,9 +103,24 @@ class ApiConnector {
   }
 
   patchPlant(Plant plant) async {
+    var endpoint = "plant/" + plant.plantId;
+    var body =
+        '{ "plantName": "${plant.plantName}", "soilMoisture": ${plant.soilMoisture}}';
+    String bearer = "Bearer ";
     try {
-      var response = await patchRequest("plant/" + plant.plantId,
-          '{ "plantName": "${plant.plantName}", "soilMoisture": ${plant.soilMoisture}}');
+      if (settingsBox.containsKey('token')) {
+        bearer += settingsBox.get('token');
+      }
+
+      var response =
+          await client.patch(Uri.parse(baseUrl + endpoint), headers: {
+        "Accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": bearer
+      }, body: {
+        "plantName": plant.plantName,
+        "soilMoisture": plant.soilMoisture
+      });
       if (response.statusCode == 204) {
         print("ok");
         return 204;
