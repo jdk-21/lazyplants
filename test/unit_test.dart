@@ -182,7 +182,7 @@ void main() async {
     }); //patchPlant
   }); //PATCH
 
-  /*group('POST', () {
+  group('POST', () {
     group('postLogin', () {
       var mail = "max@max.com";
       var pw = "max123";
@@ -190,7 +190,8 @@ void main() async {
       var token = "POST_TOKEN";
       var userId = "userId";
       var t = api.settingsBox.get('token');
-
+      var body = jsonEncode({"email": mail, "password": pw});
+      var h = "Bearer " + t;
       test('postLogin successful', () async {
         print("Test: postLogin, working");
         var response = '{"token": "' +
@@ -199,14 +200,13 @@ void main() async {
             userId +
             '"}';
         // mock the api request
-        when(client.post(uri, headers: {
-          "Accept": "application/json",
-          "content-type": "application/json",
-          "Authorization": "Bearer testToken"
-        }, body: '''{
-          "email": "$mail",
-          "password": "$pw"
-        }'''))
+        when(client.post(uri,
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": h
+                },
+                body: jsonDecode(body)))
             .thenAnswer((_) async => http.Response(response, 200));
         expect(await api.postLogin(mail, pw), 0);
         expect(api.settingsBox.get('token'), token);
@@ -224,7 +224,7 @@ void main() async {
         expect(api.settingsBox.get('token'), t);
       });
     }); //postLogin
-
+    /*
     group('postCreateAccount', () {
       var uri = Uri.parse(api.baseUrl + "user/signup");
       var uriLogin = Uri.parse(api.baseUrl + "user/login");
@@ -374,7 +374,7 @@ void main() async {
         expect(api.settingsBox.get('firstName'), null);
         expect(api.settingsBox.get('lastName'), null);
       });
-    }); //postCreateAccount
+    }); //postCreateAccount */
   }); //POST
 
   test('checkLoggedIn', () {
@@ -383,5 +383,5 @@ void main() async {
     expect(api.checkLoggedIn(), false);
     api.settingsBox.put('token', "test");
     expect(api.checkLoggedIn(), true);
-  });*/
+  });
 } //main

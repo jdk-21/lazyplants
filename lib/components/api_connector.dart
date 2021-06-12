@@ -33,7 +33,7 @@ class ApiConnector {
           "content-type": "application/json",
           "Authorization": bearer
         },
-        body: body);
+        body: jsonDecode(body));
   }
 
   getRequest(String endpoint) async {
