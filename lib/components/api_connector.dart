@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
+import 'package:lazyplants/components/db_models.dart';
 
 class ApiConnector {
   http.Client client;
@@ -100,7 +101,7 @@ class ApiConnector {
     }
   }
 
-  patchPlant(plant) async {
+  patchPlant(Plant plant) async {
     try {
       var response = await patchRequest("plant/" + plant.plantId,
           '{ "plantName": "${plant.plantName}", "soilMoisture": ${plant.soilMoisture}}');
