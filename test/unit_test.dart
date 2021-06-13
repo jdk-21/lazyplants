@@ -224,7 +224,7 @@ void main() async {
         expect(api.settingsBox.get('token'), t);
       });
     }); //postLogin
-    /*
+/*
     group('postCreateAccount', () {
       var uri = Uri.parse(api.baseUrl + "user/signup");
       var uriLogin = Uri.parse(api.baseUrl + "user/login");
@@ -254,7 +254,8 @@ void main() async {
       test('postCreateAccount successful', () async {
         print("Test: postCreateAccount, working");
         print(uri);
-        var body = '{"email":"$mail","password":"$password","firstName":"$firstName","lastName":"$lastName"}';
+        var body =
+            '{"email":"$mail","password":"$password","firstName":"$firstName","lastName":"$lastName"}';
         print(body);
         // mock the api request
         when(client.post(uri,
@@ -263,7 +264,7 @@ void main() async {
                   "content-type": "application/json",
                   "Authorization": "Bearer testToken"
                 },
-                body: body))
+                body: jsonDecode(body)))
             .thenAnswer((_) async => http.Response(responseSuccsess, 200));
         when(client.post(uriLogin,
                 body: {"email": mail, "password": password}, headers: header))
