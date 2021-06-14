@@ -218,8 +218,14 @@ void main() async {
         print("Test: postLogin, error");
         var response = 'error';
         // mock the api request
-        when(client.post(uri, body: {"email": mail, "password": pw}))
-            .thenAnswer((_) async => http.Response(response, 401));
+        when(client.post(uri, headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          "Authorization": h
+        }, body: {
+          "email": mail,
+          "password": pw
+        })).thenAnswer((_) async => http.Response(response, 401));
         expect(await api.postLogin(mail, pw), 1);
         expect(api.settingsBox.get('token'), t);
       });
