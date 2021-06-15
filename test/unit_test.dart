@@ -48,9 +48,8 @@ void main() async {
     group('getExactPlantData', () {
       const int limit = 1;
       const String plantId = "espBlume3";
-      var uri = Uri.parse(api.baseUrl +
-          "dataplant/" + plantId + "/" +
-          limit.toString());
+      var uri = Uri.parse(
+          api.baseUrl + "dataplant/" + plantId + "/" + limit.toString());
       test('getexactPlantData successful', () async {
         print("Test: getData, working");
         print(uri);
@@ -135,26 +134,25 @@ void main() async {
 
   group('PATCH', () {
     group('patchPlant', () {
-      Plant plant;
+      Plant plant = Plant();
       plant.plantId = "5fc76bf50b487e3b0415f56d";
       var uri = Uri.parse(api.baseUrl + "plant/" + plant.plantId);
       plant.espName = "espBlume3";
       plant.plantName = "TEST";
       plant.room = "t";
       plant.soilMoisture = 25.0;
+      plant.humidity = 20.0;
 
       test('patchPlant successful', () async {
         print("Test: patchPlant, working");
         var response =
-            '{"plantName": "TEST","plantDate": "2020-12-02T09:29:16.519Z","espId": "espBlume3","soilMoisture": 25,"humidity": 30,"id": "5fc76bf50b487e3b0415f56d","memberId": "5fbd47595421905a1a869a55"}';
+            '{"plantName": "${plant.plantName}","plantDate": "2020-12-02T09:29:16.519Z","espId": "${plant.espName}","soilMoisture": ${plant.soilMoisture},"humidity": ${plant.humidity},"id": "${plant.plantId}","memberId": "5fbd47595421905a1a869a55"}';
         // mock the api request
-        when(client.patch(uri,
-                body:
-                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
-                headers: header))
-            .thenAnswer((_) async => http.Response(response, 204));
-        var data = await api.patchPlant(
-            plant);
+        when(client.patch(uri, headers: header, body: {
+          "plantName": plant.plantName,
+          "soilMoisture": plant.soilMoisture
+        })).thenAnswer((_) async => http.Response(response, 204));
+        var data = await api.patchPlant(plant);
         expect(data, 204);
       });
 
@@ -162,13 +160,11 @@ void main() async {
         print("Test: patchPlant, error");
         var response = 'error';
         // mock the api request
-        when(client.patch(uri,
-                body:
-                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
-                headers: header))
-            .thenAnswer((_) async => http.Response(response, 401));
-        var data = await api.patchPlant(
-            plant);
+        when(client.patch(uri, headers: header, body: {
+          "plantName": plant.plantName,
+          "soilMoisture": plant.soilMoisture
+        })).thenAnswer((_) async => http.Response(response, 401));
+        var data = await api.patchPlant(plant);
         expect(data, 401);
       });
 
@@ -176,19 +172,17 @@ void main() async {
         print("Test: patchPlant, other Statuscode");
         var response = 'error';
         // mock the api request
-        when(client.patch(uri,
-                body:
-                    '{ "plantName": "$plant.plantName", "soilMoisture": $plant.soilMoisture }',
-                headers: header))
-            .thenAnswer((_) async => http.Response(response, 501));
-        var data = await api.patchPlant(
-            plant);
+        when(client.patch(uri, headers: header, body: {
+          "plantName": plant.plantName,
+          "soilMoisture": plant.soilMoisture
+        })).thenAnswer((_) async => http.Response(response, 501));
+        var data = await api.patchPlant(plant);
         expect(data, "error");
       });
     }); //patchPlant
   }); //PATCH
 
-  /*group('POST', () {
+  group('POST', () {
     group('postLogin', () {
       var mail = "max@max.com";
       var pw = "max123";
@@ -196,7 +190,8 @@ void main() async {
       var token = "POST_TOKEN";
       var userId = "userId";
       var t = api.settingsBox.get('token');
-
+      var body = jsonEncode({"email": mail, "password": pw});
+      var h = "Bearer " + t;
       test('postLogin successful', () async {
         print("Test: postLogin, working");
         var response = '{"token": "' +
@@ -205,14 +200,13 @@ void main() async {
             userId +
             '"}';
         // mock the api request
-        when(client.post(uri, headers: {
-          "Accept": "application/json",
-          "content-type": "application/json",
-          "Authorization": "Bearer testToken"
-        }, body: '''{
-          "email": "$mail",
-          "password": "$pw"
-        }'''))
+        when(client.post(uri,
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": h
+                },
+                body: jsonDecode(body)))
             .thenAnswer((_) async => http.Response(response, 200));
         expect(await api.postLogin(mail, pw), 0);
         expect(api.settingsBox.get('token'), token);
@@ -224,13 +218,19 @@ void main() async {
         print("Test: postLogin, error");
         var response = 'error';
         // mock the api request
-        when(client.post(uri, body: {"email": mail, "password": pw}))
-            .thenAnswer((_) async => http.Response(response, 401));
+        when(client.post(uri, headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          "Authorization": h
+        }, body: {
+          "email": mail,
+          "password": pw
+        })).thenAnswer((_) async => http.Response(response, 401));
         expect(await api.postLogin(mail, pw), 1);
         expect(api.settingsBox.get('token'), t);
       });
     }); //postLogin
-
+/*
     group('postCreateAccount', () {
       var uri = Uri.parse(api.baseUrl + "user/signup");
       var uriLogin = Uri.parse(api.baseUrl + "user/login");
@@ -260,7 +260,8 @@ void main() async {
       test('postCreateAccount successful', () async {
         print("Test: postCreateAccount, working");
         print(uri);
-        var body = '{"email":"$mail","password":"$password","firstName":"$firstName","lastName":"$lastName"}';
+        var body =
+            '{"email":"$mail","password":"$password","firstName":"$firstName","lastName":"$lastName"}';
         print(body);
         // mock the api request
         when(client.post(uri,
@@ -269,7 +270,7 @@ void main() async {
                   "content-type": "application/json",
                   "Authorization": "Bearer testToken"
                 },
-                body: body))
+                body: jsonDecode(body)))
             .thenAnswer((_) async => http.Response(responseSuccsess, 200));
         when(client.post(uriLogin,
                 body: {"email": mail, "password": password}, headers: header))
@@ -380,7 +381,7 @@ void main() async {
         expect(api.settingsBox.get('firstName'), null);
         expect(api.settingsBox.get('lastName'), null);
       });
-    }); //postCreateAccount
+    }); //postCreateAccount */
   }); //POST
 
   test('checkLoggedIn', () {
@@ -389,5 +390,5 @@ void main() async {
     expect(api.checkLoggedIn(), false);
     api.settingsBox.put('token', "test");
     expect(api.checkLoggedIn(), true);
-  });*/
+  });
 } //main
