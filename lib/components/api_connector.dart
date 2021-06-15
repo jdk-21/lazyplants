@@ -104,8 +104,6 @@ class ApiConnector {
 
   patchPlant(Plant plant) async {
     var endpoint = "plant/" + plant.plantId;
-    var body =
-        '{ "plantName": "${plant.plantName}", "soilMoisture": ${plant.soilMoisture}}';
     String bearer = "Bearer ";
     try {
       if (settingsBox.containsKey('token')) {
